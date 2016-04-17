@@ -42,13 +42,15 @@ function CombatFightState:NeedToRun()
     local selfPlayerPosition = selfPlayer.Position
 
     -- Need to do PvP Check
-    --[[
-    if Bot.Settings.AttackPvpFlagged == true and Helpers.IsSafeZone() == false then
+    if Bot.Settings.AttackPvpFlagged == true and selfPlayer.IsPvpEnable == true and Helpers.IsSafeZone() == false then
         local players = Bot.GetPlayers(true)
         table.sort(players, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
-        for key, value in pairs(monsters) do
+        for key, value in pairs(players) do
+--        print(value.Name+" "+value.IsAlive) + " "+ value.IsPvpEnable+ " "+ selfPlayer.Key ~= value.Key)
             if value.IsAlive and value.IsPvpEnable and selfPlayer.Key ~= value.Key
-            and value.Distance3DFromMe <= value.BodySize + Bot.Settings.Advanced.PvpAttackRadius then
+            and value.Position.Distance3DFromMe <= value.BodySize + Bot.Settings.Advanced.PvpAttackRadius and
+            ProfileEditor.CurrentProfile:IsPositionNearHotspots(value.Position, Bot.Settings.Advanced.HotSpotRadius * 2) 
+             then
                 if value.Key ~= self.CurrentCombatActor.Key then
                     self._newTarget = true
                 else
@@ -57,7 +59,7 @@ function CombatFightState:NeedToRun()
 
                 self.CurrentCombatActor = value
                 print("Want to Attack Player: "..value.Name.." "..value.CanAttack)
---                return true
+                return true
             end
         end
     end

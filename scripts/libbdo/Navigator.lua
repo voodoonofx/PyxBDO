@@ -12,10 +12,13 @@ Navigator.StuckCount = 0
 Navigator.OnStuckCall = nil
 
 function Navigator.CanMoveTo(destination)
-
   local selfPlayer = GetSelfPlayer()
 
   if not selfPlayer then
+    return false
+  end
+  
+  if not destination.IsOnMesh then
     return false
   end
 
@@ -25,7 +28,7 @@ function Navigator.CanMoveTo(destination)
     return false
   end
 
-  if waypoints[#waypoints]:GetDistance3D(destination) > 500 then
+  if waypoints[#waypoints]:GetDistance3D(destination) > 180 then
     return false
   end
 
@@ -39,6 +42,7 @@ function Navigator.MoveToStraight(destination)
   table.insert(Navigator.Waypoints, destination)
   Navigator.Destination = destination
   Navigator.Running = true
+  return true
 end
 
 function Navigator.MoveTo(destination, forceRecalculate)
@@ -66,7 +70,7 @@ function Navigator.MoveTo(destination, forceRecalculate)
     table.insert(waypoints, destination)
   end
 
-  while waypoints[1] and waypoints[1].Distance2DFromMe < Navigator.ApproachDistance do
+  while waypoints[1] and waypoints[1].Distance3DFromMe <= Navigator.ApproachDistance do
     table.remove(waypoints, 1)
   end
 
@@ -74,6 +78,7 @@ function Navigator.MoveTo(destination, forceRecalculate)
   Navigator.Destination = destination
   Navigator.Running = true
   return true
+  
 end
 
 function Navigator.Stop()

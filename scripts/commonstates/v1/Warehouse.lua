@@ -213,8 +213,8 @@ function WarehouseState:GetItems()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         for k, v in pairs(selfPlayer.Inventory.Items) do
-            if self.ItemCheckFunction then
-                if self.ItemCheckFunction(v) then
+            if self.ItemCheckFunction ~= nil then
+                if self.ItemCheckFunction(v) == true then
                     table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
                 end
             else

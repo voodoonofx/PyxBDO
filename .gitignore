@@ -234,3 +234,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+scripts/Fisher/Profiles/fish1.json
+*.mesh
+scripts/Fisher/Profiles/fish2.json
+*.json
+*.nav

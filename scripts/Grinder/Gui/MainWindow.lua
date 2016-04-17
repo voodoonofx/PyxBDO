@@ -89,7 +89,7 @@ function MainWindow.DrawMainWindow()
                 Bot.Settings.CombatScript = MainWindow.AvailablesCombats[MainWindow.CombatsComboBoxSelected]
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
             end
---           _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
+           _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
 
         end
         if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then

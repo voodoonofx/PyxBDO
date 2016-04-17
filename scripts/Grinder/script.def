@@ -19,7 +19,6 @@ file=../commonstates/v1/Vendor.lua
 file=../commonstates/v1/Warehouse.lua
 file=../commonstates/v1/Consumables.lua
 file=../commonstates/v1/InventoryDeleteState.lua
-file=Helpers/Rendering.lua
 file=GrinderBot.lua
 file=Main.lua
 

@@ -24,7 +24,7 @@ Bot.CombatPullState = CombatPullState()
 function Bot.GetPlayers(onlyPvpFlagged)
     local actors = GetActors()
     local players = { }
-    for key, value in pairs(monsters) do
+    for key, value in pairs(actors) do
         if value.IsPlayer then
             if (onlyPvpFlagged == nil or onlyPvpFlagged == false) or(onlyPvpFlagged == true and value.IsPvpEnable == true) then
                 players[#players] = value

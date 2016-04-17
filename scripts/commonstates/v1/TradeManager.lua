@@ -36,11 +36,6 @@ function TradeManagerState:NeedToRun()
         return false
     end
 
-    --[[
-    if selfPlayer.CurrentActionName == "FISHING_WAIT" then
-        return false
-    end
-    --]]
     if not selfPlayer.IsAlive then
         return false
     end
@@ -49,7 +44,7 @@ function TradeManagerState:NeedToRun()
         self.Forced = false
         return false
     end
-
+    
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
     self.Forced = false
         return false
