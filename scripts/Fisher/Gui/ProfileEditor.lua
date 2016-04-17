@@ -169,8 +169,6 @@ function ProfileEditor.SaveProfile(name)
     local meshFilename = "\\Profiles\\" .. name .. ".mesh"
     local objFilename = "\\Profiles\\" .. name .. ".obj"
     
-    --Navigation.ExportWavefrontObject(objFilename)
-    
     print("Save mesh : " .. meshFilename)
     if not Navigation.SaveMesh(meshFilename) then
         print("Unable to save .mesh !")
@@ -226,10 +224,14 @@ end
 
 function ProfileEditor.OnRender3D()
     
-    local selfPlayer = GetSelfPlayer()
+    if Navigation.RenderMesh then
     
-    if ProfileEditor.CurrentProfile:HasFishSpot() then
-        Renderer.Draw3DTrianglesList(GetInvertedTriangleList(ProfileEditor.CurrentProfile.FishSpotPosition.X, ProfileEditor.CurrentProfile.FishSpotPosition.Y + 100, ProfileEditor.CurrentProfile.FishSpotPosition.Z, 100, 150, 0xAAFF0000, 0xAAFF00FF))
+        local selfPlayer = GetSelfPlayer()
+        
+        if ProfileEditor.CurrentProfile:HasFishSpot() then
+            Renderer.Draw3DTrianglesList(GetInvertedTriangleList(ProfileEditor.CurrentProfile.FishSpotPosition.X, ProfileEditor.CurrentProfile.FishSpotPosition.Y + 100, ProfileEditor.CurrentProfile.FishSpotPosition.Z, 100, 150, 0xAAFF0000, 0xAAFF00FF))
+        end
+    
     end
         
 end

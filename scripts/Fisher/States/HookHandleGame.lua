@@ -37,7 +37,7 @@ function HookFishHandleGameState:Run()
     if selfPlayer.CurrentActionName == "FISHING_HOOK_START" then
         selfPlayer:DoAction("FISHING_HOOK_PERFECT")
         selfPlayer:DoAction("FISHING_HOOK_ING")
-        BDOLua.Execute("getSelfPlayer():get():SetMiniGameResult(1)")
+        BDOLua.Execute("getSelfPlayer():get():SetMiniGameResult(3)")
         selfPlayer:DoAction("FISHING_HOOK_ING_HARDER")
         self.LastGameTick = Pyx.System.TickCount
         if self.Settings.InstantFish then    

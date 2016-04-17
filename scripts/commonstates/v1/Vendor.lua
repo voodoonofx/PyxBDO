@@ -26,7 +26,7 @@ function VendorState.new()
         IgnoreItemsNamed = { },
         -- Buy Items Format {Name, BuyAt, BuyMax} BuyAt level we should buyat or below, BuyMax Max to have in Inventory so if is 100 and we have 20 bot will buy 80
         BuyItems = { },
-        SecondsBetweenTries = 3000
+        SecondsBetweenTries = 300
     }
 
     self.State = 0
@@ -297,15 +297,17 @@ function VendorState:GetSellItems()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         for k, v in pairs(selfPlayer.Inventory.Items) do
-            if self.ItemCheckFunction then
-                if self.ItemCheckFunction(v) then
-                    table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
-                end
-            else
-                if not table.find(self.Settings.IgnoreItemsNamed, v.ItemEnchantStaticStatus.Name) and self:CanSellGrade(v) == true then
-                    table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
-                end
+            if not v.ItemEnchantStaticStatus.IsFishingRod then
+                if self.ItemCheckFunction then
+                    if self.ItemCheckFunction(v) then
+                        table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
+                    end
+                else
+                    if not table.find(self.Settings.IgnoreItemsNamed, v.ItemEnchantStaticStatus.Name) and self:CanSellGrade(v) == true then
+                        table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
+                    end
 
+                end
             end
         end
     end

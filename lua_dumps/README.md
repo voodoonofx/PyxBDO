@@ -1,2 +1,0 @@
-# PyxBDO
-Lua dumped files
