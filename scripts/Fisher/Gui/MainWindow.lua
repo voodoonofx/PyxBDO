@@ -72,6 +72,10 @@ function MainWindow.DrawMainWindow()
             end
             _, Bot.Settings.ConsumablesSettings.Consumables[1].ConditionValue = ImGui.SliderInt("Mins Lasts for##id_gui_bait_lasts", tonumber(Bot.Settings.ConsumablesSettings.Consumables[1].ConditionValue), 1, 120)
         end
+        if ImGui.CollapsingHeader("Repair", "id_gui_trademanager", true, false) then
+            _, Bot.Settings.RepairFishingRod = ImGui.Checkbox("Repair fishing rod##id_repair_fishing_rod", Bot.Settings.RepairFishingRod)
+        end
+
         if ImGui.CollapsingHeader("Trade Manager", "id_gui_trademanager", true, false) then
             _, Bot.Settings.TradeManagerSettings.TradeManagerOnInventoryFull = ImGui.Checkbox("Sell at trade manager when inventory is full##id_guid_trademanager_full_inventory", Bot.Settings.TradeManagerSettings.TradeManagerOnInventoryFull)
         end

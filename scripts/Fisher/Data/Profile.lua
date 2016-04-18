@@ -18,6 +18,9 @@ function Profile.new()
     self.TradeManagerNpcPosition = { X = 0, Y = 0, Z = 0 }
     self.WarehouseNpcName = ""
     self.WarehouseNpcPosition = { X = 0, Y = 0, Z = 0 }
+        self.RepairNpcName = ""
+    self.RepairNpcPosition = { X = 0, Y = 0, Z = 0 }
+
   return self
 end
 
@@ -55,6 +58,10 @@ end
 
 function Profile:GetVendorPosition()
     return Vector3(self.VendorNpcPosition.X, self.VendorNpcPosition.Y, self.VendorNpcPosition.Z)
+end
+
+function Profile:GetRepairPosition()
+    return Vector3(self.RepairNpcPosition.X, self.RepairNpcPosition.Y, self.RepairNpcPosition.Z)
 end
 
 function Profile:HasVendor()

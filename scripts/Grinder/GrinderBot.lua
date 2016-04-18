@@ -48,11 +48,11 @@ function Bot.Start()
 
         local combatScriptFile = Bot.Settings.CombatScript
 
-        local combatScriptFunc = loadfile("Combats/" .. combatScriptFile)
+        local code = Pyx.FileSystem.ReadFile("Combats/" .. combatScriptFile) 
+        combatScriptFunc,combatScriptError = load(code)
 
-        if not combatScriptFunc then
-            print("Unable to load combat script !")
-            return
+        if combatScriptFunc == nil then
+             print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))  
         end
 
         Bot.Combat = combatScriptFunc()

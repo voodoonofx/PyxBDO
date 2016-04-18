@@ -22,6 +22,8 @@ file=../commonstates/v1/Warehouse.lua
 file=../commonstates/v1/InventoryDeleteState.Lua
 file=../commonstates/v1/InventoryDeleteState.Lua
 file=../commonstates/v1/Consumables.lua
+file=../commonstates/v1/Repair.lua
+
 file=Helpers/Rendering.lua
 file=FishBot.lua
 file=Main.lua

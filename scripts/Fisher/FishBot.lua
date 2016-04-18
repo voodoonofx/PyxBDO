@@ -9,6 +9,7 @@ Bot.InventoryDeleteState = InventoryDeleteState()
 Bot.ConsumablesState = ConsumablesState()
 Bot.StartFishingState = StartFishingState()
 Bot.HookFishHandleGameState = HookFishHandleGameState()
+Bot.RepairState = RepairState()
 
 function Bot.Start()
     if not Bot.Running then
@@ -44,6 +45,11 @@ function Bot.Start()
 
         Bot.ConsumablesState.ValidActions = { "WAIT" }
 
+        Bot.RepairState.RepairCheck = Bot.RepairCheck
+        Bot.RepairState.Settings.NpcName = currentProfile.RepairNpcName
+        Bot.RepairState.Settings.NpcPosition = currentProfile.RepairNpcPosition
+
+
         if not currentProfile then
             print("No profile loaded !")
             return
@@ -70,6 +76,7 @@ function Bot.Start()
         Bot.Fsm:AddState(Bot.TradeManagerState)
         Bot.Fsm:AddState(Bot.VendorState)
         Bot.Fsm:AddState(Bot.WarehouseState)
+        Bot.Fsm:AddState(Bot.RepairState)
         Bot.Fsm:AddState(EquipFishingRodState())
         Bot.Fsm:AddState(Bot.ConsumablesState)
         Bot.Fsm:AddState(LibConsumables.ConsumablesState)
@@ -114,9 +121,9 @@ function Bot.LoadSettings()
     Bot.Settings.InventoryDeleteSettings = Bot.InventoryDeleteState.Settings
     Bot.Settings.ConsumablesSettings = Bot.ConsumablesState.Settings
     Bot.Settings.LibConsumablesSettings = LibConsumables.Settings
-       Bot.Settings.StartFishingSettings = Bot.StartFishingState.Settings
+    Bot.Settings.StartFishingSettings = Bot.StartFishingState.Settings
     Bot.Settings.HookFishHandleGameSettings = Bot.HookFishHandleGameState.Settings
- 
+    Bot.Settings.RepairSettings = Bot.RepairState.Settings
 
     table.merge(Bot.Settings, json:decode(Pyx.FileSystem.ReadFile("Settings.json")))
     if string.len(Bot.Settings.LastProfileName) > 0 then
@@ -188,6 +195,26 @@ function Bot.CustomWarehouseCheck(item)
     if not table.find(Bot.WarehouseState.Settings.IgnoreItemsNamed, item.ItemEnchantStaticStatus.Name) and item.Type ~= 8 then
         return true
     end
+    return false
+end
+
+function Bot.RepairCheck()
+    if Bot.Settings.RepairFishingRod == false then
+        return false
+    end
+
+    for k, v in pairs(selfPlayer.EquippedItems) do
+        if v.HasEndurance and v.EndurancePercent <= 0 and v.IsFishingRod == true then
+            return true
+        end
+    end
+
+    for k, v in pairs(selfPlayer.Inventory.Items) do
+        if v.HasEndurance and v.EndurancePercent <= 0 and v.IsFishingRod == true then
+            return true
+        end
+    end
+
     return false
 end
 

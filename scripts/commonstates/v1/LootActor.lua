@@ -18,6 +18,7 @@ function LootActorState.new()
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nill
+        self.SleepTimer = nil
 
     return self
 end
@@ -68,6 +69,10 @@ function LootActorState:Run()
     local selfPlayer = GetSelfPlayer()
     local actorPosition = self.CurrentLootActor.Position
 
+        if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
+        return
+    end
+
     if Looting.IsLooting then
         local numLoots = Looting.ItemCount
         for i=0,numLoots-1 do 
@@ -87,11 +92,16 @@ function LootActorState:Run()
     if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
         if self.CallWhileMoving then
             self:CallWhileMoving()
-        end
+            end
+
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
+        print("Loot Interact pause .5")
         self.CurrentLootActor:Interact(7) -- Loot interaction
+        self.SleepTimer = PyxTimer:New(.5)
+        self.SleepTimer:Start()
+
     end
     
 

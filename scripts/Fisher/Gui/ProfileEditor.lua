@@ -146,7 +146,31 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = 0
             end
         end
-        
+                if ImGui.CollapsingHeader("Repair npc", "id_profile_editor_Repair", true, false) then
+            if string.len(ProfileEditor.CurrentProfile.RepairNpcName) > 0 then
+                ImGui.Text("Name : " .. ProfileEditor.CurrentProfile.RepairNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetRepairPosition().Distance3DFromMe / 100) .. "y)")
+            else
+                ImGui.Text("Name : Not set")
+            end
+            if ImGui.Button("Set##id_profile_set_Repair" , ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                local npcs = GetNpcs()
+                if table.length(npcs) > 0 then
+                    local RepairNpc = npcs[1]
+                    ProfileEditor.CurrentProfile.RepairNpcName = RepairNpc.Name
+                    ProfileEditor.CurrentProfile.RepairNpcPosition.X = RepairNpc.Position.X
+                    ProfileEditor.CurrentProfile.RepairNpcPosition.Y = RepairNpc.Position.Y
+                    ProfileEditor.CurrentProfile.RepairNpcPosition.Z = RepairNpc.Position.Z
+                end
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Clear##id_profile_clear_Repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                ProfileEditor.CurrentProfile.RepairNpcName = ""
+                ProfileEditor.CurrentProfile.RepairNpcPosition.X = 0
+                ProfileEditor.CurrentProfile.RepairNpcPosition.Y = 0
+                ProfileEditor.CurrentProfile.RepairNpcPosition.Z = 0
+            end
+        end
+
         ImGui.End()
     end
 end

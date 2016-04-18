@@ -29,11 +29,14 @@ function Settings.new()
     self.DeleteUsedRods = true
 
     self.IgnoreUntradeAbleItems = false
+    self.RepairFishingRod = false
 
     self.LibConsumablesSettings = {}
 
     self.StartFishingSettings = {}
     self.HookFishHandleGameSettings = {}
+
+    self.RepairSettings = {}
     
   return self
 end

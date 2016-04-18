@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 3000 }
+    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 3000, RepairInventory = true, RepairEquipped = true }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -19,8 +19,9 @@ function RepairState.new()
 
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
+    self.RepairCheck = nil
 
-    self.RepairList = {}
+    self.RepairList = { }
 
     return self
 end
@@ -43,7 +44,7 @@ function RepairState:NeedToRun()
         self.Forced = false
         return false
     end
-        
+
     if self.Forced == true and not Navigator.CanMoveTo(self:GetPosition()) then
         print("Was told to go to Repair but Navigator.CanMoveTo returns false")
         self.Forced = false
@@ -52,23 +53,30 @@ function RepairState:NeedToRun()
         return true
     end
 
-
-        if self.LastUseTimer ~= nil and not self.LastUseTimer:Expired() then
+    if self.RepairCheck ~= nil then
+        if self.RepairCheck() == true then
+            self.Forced = true
+            return true
+        end
         return false
     end
 
-        for k, v in pairs(selfPlayer.EquippedItems) do
-            if v.HasEndurance and v.EndurancePercent <= 20 then
-                if Navigator.CanMoveTo(self:GetPosition()) then
-                    self.Forced = true
-                    return true
-                else
-                    print("Need to Repair! Can not find path to NPC: " .. self.Settings.NpcName)
-                    return false
-                end
+    if self.LastUseTimer ~= nil and not self.LastUseTimer:Expired() then
+        return false
+    end
 
+    for k, v in pairs(selfPlayer.EquippedItems) do
+        if v.HasEndurance and v.EndurancePercent <= 20 then
+            if Navigator.CanMoveTo(self:GetPosition()) then
+                self.Forced = true
+                return true
+            else
+                print("Need to Repair! Can not find path to NPC: " .. self.Settings.NpcName)
+                return false
             end
+
         end
+    end
 
     return false
 end
@@ -85,7 +93,7 @@ function RepairState:Reset()
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
-    self.RepairList = {}
+    self.RepairList = { }
 end
 
 function RepairState:Exit()
@@ -98,8 +106,8 @@ function RepairState:Exit()
         self.LastUseTimer:Start()
         self.SleepTimer = nil
         self.Forced = false
-        self.RepairList = {}
-        end
+        self.RepairList = { }
+    end
 
 end
 
@@ -145,39 +153,69 @@ function RepairState:Run()
     end
 
     if self.State == 2 then
+    self.State = 3
+    BDOLua.Execute("Repair_OpenPanel( true)")
+            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer:Start()
+            return
+    end
+
+    if self.State == 3 then
         if not Dialog.IsTalking then
             print("Repair Error Dialog didn't open")
             self:Exit()
             return
         end
-        self.SleepTimer = PyxTimer:New(0.1)
-        self.SleepTimer:Start()
-        self.State = 3
-        self.RepairList = self:GetItems()
+        if self.Settings.RepairEquipped == true then
+            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer:Start()
+            BDOLua.Execute("RepairAllEquippedItemBtn_LUp()")
+            self.State = 4
+        else
+            self.State = 5
+        end
         return
     end
-    if self.State == 3 then
 
-        if table.length(self.RepairList) < 1 then
-            print("Repair done list")
-            self.State = 4
-            if self.CallWhenCompleted then
-                self.CallWhenCompleted(self)
-            end
+    if self.State == 4 then
+        self.State = 5
+        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer:Start()
+        return
+    end
+
+    if self.State == 5 then
+        if not Dialog.IsTalking then
+            print("Repair Error Dialog didn't open")
             self:Exit()
             return
         end
-
-        local item = self.RepairList[1]
-        --        local itemPtr = selfPlayer.Inventory:GetItemByName(item.name)
-        if item.item ~= nil then
-            print(" Repair item : " .. item.name)
-            item.item:Repair(npc)
-            self.SleepTimer = PyxTimer:New(0.5)
+        if self.Settings.RepairInventory == true then
+            self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
+            BDOLua.Execute("RepairAllInvenItemBtn_LUp()")
+            self.State = 6
+        else
+            self.State = 7
         end
-        table.remove(self.RepairList, 1)
         return
+    end
+
+    if self.State == 6 then
+        self.State = 7
+        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer:Start()
+        return
+    end
+
+        if self.State == 7 then
+    self.State = 8
+    BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
+            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer:Start()
+            return
     end
 
     self:Exit()
