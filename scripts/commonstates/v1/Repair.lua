@@ -179,7 +179,8 @@ function RepairState:Run()
 
     if self.State == 4 then
         self.State = 5
-        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+--        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+    BDOLua.Execute("MessageBox.keyProcessEnter()")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         return
@@ -204,7 +205,8 @@ function RepairState:Run()
 
     if self.State == 6 then
         self.State = 7
-        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+--        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
+    BDOLua.Execute("MessageBox.keyProcessEnter()")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         return

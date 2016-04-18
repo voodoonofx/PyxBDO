@@ -39,6 +39,10 @@ function CombatFightState:NeedToRun()
         return false
     end
 
+    if Bot.Settings.Advanced.IgnoreCombatOnVendor == true and Bot.VendorState.Forced == true or
+    Bot.Settings.Advanced.IgnoreCombatOnRepair == true and Bot.RepairState.Forced == true then
+    return false
+    end
     local selfPlayerPosition = selfPlayer.Position
 
     -- Need to do PvP Check

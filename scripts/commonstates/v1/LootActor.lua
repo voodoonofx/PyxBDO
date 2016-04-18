@@ -97,9 +97,9 @@ function LootActorState:Run()
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
-        print("Loot Interact pause .5")
+        print("Loot Interact pause 1")
         self.CurrentLootActor:Interact(7) -- Loot interaction
-        self.SleepTimer = PyxTimer:New(.5)
+        self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
 
     end
