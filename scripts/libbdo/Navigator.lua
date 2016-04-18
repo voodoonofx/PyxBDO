@@ -28,7 +28,7 @@ function Navigator.CanMoveTo(destination)
     return false
   end
 
-  if waypoints[#waypoints]:GetDistance3D(destination) > 180 then
+  if waypoints[#waypoints]:GetDistance3D(destination) > 500 then
     return false
   end
 

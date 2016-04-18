@@ -43,14 +43,17 @@ function LootActorState:NeedToRun()
     if selfPlayer.Inventory.FreeSlots == 0 then
         return false
     end
+    
+    local nearestAttacker = self:GetNeareastAttacker()
 
     local actors = GetActors()
     table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(actors) do
-        if v.IsInteractable and
-            v.IsLootInteraction and
+        if v.IsLootable and
             v.Position.Distance3DFromMe < self.Settings.LootRadius and
-            Navigator.CanMoveTo(v.Position) -- or v.IsLineOfSight and v.Position.Distance3DFromMe < 1000)
+            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
+            v.IsLineOfSight and
+            Navigator.CanMoveTo(v.Position)
         then
             self.CurrentLootActor = v
             return true
@@ -65,25 +68,42 @@ function LootActorState:Run()
     local selfPlayer = GetSelfPlayer()
     local actorPosition = self.CurrentLootActor.Position
 
-    if selfPlayer.LootState > 0 then
-        selfPlayer:LootAllItemsToPlayer()
+    if Looting.IsLooting then
+        local numLoots = Looting.ItemCount
+        for i=0,numLoots-1 do 
+            local lootItem = Looting.GetItemByIndex(i)
+            if lootItem then
+                print("Loot item : " .. lootItem.ItemEnchantStaticStatus.Name)
+                Looting.Take(i)
+            end
+        end
+        Looting.Close();
         if self.CallWhenCompleted then
             self.CallWhenCompleted(self)
         end
-
         return true
     end
 
     if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
         if self.CallWhileMoving then
-            self.CallWhileMoving(self)
+            self:CallWhileMoving()
         end
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
-        selfPlayer:Interact(self.CurrentLootActor)
+        self.CurrentLootActor:Interact(7) -- Loot interaction
     end
+    
 
     return true
 
+end
+
+function LootActorState:GetNeareastAttacker()
+    for k,v in pairs(GetMonsters()) do
+        if v.IsAggro and v.CanAttack and v.IsLineOfSight then
+            return v
+        end
+    end
+    return nil
 end

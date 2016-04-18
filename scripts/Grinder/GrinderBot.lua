@@ -79,6 +79,7 @@ function Bot.Start()
             print("Profile require at least 2 hotspots !")
             return
         end
+        
         Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
@@ -113,8 +114,8 @@ function Bot.Start()
         Bot.Fsm:AddState(Bot.BuildNavigationState)
         Bot.Fsm:AddState(Bot.DeathState)
         Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-        Bot.Fsm:AddState(Bot.CombatFightState)
         Bot.Fsm:AddState(Bot.LootState)
+        Bot.Fsm:AddState(Bot.CombatFightState)
         Bot.Fsm:AddState(Bot.VendorState)
         Bot.Fsm:AddState(Bot.WarehouseState)
         Bot.Fsm:AddState(Bot.RepairState)

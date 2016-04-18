@@ -43,6 +43,7 @@ function CombatPullState:NeedToRun()
     for k, v in pairs(monsters) do
         if v.IsVisible and
             v.IsAlive and
+            math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
             --v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
             v.CanAttack and
             not self.MobIgnoreList:Contains(v.Key) and
@@ -50,6 +51,7 @@ function CombatPullState:NeedToRun()
             (Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
             ProfileEditor.CurrentProfile:CanAttackMonster(v) and
+            v.IsLineOfSight and
             Navigator.CanMoveTo(v.Position) then
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true

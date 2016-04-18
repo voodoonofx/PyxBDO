@@ -69,10 +69,12 @@ function CombatFightState:NeedToRun()
     for k, v in pairs(monsters) do
         if
             v.IsAlive and
+            math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
             v.CanAttack and
             v.IsAggro and
             not self.MobIgnoreList:Contains(v.Key) and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.CombatMaxDistanceFromMe and
+            v.IsLineOfSight and
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and
             (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400 and v.IsLineOfSight or Navigator.CanMoveTo(v.Position))-- Should be a Pull/combat distance check
