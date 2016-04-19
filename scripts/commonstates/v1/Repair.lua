@@ -100,7 +100,7 @@ function RepairState:Exit()
     if Dialog.IsTalking then
         Dialog.ClickExit()
     end
-    if self.State > 1 then
+    if self.State > 0 then
         self.State = 0
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
@@ -153,36 +153,39 @@ function RepairState:Run()
     end
 
     if self.State == 2 then
-    self.State = 3
-    BDOLua.Execute("Repair_OpenPanel( true)")
-            self.SleepTimer = PyxTimer:New(1)
-            self.SleepTimer:Start()
-            return
+        self.State = 3
+        BDOLua.Execute("Repair_OpenPanel( true)")
+        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer:Start()
+        return
     end
 
     if self.State == 3 then
-    self.State = 4
-    if self.Settings.RepairEquipped == true then
-     selfPlayer:RepairAllEquippedItems(npc)
+        self.State = 4
+        if self.Settings.RepairEquipped == true then
+            selfPlayer:RepairAllEquippedItems(npc)
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
-            end
+        end
+        return
     end
     if self.State == 4 then
-    self.State = 5
-    if self.Settings.RepairInventory == true then
-     selfPlayer:RepairAllInventoryItems(npc)
+        self.State = 5
+        if self.Settings.RepairInventory == true then
+            selfPlayer:RepairAllInventoryItems(npc)
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
-            end
+        end
+        return
     end
 
     if self.State == 5 then
-    self.State = 6
-            print("Repair Done")
-    BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
-            self.SleepTimer = PyxTimer:New(1)
-            self.SleepTimer:Start()
+        self.State = 6
+        print("Repair Done")
+        BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
+        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer:Start()
+        return
     end
 
     self:Exit()

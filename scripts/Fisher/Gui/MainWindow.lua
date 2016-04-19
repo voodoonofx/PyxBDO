@@ -13,10 +13,11 @@ MainWindow.InventorySelectedIndex = 0
 MainWindow.WarehouseComboSelectedIndex = 0
 MainWindow.WarehouseSelectedIndex = 0
 MainWindow.WarehouseName = { }
-
+MainWindow.Popupconfirm = false
 
 MainWindow.BaitComboBoxItems = { }
 MainWindow.BaitComboBoxSelected = 0
+MainWindow.ConfirmPopup = false
 
 -----------------------------------------------------------------------------
 -- MainWindow Functions
@@ -38,9 +39,26 @@ function MainWindow.DrawMainWindow()
             ImGui.Text(( function(player) if player then return player.Name else return 'Disconnected' end end)(player))
             ImGui.NextColumn()
             ImGui.Columns(1)
+            if ImGui.BeginPopup("Confirm") then
+            ImGui.Text("WARNING!")
+            ImGui.Text("You Have Delete Used Up Fishing Rods enabled")
+                if ImGui.Button("Ok##btn_ok_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+            Bot.Start()
+            ImGui.CloseCurrentPopup()
+            end
+            ImGui.SameLine()
+                if ImGui.Button("Cancel##btn_cancel_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+            ImGui.CloseCurrentPopup()
+            end
+            ImGui.EndPopup()
+            end
             if not Bot.Running then
                 if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                    Bot.Start()
+                if Bot.Settings.DeleteUsedRods == true then
+                ImGui.OpenPopup("Confirm")
+                else
+                Bot.Start()
+                end
                 end
                 ImGui.SameLine()
                 if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then

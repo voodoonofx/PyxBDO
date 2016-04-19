@@ -29,6 +29,7 @@ function Navigator.CanMoveTo(destination)
   end
 
   if waypoints[#waypoints]:GetDistance3D(destination) > 500 then
+     print(waypoints[#waypoints]:GetDistance3D(destination))
     return false
   end
 

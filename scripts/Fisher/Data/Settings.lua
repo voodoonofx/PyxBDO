@@ -26,7 +26,7 @@ function Settings.new()
     self.ConsumablesSettings = {}
 
     self.InventoryDeleteSettings = {}
-    self.DeleteUsedRods = true
+    self.DeleteUsedRods = false
 
     self.IgnoreUntradeAbleItems = false
     self.RepairFishingRod = false

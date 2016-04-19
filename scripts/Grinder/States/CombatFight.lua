@@ -83,7 +83,7 @@ function CombatFightState:NeedToRun()
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and
             (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400) and 
-            ((self.CurrentCombatActor and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
+            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)-- Should be a Pull/combat distance check
         then
             if v.Key ~= self.CurrentCombatActor.Key then

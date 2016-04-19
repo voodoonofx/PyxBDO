@@ -33,7 +33,7 @@ function Bot.Start()
         Bot.TradeManagerState.Settings.NpcPosition = currentProfile.TradeManagerNpcPosition
         Bot.TradeManagerState.CallWhenCompleted = Bot.StateComplete
         Bot.TradeManagerState.CallWhileMoving = Bot.StateMoving
-        Bot.Settings.TradeManagerSettings.SecondsBetweenTries = 0
+        Bot.Settings.TradeManagerSettings.SecondsBetweenTries = 1
 
         Bot.InventoryDeleteState.ItemCheckFunction = Bot.DeleteItemCheck
 
@@ -199,18 +199,24 @@ function Bot.CustomWarehouseCheck(item)
 end
 
 function Bot.RepairCheck()
+    local selfPlayer = GetSelfPlayer()
+
     if Bot.Settings.RepairFishingRod == false then
         return false
     end
 
     for k, v in pairs(selfPlayer.EquippedItems) do
-        if v.HasEndurance and v.EndurancePercent <= 0 and v.IsFishingRod == true then
+--    print ("Eq : "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
+        print("Need Repair Equipped")
             return true
         end
     end
 
     for k, v in pairs(selfPlayer.Inventory.Items) do
-        if v.HasEndurance and v.EndurancePercent <= 0 and v.IsFishingRod == true then
+--    print ("Inv: "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
+        print("Need Repair Inventory")
             return true
         end
     end
