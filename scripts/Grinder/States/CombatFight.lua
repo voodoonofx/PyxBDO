@@ -53,6 +53,7 @@ function CombatFightState:NeedToRun()
 --        print(value.Name+" "+value.IsAlive) + " "+ value.IsPvpEnable+ " "+ selfPlayer.Key ~= value.Key)
             if value.IsAlive and value.IsPvpEnable and selfPlayer.Key ~= value.Key
             and value.Position.Distance3DFromMe <= value.BodySize + Bot.Settings.Advanced.PvpAttackRadius and
+            value.CanAttack == true and value.IsLineOfSight and
             ProfileEditor.CurrentProfile:IsPositionNearHotspots(value.Position, Bot.Settings.Advanced.HotSpotRadius * 2) 
              then
                 if value.Key ~= self.CurrentCombatActor.Key then
@@ -62,7 +63,7 @@ function CombatFightState:NeedToRun()
                 end
 
                 self.CurrentCombatActor = value
-                print("Want to Attack Player: "..value.Name)--.." "..value.CanAttack)
+                print("Want to Attack Player: "+tostring(value.Name)+" "+tostring(value.CanAttack)+" "+tostring(value.IsLineOfSight))--.." "..value.CanAttack)
                 return true
             end
         end
@@ -81,7 +82,9 @@ function CombatFightState:NeedToRun()
             v.IsLineOfSight and
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and
-            (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400 and v.IsLineOfSight or Navigator.CanMoveTo(v.Position))-- Should be a Pull/combat distance check
+            (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400) and 
+            ((self.CurrentCombatActor and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
+            Navigator.CanMoveTo(v.Position)-- Should be a Pull/combat distance check
         then
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true

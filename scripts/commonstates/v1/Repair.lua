@@ -20,8 +20,8 @@ function RepairState.new()
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
     self.RepairCheck = nil
-
-    self.RepairList = { }
+    self.ItemCheckFunction = nil
+    self.Items = { }
 
     return self
 end
@@ -161,63 +161,28 @@ function RepairState:Run()
     end
 
     if self.State == 3 then
-        if not Dialog.IsTalking then
-            print("Repair Error Dialog didn't open")
-            self:Exit()
-            return
-        end
-        if self.Settings.RepairEquipped == true then
+    self.State = 4
+    if self.Settings.RepairEquipped == true then
+     selfPlayer:RepairAllEquippedItems(npc)
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
-            BDOLua.Execute("RepairAllEquippedItemBtn_LUp()")
-            self.State = 4
-        else
-            self.State = 5
-        end
-        return
+            end
     end
-
     if self.State == 4 then
-        self.State = 5
---        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
-    BDOLua.Execute("MessageBox.keyProcessEnter()")
-        self.SleepTimer = PyxTimer:New(1)
-        self.SleepTimer:Start()
-        return
+    self.State = 5
+    if self.Settings.RepairInventory == true then
+     selfPlayer:RepairAllInventoryItems(npc)
+            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer:Start()
+            end
     end
 
     if self.State == 5 then
-        if not Dialog.IsTalking then
-            print("Repair Error Dialog didn't open")
-            self:Exit()
-            return
-        end
-        if self.Settings.RepairInventory == true then
-            self.SleepTimer = PyxTimer:New(1)
-            self.SleepTimer:Start()
-            BDOLua.Execute("RepairAllInvenItemBtn_LUp()")
-            self.State = 6
-        else
-            self.State = 7
-        end
-        return
-    end
-
-    if self.State == 6 then
-        self.State = 7
---        BDOLua.Execute("Repair_AllItem_MessageBox_Confirm()")
-    BDOLua.Execute("MessageBox.keyProcessEnter()")
-        self.SleepTimer = PyxTimer:New(1)
-        self.SleepTimer:Start()
-        return
-    end
-
-        if self.State == 7 then
-    self.State = 8
+    self.State = 6
+            print("Repair Done")
     BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
-            return
     end
 
     self:Exit()
@@ -230,6 +195,17 @@ function RepairState:GetItems()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         for k, v in pairs(selfPlayer.EquippedItems) do
+            if self.ItemCheckFunction then
+                if self.ItemCheckFunction(v) then
+                    table.insert(items, { item = v, slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
+                end
+            else
+                if v.HasEndurance and v.EndurancePercent < 100 then
+                    table.insert(items, { item = v, slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })
+                end
+            end
+        end
+        for k, v in pairs(selfPlayer.Inventory.Items) do
             if self.ItemCheckFunction then
                 if self.ItemCheckFunction(v) then
                     table.insert(items, { item = v, slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count })

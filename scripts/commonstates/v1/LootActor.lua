@@ -18,7 +18,6 @@ function LootActorState.new()
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nill
-        self.SleepTimer = nil
 
     return self
 end
@@ -52,8 +51,9 @@ function LootActorState:NeedToRun()
     for k, v in pairs(actors) do
         if v.IsLootable and
             v.Position.Distance3DFromMe < self.Settings.LootRadius and
+            (not self.BlacklistActors[v.Guid] or Pyx.System.TickCount - self.BlacklistActors[v.Guid] < 2000) and
             (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
-            v.IsLineOfSight and
+            ((self.CurrentLootActor and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
         then
             self.CurrentLootActor = v
@@ -68,10 +68,6 @@ function LootActorState:Run()
 
     local selfPlayer = GetSelfPlayer()
     local actorPosition = self.CurrentLootActor.Position
-
-        if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
-        return
-    end
 
     if Looting.IsLooting then
         local numLoots = Looting.ItemCount
@@ -88,23 +84,30 @@ function LootActorState:Run()
         end
         return true
     end
+    
+    self.CurrentLootActor:RequestDropItems()
 
     if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
         if self.CallWhileMoving then
             self:CallWhileMoving()
-            end
-
+        end
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
-        print("Loot Interact pause 1")
-        self.CurrentLootActor:Interact(7) -- Loot interaction
-        self.SleepTimer = PyxTimer:New(1)
-        self.SleepTimer:Start()
-
+        
+        if not self.CurrentLootActor.IsLootInteraction then
+            print("Not lootable yet, black list !"  )
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.System.TickCount - 30 * 1000 -- Not lootable for now
+            return false
+        end
+        
+        if not self.BlacklistActors[self.CurrentLootActor.Guid] then
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.System.TickCount
+            return false
+        end
+        
     end
     
-
     return true
 
 end

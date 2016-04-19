@@ -72,7 +72,7 @@ function CombatRanger:Attack(monsterActor, isPulling)
 
 
 
-        if actorPosition.Distance3DFromMe > monsterActor.BodySize + 1700 then
+        if actorPosition.Distance3DFromMe > monsterActor.BodySize + 1700 or monsterActor.IsLineOfSight == false then
             self.Mode = 0
             Navigator.MoveTo(actorPosition)
         else
