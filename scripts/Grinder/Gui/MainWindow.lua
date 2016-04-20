@@ -21,6 +21,11 @@ MainWindow.WarehouseComboSelectedIndex = 0
 MainWindow.WarehouseSelectedIndex = 0
 MainWindow.WarehouseName = { }
 
+
+MainWindow.DontPullComboSelectedIndex = 0
+MainWindow.MonsterNames = { }
+MainWindow.DontPullSelectedIndex = 0
+
 ------------------------------------------------------------------------------
 -- Internal variables (Don't touch this if you don't know what you are doing !)
 -----------------------------------------------------------------------------
@@ -81,6 +86,7 @@ function MainWindow.DrawMainWindow()
         end
 
         if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
+        MainWindow.UpdateMonsters()
             if not table.find(MainWindow.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(MainWindow.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -90,6 +96,22 @@ function MainWindow.DrawMainWindow()
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
             end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
+            valueChanged, MainWindow.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", MainWindow.DontPullComboSelectedIndex, MainWindow.MonsterNames)
+            if valueChanged then
+                local monsterName = MainWindow.MonsterNames[MainWindow.DontPullComboSelectedIndex]
+                if not table.find(Bot.Settings.PullSettings.DontPull, monsterName) then
+
+                    table.insert(Bot.Settings.PullSettings.DontPull, monsterName)
+                end
+                MainWindow.DontPullComboSelectedIndex = 0
+            end
+            _, MainWindow.DontPullSelectedIndex = ImGui.ListBox("##id_guid_spull_Delete", MainWindow.DontPullSelectedIndex,Bot.Settings.PullSettings.DontPull, 5)
+            if ImGui.Button("Remove Item##id_guid_inv_delete_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                if MainWindow.DontPullSelectedIndex > 0 and MainWindow.DontPullSelectedIndex <= table.length(Bot.Settings.PullSettings.DontPull) then
+                    table.remove(Bot.Settings.PullSettings.DontPull, MainWindow.DontPullSelectedIndex)
+                    MainWindow.DontPullSelectedIndex = 0
+                end
+            end
 
         end
         if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then
@@ -259,10 +281,29 @@ function MainWindow.DrawMainWindow()
             ImGui.Text("Ignore in combat between hotspots")
             ImGui.SameLine()
             _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+            ImGui.Text("Draw obstacles")
+            ImGui.SameLine()
+            _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
         end
 
         ImGui.End()
     end
+end
+
+function MainWindow.UpdateMonsters()
+    MainWindow.MonsterNames = { }
+    local selfPlayer = GetSelfPlayer()
+    if selfPlayer then
+        for k, v in pairs(GetMonsters()) do
+
+            if not table.find(MainWindow.MonsterNames, v.Name) then
+                table.insert(MainWindow.MonsterNames, v.Name)
+            end
+        end
+            table.sort(MainWindow.MonsterNames)
+
+    end
+
 end
 
 function MainWindow.UpdateInventoryList()

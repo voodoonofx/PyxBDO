@@ -181,6 +181,7 @@ function Bot.LoadSettings()
     Bot.Settings.LootSettings = Bot.LootState.Settings
     Bot.Settings.InventoryDeleteSettings = Bot.InventoryDeleteState.Settings
     Bot.Settings.LibConsumablesSettings = LibConsumables.Settings
+    Bot.Settings.PullSettings = Bot.CombatPullState.Settings
 
 
     table.merge(Bot.Settings, json:decode(Pyx.FileSystem.ReadFile("Settings.json")))

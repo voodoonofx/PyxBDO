@@ -20,6 +20,7 @@ function Settings.new()
     self.LootSettings = {}
     self.InventoryDeleteSettings = {}
     self.LibConsumablesSettings = {}
+    self.PullSettings = {}
 
 	self.WarehouseAfterVendor = true
     self.AttackPvpFlagged = true

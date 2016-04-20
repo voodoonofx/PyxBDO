@@ -3,6 +3,8 @@ Navigator.Running = false
 Navigator.Destination = Vector3(0, 0, 0)
 Navigator.Waypoints = { }
 Navigator.ApproachDistance = 100
+Navigator.LastObstacleCheckTick = 0
+Navigator.LastFindPathTick = 0
 Navigator.LastStuckCheckTickcount = 0
 Navigator.LastStuckCheckPosition = Vector3(0, 0, 0)
 Navigator.LastMoveTo = Vector3(0, 0, 0)
@@ -29,7 +31,6 @@ function Navigator.CanMoveTo(destination)
   end
 
   if waypoints[#waypoints]:GetDistance3D(destination) > 500 then
-     print(waypoints[#waypoints]:GetDistance3D(destination))
     return false
   end
 
@@ -55,11 +56,14 @@ function Navigator.MoveTo(destination, forceRecalculate)
     return false
   end
   
-  if (forceRecalculate == nil or forceRecalculate == false) and Navigator.Running and
+  if (forceRecalculate == nil or forceRecalculate == false) and
+    Navigator.Destination == destination and
+    Pyx.System.TickCount - Navigator.LastFindPathTick < 500 and
     (table.length(Navigator.Waypoints) > 0 or Navigator.LastWayPoint == true) and
-    Navigator.LastPosition.Distance2DFromMe < 150 and Navigator.Destination == destination then
+    Navigator.LastPosition.Distance2DFromMe < 150 then
     return true
   end
+  
   local waypoints = Navigation.FindPath(selfPlayer.Position, destination)
 
   if table.length(waypoints) == 0 then
@@ -75,6 +79,7 @@ function Navigator.MoveTo(destination, forceRecalculate)
     table.remove(waypoints, 1)
   end
 
+  Navigator.LastFindPathTick = Pyx.System.TickCount
   Navigator.Waypoints = waypoints
   Navigator.Destination = destination
   Navigator.Running = true
@@ -105,6 +110,11 @@ function Navigator.OnPulse()
 
   if Navigator.Running and selfPlayer then
     Navigator.LastPosition = selfPlayer.Position
+    
+    if Pyx.System.TickCount - Navigator.LastObstacleCheckTick > 1000 then
+      --Navigation.UpdateObstacles() -- Do not use for now, it's coming :)
+      Navigator.LastObstacleCheckTick = Pyx.System.TickCount
+    end
 
     if Pyx.System.TickCount - Navigator.LastStuckCheckTickcount > 400 then
       if (Navigator.LastStuckCheckPosition.Distance2DFromMe < 40) then

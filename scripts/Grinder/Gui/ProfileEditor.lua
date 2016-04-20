@@ -243,10 +243,12 @@ function ProfileEditor.OnRender3D()
     
     local selfPlayer = GetSelfPlayer()
     
-    if Navigation.MesherEnabled then
+    if Navigation.RenderMesh then
+    
         for k,v in pairs(ProfileEditor.CurrentProfile:GetHotspots()) do
             Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 100, v.Z, 100, 150, 0xAAFF0000, 0xAAFF00FF))
         end
+        
     end
     
 end

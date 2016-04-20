@@ -15,6 +15,7 @@ function CombatPullState.new()
     self._newTarget = false
     self.MobIgnoreList = PyxTimedList:New()
     self.Enabled = true
+    self.Settings = {DontPull = {}}
     return self
 end
 
@@ -37,7 +38,6 @@ function CombatPullState:NeedToRun()
     end
 
     local selfPlayerPosition = selfPlayer.Position
-
     local monsters = GetMonsters()
     table.sort(monsters, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(monsters) do
@@ -47,6 +47,7 @@ function CombatPullState:NeedToRun()
             --v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
             v.CanAttack and
             not self.MobIgnoreList:Contains(v.Key) and
+            not table.find(Bot.Settings.PullSettings.DontPull, v.Name) and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.PullDistance and
             (Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
