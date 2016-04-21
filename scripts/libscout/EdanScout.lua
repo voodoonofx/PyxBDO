@@ -1,5 +1,6 @@
 EdanScout = {}
 EdanScout.FrontDegrees = 90
+EdanScout.MeleeRange = 200
 EdanScout.MidRange = 800
 EdanScout.MaxRange = 1400
 
