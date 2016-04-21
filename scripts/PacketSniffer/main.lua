@@ -15,6 +15,15 @@ g_filterExcludeOpCode = ""
 -- GUI Functions
 ---------------------------------------------
 
+function MultiMatch(list, opcode)
+    for entry in string.gmatch(list, "[^ ]+") do
+        if opcode:match(entry) then
+            return true
+        end
+    end
+    return false
+end
+
 function OnDrawGuiCallback()
 	local shouldDisplay;
 	_, shouldDisplay = ImGui.Begin("Packet Sniffer", true, ImVec2(600, 230), -1.0)
@@ -46,9 +55,9 @@ function OnDrawGuiCallback()
         ImGui.Separator()
         local count = 0
         for k,v in pairs(g_packets) do
-            if (g_filterOnlyIncludeOpCode:len() == 0 or v.OpCode:match(g_filterOnlyIncludeOpCode))
+            if (g_filterOnlyIncludeOpCode:len() == 0 or MultiMatch(g_filterOnlyIncludeOpCode, v.OpCode))
                 and
-                (g_filterExcludeOpCode:len() == 0 or not v.OpCode:match(g_filterExcludeOpCode))
+                (g_filterExcludeOpCode:len() == 0 or not MultiMatch(g_filterExcludeOpCode, v.OpCode))
              then
                 ImGui.Text(v.Date)
                 ImGui.NextColumn()
