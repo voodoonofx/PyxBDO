@@ -15,6 +15,7 @@ file=States/CombatFight.lua
 file=States/CombatPull.lua
 file=States/Roaming.lua
 file=States/Idle.lua
+file=States/PlayerPress.lua
 file=../commonstates/v1/Vendor.lua
 file=../commonstates/v1/Warehouse.lua
 file=../commonstates/v1/Consumables.lua

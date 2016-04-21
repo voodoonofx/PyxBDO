@@ -49,7 +49,7 @@ function CombatPullState:NeedToRun()
             not self.MobIgnoreList:Contains(v.Key) and
             not table.find(Bot.Settings.PullSettings.DontPull, v.Name) and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.PullDistance and
-            (Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
+            (Bot.MeshDisabled == true or Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
             ProfileEditor.CurrentProfile:CanAttackMonster(v) and
             ((self.CurrentCombatActor and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
