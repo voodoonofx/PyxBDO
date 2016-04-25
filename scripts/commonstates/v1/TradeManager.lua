@@ -1,7 +1,6 @@
 TradeManagerState = { }
 TradeManagerState.__index = TradeManagerState
 TradeManagerState.Name = "TradeManager"
--- TradeManagerState.DefaultSettings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = {}, SecondsBetweenTries = 3000 }
 
 setmetatable(TradeManagerState, {
     __call = function(cls, ...)
@@ -11,7 +10,7 @@ setmetatable(TradeManagerState, {
 
 function TradeManagerState.new()
     local self = setmetatable( { }, TradeManagerState)
-    self.Settings = {DoTradeGame = false, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = { }, SecondsBetweenTries = 3000 }
+    self.Settings = {DoTradeGame = false, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = { }, SecondsBetweenTries = 300 }
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
