@@ -1,0 +1,12 @@
+[script]
+name=Edan Skill Cache
+type=lib
+
+[files]
+file=EdanSkills.lua
+file=EdanCombo.lua
+file=Skills.lua
+
+[dependencies]
+file=../libtable/script.def
+file=../libbdo/script.def
