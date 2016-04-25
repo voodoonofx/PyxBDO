@@ -102,7 +102,6 @@ function EdanCombo.PressAndWait(keys, position, duration)
 end
 
 EdanCombo.WaitActions = {
-	-- BT_WAIT_HOLD_ON = 1,
 	BT_WAIT = 1,
 }
 
@@ -111,6 +110,7 @@ function EdanCombo.NotUsingSkill(action)
 	local result = 
 	string.match(action, "_End$") or
 	string.match(action, "^BT_RUN_") or
+	string.match(action, "^BT_ATTACK_") or
 	string.match(action, "^BT_") == nil or
 	EdanCombo.WaitActions[action] ~= nil
 
