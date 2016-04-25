@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 3000, RepairInventory = true, RepairEquipped = true }
+    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true }
 
     self.Forced = false
     self.LastUseTimer = nil

@@ -24,11 +24,14 @@ end
 
 function PlayerPressState:ButtonsPressed()
   local pressed = 
-  Pyx.Input.IsKeyDown(string.byte('A'))
+  Pyx.Input.IsGameForeground() and
+  (Pyx.Input.IsKeyDown(string.byte('A'))
   or Pyx.Input.IsKeyDown(string.byte('D'))
   or Pyx.Input.IsKeyDown(string.byte('S'))
   or Pyx.Input.IsKeyDown(string.byte('W'))
-  or Pyx.Input.IsKeyDown(string.byte(' '))
+  or Pyx.Input.IsKeyDown(string.byte('Z'))
+  or Pyx.Input.IsKeyDown(string.byte('Q'))
+  or Pyx.Input.IsKeyDown(string.byte(' ')))
 
   if pressed then
     self.lastPress = os.clock()
