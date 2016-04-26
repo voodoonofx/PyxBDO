@@ -7,6 +7,10 @@ EdanSkills.SkillLevels = {}
 
 -- returns the skill id you have learned or 0
 function EdanSkills.GetSkill(id)
+	if id == nil then
+		error("bad skill name")
+		return
+	end
 	local now = os.clock()
 	local cache = EdanSkills.LearnedSkillCache[id]
 	local cache_age = EdanSkills.LastUpdate[id]
@@ -30,11 +34,19 @@ end
 
 -- get the skill level of the skill you have learned. returns 0 if not learned
 function EdanSkills.GetSkillLevel(id)
+	if id == nil then
+		error("bad skill name")
+		return
+	end
 	local learned = EdanSkills.GetSkill(id)
 	return EdanSkills.IdLevels[learned] or 0
 end
 
 function EdanSkills.SkillUsable(id)
+	if id == nil then
+		error("bad skill name")
+		return
+	end
 	local learned = EdanSkills.GetSkill(id)
 	if learned ~= 0 and SkillsHelper.IsSkillUsable(learned) then
 		return true
@@ -43,6 +55,10 @@ function EdanSkills.SkillUsable(id)
 end
 
 function EdanSkills.SkillUsableCooldown(id)
+	if id == nil then
+		error("bad skill name")
+		return
+	end
 	local learned = EdanSkills.GetSkill(id)
 	if learned ~= 0 and SkillsHelper.IsSkillUsable(learned) and not GetSelfPlayer():IsSkillOnCooldown(learned) then
 		return true
