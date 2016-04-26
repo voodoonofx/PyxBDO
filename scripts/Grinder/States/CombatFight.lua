@@ -63,7 +63,7 @@ function CombatFightState:NeedToRun()
                 end
 
                 self.CurrentCombatActor = value
-                print("Want to Attack Player: "+tostring(value.Name)+" "+tostring(value.CanAttack)+" "+tostring(value.IsLineOfSight))--.." "..value.CanAttack)
+                print("Want to Attack Player: "..tostring(value.Name).." "..tostring(value.CanAttack).." "..tostring(value.IsLineOfSight))--.." "..value.CanAttack)
                 return true
             end
         end
