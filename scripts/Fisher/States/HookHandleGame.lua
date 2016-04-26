@@ -13,7 +13,7 @@ function HookFishHandleGameState.new()
     self.LastHookFishTickCount = 0
     self.LastGameTick = 0
     self.RandomWaitTime = 0
-    self.Settings = {InstantFish = false}
+    self.Settings = {InstantFish = false, AlwaysPerfect = false}
     return self
 end
 
@@ -47,19 +47,22 @@ FISHING_HOOK_ING_SUCCESS - qte complete
 
 function HookFishHandleGameState:Run()
     local selfPlayer = GetSelfPlayer()
+    local fishResult = "FISHING_HOOK_SUCCESS"
+    if self.Settings.AlwaysPerfect == false then
+    if math.random(3) > 1 then
+        fishResult = "FISHING_HOOK_GOOD"
+    end
+    end
     if selfPlayer.CurrentActionName == "FISHING_HOOK_START" then
         if self.Settings.InstantFish then
-            selfPlayer:DoAction("FISHING_HOOK_ING_SUCCESS")
+            selfPlayer:DoAction(fishResult)
         else
             self.LastGameTick = Pyx.System.TickCount
             self.RandomWaitTime = math.random(2500, 4500)
-            selfPlayer:DoAction("FISHING_HOOK_GOOD")
-            --BDOLua.Execute("getSelfPlayer():get():SetMiniGameResult(1)")            
+            selfPlayer:DoAction(fishResult)
         end
     elseif selfPlayer.CurrentActionName == "FISHING_HOOK_ING_HARDER" then
         if Pyx.System.TickCount - self.LastGameTick > self.RandomWaitTime then
-            --BDOLua.Execute("getSelfPlayer():get():SetMiniGameResult(2)")
-            --BDOLua.Execute("MiniGame_Command_OnSuccess()")
             selfPlayer:DoAction("FISHING_HOOK_ING_SUCCESS")
         end
     end
