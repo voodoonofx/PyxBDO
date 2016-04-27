@@ -12,6 +12,7 @@ setmetatable(VendorState, {
 function VendorState.new()
     local self = setmetatable( { }, VendorState)
     self.Settings = {
+    PlayerRun = true,
         NpcName = "",
         NpcPosition = { X = 0, Y = 0, Z = 0 },
         VendorOnInventoryFull = true,
@@ -146,7 +147,7 @@ function VendorState:Run()
             self.CallWhileMoving(self)
         end
 
-        Navigator.MoveTo(vendorPosition)
+        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
         if self.State > 1 then
             self:Exit()
             return true
