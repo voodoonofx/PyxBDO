@@ -17,7 +17,7 @@ function LootActorState.new()
 
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
-    self.CallWhileMoving = nill
+    self.CallWhileMoving = nil
 
     return self
 end
