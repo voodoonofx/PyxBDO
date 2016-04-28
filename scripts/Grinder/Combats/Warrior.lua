@@ -144,9 +144,9 @@ function WarriorV3:Attack(monsterActor)
 	
     if monsterActor then		
 		
-        if targetPosition.Distance3DFromMe > monsterActor.BodySize + 250 then
+        if targetPosition.Distance3DFromMe > monsterActor.BodySize + 250 or monsterActor.IsLineOfSight == false then
 			-- Close the gap
-			if self.CHARGING_THRUST:cast(targetPosition) then
+			if self.CHARGING_THRUST:cast(targetPosition) and monsterActor.IsLineOfSight == true then
 				return
 			end
             Navigator.MoveTo(targetPosition)

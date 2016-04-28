@@ -146,7 +146,7 @@ function CombatSorcerer:Attack(monsterActor)
                     return
                 end
                 
-            if actorPosition.Distance3DFromMe > monsterActor.BodySize + 150 then
+            if actorPosition.Distance3DFromMe > monsterActor.BodySize + 150 or monsterActor.IsLineOfSight == false then
             --GapClose Rushing Crow
                 if RUSHING_CROW ~= 0 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 700 and actorPosition.Distance3DFromMe >= monsterActor.BodySize + 300 and
                     not selfPlayer:IsSkillOnCooldown(RUSHING_CROW) then

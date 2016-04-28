@@ -119,7 +119,7 @@ function VitalicTamer:Attack(monsterActor)
 		local selfPlayer = GetSelfPlayer()
         local actorPosition = monsterActor.Position
 
-        if actorPosition.Distance3DFromMe > monsterActor.BodySize + 150 then
+        if actorPosition.Distance3DFromMe > monsterActor.BodySize + 150 or monsterActor.IsLineOfSight == false then
             Navigator.MoveTo(actorPosition)
         else
             Navigator.Stop()
