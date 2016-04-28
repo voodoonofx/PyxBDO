@@ -24,6 +24,7 @@ function Settings.new()
 
 	self.WarehouseAfterVendor = true
     self.AttackPvpFlagged = true
+    self.RunToHotSpots = true
 
     self.Advanced = {PvpAttackRadius = 1800, HotSpotRadius = 3000, IgnorePullBetweenHotSpots = true, IgnoreInCombatBetweenHotSpots = false, PullDistance = 2500, PullSecondsUntillIgnore = 10, CombatMaxDistanceFromMe = 2200, CombatSecondsUntillIgnore = 15, IgnoreCombatOnVendor = true, IgnoreCombatOnRepair = true}
 

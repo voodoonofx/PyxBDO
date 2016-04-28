@@ -279,6 +279,15 @@ function MainWindow.DrawMainWindow()
 
         end
         if ImGui.CollapsingHeader("Advanced", "id_gui_advanced", true, false) then
+            ImGui.Columns(2)
+            _, Bot.Settings.RunToHotSpots = ImGui.Checkbox("Run To Hotspots##id_guid_advanced_run_HotSpots", Bot.Settings.RunToHotSpots)
+            ImGui.NextColumn()
+            _, Bot.Settings.VendorSettings.PlayerRun = ImGui.Checkbox("Run To Vendor##id_guid_advanced_run_Vendor", Bot.Settings.VendorSettings.PlayerRun)
+            ImGui.NextColumn()
+            _, Bot.Settings.RepairSettings.PlayerRun = ImGui.Checkbox("Run To Repair##id_guid_advanced_run_Repair", Bot.Settings.RepairSettings.PlayerRun)
+            ImGui.NextColumn()
+            _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Warehouse##id_guid_advanced_run_Warehouse", Bot.Settings.WarehouseSettings.PlayerRun)
+            ImGui.Columns(1)
             ImGui.Text("Change with caution!!!")
             ImGui.Text(" ")
             _, Bot.Settings.Advanced.PvpAttackRadius = ImGui.SliderInt("Pvp Attack Radius##id_gui_advanced_pvp_radius", Bot.Settings.Advanced.PvpAttackRadius, 500, 10000)
@@ -287,12 +296,16 @@ function MainWindow.DrawMainWindow()
             _, Bot.Settings.Advanced.PullDistance = ImGui.SliderInt("Pull Distance##id_gui_advanced_pull_distance", Bot.Settings.Advanced.PullDistance, 500, 10000)
             _, Bot.Settings.Advanced.PullSecondsUntillIgnore = ImGui.SliderInt("Pull Seconds untill ignore##id_gui_advanced_pull_seconds", Bot.Settings.Advanced.PullSecondsUntillIgnore, 5, 30)
             _, Bot.Settings.Advanced.CombatMaxDistanceFromMe = ImGui.SliderInt("Combat Max Distance##id_gui_advanced_combat_maxdistance", Bot.Settings.Advanced.CombatMaxDistanceFromMe, 1000, 5000)
+            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+            ImGui.NextColumn()
             ImGui.Text("Skip Pull between hotspots")
             ImGui.SameLine()
             _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
             ImGui.Text("Ignore in combat between hotspots")
             ImGui.SameLine()
-            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+
+
+
             ImGui.Text("Draw obstacles")
             ImGui.SameLine()
             _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
