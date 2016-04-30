@@ -153,6 +153,11 @@ end
 function Bot.Death(state)
     if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
         Bot.Stop()
+        else
+                Bot.WarehouseState:Reset()
+        Bot.VendorState:Reset()
+        Bot.RepairState:Reset()
+
     end
 end
 

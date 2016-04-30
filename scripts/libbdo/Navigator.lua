@@ -12,6 +12,8 @@ Navigator.LastPosition = Vector3(0, 0, 0)
 Navigator.LastWayPoint = false
 Navigator.StuckCount = 0
 Navigator.OnStuckCall = nil
+Navigator.PlayerRun = false
+Navigator.MeshConnects = {Connections = {}}
 
 function Navigator.CanMoveTo(destination)
   local selfPlayer = GetSelfPlayer()
@@ -47,7 +49,7 @@ function Navigator.MoveToStraight(destination)
   return true
 end
 
-function Navigator.MoveTo(destination, forceRecalculate)
+function Navigator.MoveTo(destination, forceRecalculate, playerRun)
 
   local selfPlayer = GetSelfPlayer()
   local currentPosition = selfPlayer.Position
@@ -56,6 +58,13 @@ function Navigator.MoveTo(destination, forceRecalculate)
     return false
   end
   
+  if playerRun == nil or playerRun == false then
+  Navigator.PlayerRun = false
+  else
+  Navigator.PlayerRun = true
+  end
+
+
   if (forceRecalculate == nil or forceRecalculate == false) and
     Navigator.Destination == destination and
     Pyx.System.TickCount - Navigator.LastFindPathTick < 500 and
@@ -151,6 +160,10 @@ function Navigator.OnPulse()
         end
       end
     end
+    if Navigator.LastWayPoint == false and Navigator.PlayerRun == true and selfPlayer.StaminaPercent >= 100 then
+    selfPlayer:DoAction("RUN_SPRINT_FAST_ST")
+    end
+
   end
 end
 

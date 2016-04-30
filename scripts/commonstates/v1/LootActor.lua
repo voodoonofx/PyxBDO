@@ -17,7 +17,7 @@ function LootActorState.new()
 
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
-    self.CallWhileMoving = nill
+    self.CallWhileMoving = nil
 
     return self
 end
@@ -85,7 +85,7 @@ function LootActorState:Run()
         return true
     end
     
-    self.CurrentLootActor:RequestDropItems()
+    
 
     if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
         if self.CallWhileMoving then
@@ -94,6 +94,7 @@ function LootActorState:Run()
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
+        self.CurrentLootActor:RequestDropItems()
         
         if not self.CurrentLootActor.IsLootInteraction then
             print("Not lootable yet, black list !"  )

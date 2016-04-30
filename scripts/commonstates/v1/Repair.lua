@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true }
+    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -119,7 +119,7 @@ function RepairState:Run()
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
-        Navigator.MoveTo(vendorPosition)
+        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
         if self.State > 1 then
             self:Exit()
             return

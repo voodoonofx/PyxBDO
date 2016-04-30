@@ -36,7 +36,7 @@ function RoamingState:Run()
     
     if hotspot.Distance3DFromMe > 200 then
         Bot.CallCombatRoaming()
-        Navigator.MoveTo(hotspot)
+        Navigator.MoveTo(hotspot,nil,true)
     else
         if self.CurrentHotspotIndex < table.length(self.Hotspots) then
             self.CurrentHotspotIndex = self.CurrentHotspotIndex + 1
