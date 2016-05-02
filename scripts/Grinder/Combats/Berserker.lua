@@ -70,7 +70,7 @@ function CombatBerserker:Attack(monsterActor)
 ------- Mob Find ----------------------------------------------------------------------
 	if monsterActor then
 		
-		if actorPosition.Distance3DFromMe > monsterActor.BodySize + 500 then
+		if actorPosition.Distance3DFromMe > monsterActor.BodySize + 500 or monsterActor.IsLineOfSight == false then
 			Navigator.MoveTo(actorPosition)
 		else
 			Navigator.Stop()

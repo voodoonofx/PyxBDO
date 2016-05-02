@@ -53,7 +53,7 @@ function LootActorState:NeedToRun()
             v.Position.Distance3DFromMe < self.Settings.LootRadius and
             (not self.BlacklistActors[v.Guid] or Pyx.System.TickCount - self.BlacklistActors[v.Guid] < 2000) and
             (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
-            ((self.CurrentLootActor and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
+--            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
         then
             self.CurrentLootActor = v

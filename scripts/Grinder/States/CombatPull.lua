@@ -52,7 +52,7 @@ function CombatPullState:NeedToRun()
             (Bot.MeshDisabled == true or Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
             ProfileEditor.CurrentProfile:CanAttackMonster(v) and
-            ((self.CurrentCombatActor and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
+            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position) then
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true

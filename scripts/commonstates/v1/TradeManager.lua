@@ -107,7 +107,7 @@ function TradeManagerState:Run()
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
-        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
+        Navigator.MoveTo(TradeManagerPosition,false,self.Settings.PlayerRun)
         if self.State > 1 then
             self:Exit()
             return
