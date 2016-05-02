@@ -198,7 +198,7 @@ function VendorState:Run()
         elseif self.Settings.BuyEnabled then
             self.State = 4
             -- go right to buying
-            self.CurrentBuyList = self.GetBuyItems(self.Settings.BuyWhenAtVendor)
+            self.CurrentBuyList = self:GetBuyItems(self.Settings.BuyWhenAtVendor)
         else
             -- how did we get here!
             self.State = 5
