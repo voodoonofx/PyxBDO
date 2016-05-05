@@ -12,6 +12,8 @@ function StartFishingState.new()
   local self = setmetatable({}, StartFishingState)
   self.LastStartFishTickcount = 0
   self.Settings = {MaxEnergyCheat = false}
+  self.LastActionTime = 0
+  self.State = 0
   return self
 end
 
@@ -50,14 +52,21 @@ end
 
 function StartFishingState:Run()
     local selfPlayer = GetSelfPlayer()
-    print("Start fishing ...")
-    selfPlayer:SetRotation(ProfileEditor.CurrentProfile:GetFishSpotRotation())
-    selfPlayer:DoAction("FISHING_START")
-    selfPlayer:DoAction("FISHING_ING_START")
-    if self.Settings.MaxEnergyCheat == true then
-    selfPlayer:DoAction("FISHING_START_END_Lv10")
-    else
-    selfPlayer:DoAction("FISHING_START_END_Lv0")
+    if self.State == 0 then
+        selfPlayer:SetRotation(ProfileEditor.CurrentProfile:GetFishSpotRotation())
+        self.State = 1
+        self.LastActionTime = Pyx.System.TickCount
+    elseif self.State == 1 and Pyx.System.TickCount - self.LastActionTime > 1000 then        
+        print("Start fishing ...")    
+        selfPlayer:DoAction("FISHING_START")
+        selfPlayer:DoAction("FISHING_ING_START")
+        if self.Settings.MaxEnergyCheat == true then
+        selfPlayer:DoAction("FISHING_START_END_Lv10")
+        else
+        selfPlayer:DoAction("FISHING_START_END_Lv0")
+        end
+        self.State = 0
+        self.LastStartFishTickcount = Pyx.System.TickCount
     end
-    self.LastStartFishTickcount = Pyx.System.TickCount
+    
 end
