@@ -13,7 +13,7 @@ setmetatable(WarehouseState, {
 function WarehouseState.new()
     local self = setmetatable( { }, WarehouseState)
 
-    self.Settings = {PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 3000}
+    self.Settings = {PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
