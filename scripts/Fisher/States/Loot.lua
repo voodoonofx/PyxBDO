@@ -97,7 +97,7 @@ function LootState:Run()
                     if Bot.Settings.LootAndDeleteUnwantedFish then
                         Looting.Take(i)
                         table.insert(self.DeleteList, lootItem.ItemEnchantStaticStatus.ItemId)
-                        self.DeleteTime = os.clock() + 1
+                        self.DeleteTime = os.clock() + 2
                     end
                 else
                     print("Loot item : " .. lootItem.ItemEnchantStaticStatus.Name)
