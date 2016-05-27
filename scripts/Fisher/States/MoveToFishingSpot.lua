@@ -11,6 +11,7 @@ setmetatable(MoveToFishingSpotState, {
 function MoveToFishingSpotState.new()
   local self = setmetatable({}, MoveToFishingSpotState)
   self.LastStartFishTickcount = 0
+  self.Settings = {PlayerRun = true}
   return self
 end
 
@@ -33,10 +34,10 @@ function MoveToFishingSpotState:NeedToRun()
         return false
     end
     
-    return ProfileEditor.CurrentProfile:GetFishSpotPosition().Distance3DFromMe > 100 
+    return ProfileEditor.CurrentProfile:GetFishSpotPosition().Distance3DFromMe >= 100 
     
 end
 
 function MoveToFishingSpotState:Run()
-    Navigator.MoveTo(ProfileEditor.CurrentProfile:GetFishSpotPosition(),nil,true)
+    Navigator.MoveTo(ProfileEditor.CurrentProfile:GetFishSpotPosition(),nil,self.Settings.PlayerRun)
 end

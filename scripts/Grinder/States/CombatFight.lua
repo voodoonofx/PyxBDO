@@ -73,11 +73,11 @@ function CombatFightState:NeedToRun()
     table.sort(monsters, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(monsters) do
         if
-            v.IsAlive and
+            v.IsAlive == true and
             math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
-            v.CanAttack and
-            v.IsAggro and
-            not self.MobIgnoreList:Contains(v.Key) and
+            v.CanAttack == true and
+            v.IsAggro == true and
+            self.MobIgnoreList:Contains(v.Key) == false and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.CombatMaxDistanceFromMe and
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and

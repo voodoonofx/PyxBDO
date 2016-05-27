@@ -130,6 +130,6 @@ function OnReceivePacket(name, opcode, packet)
     end
 end
 
-Pyx.System.RegisterCallback("OnDrawGui", OnDrawGuiCallback)
-Pyx.System.RegisterCallback("OnSendPacket", OnSendPacket)
-Pyx.System.RegisterCallback("OnReceivePacket", OnReceivePacket)
+Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", OnDrawGuiCallback)
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnSendPacket", OnSendPacket)
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnReceivePacket", OnReceivePacket)

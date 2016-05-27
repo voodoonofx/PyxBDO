@@ -39,7 +39,7 @@ function StartFishingState:NeedToRun()
         return false
     end
     
-    if Pyx.System.TickCount - self.LastStartFishTickcount < 4000 then
+    if Pyx.Win32.GetTickCount() - self.LastStartFishTickcount < 4000 then
         return false
     end
     
@@ -55,8 +55,8 @@ function StartFishingState:Run()
     if self.State == 0 then
         selfPlayer:SetRotation(ProfileEditor.CurrentProfile:GetFishSpotRotation())
         self.State = 1
-        self.LastActionTime = Pyx.System.TickCount
-    elseif self.State == 1 and Pyx.System.TickCount - self.LastActionTime > 1000 then        
+        self.LastActionTime = Pyx.Win32.GetTickCount()
+    elseif self.State == 1 and Pyx.Win32.GetTickCount() - self.LastActionTime > 1000 then        
         print("Start fishing ...")    
         selfPlayer:DoAction("FISHING_START")
         selfPlayer:DoAction("FISHING_ING_START")
@@ -66,7 +66,7 @@ function StartFishingState:Run()
         selfPlayer:DoAction("FISHING_START_END_Lv0")
         end
         self.State = 0
-        self.LastStartFishTickcount = Pyx.System.TickCount
+        self.LastStartFishTickcount = Pyx.Win32.GetTickCount()
     end
     
 end

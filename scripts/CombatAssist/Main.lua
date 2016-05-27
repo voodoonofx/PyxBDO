@@ -1,20 +1,20 @@
-Pyx.System.RegisterCallback("OnScriptStart", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStart", function()
     LoadSettings()
  end)
  
-Pyx.System.RegisterCallback("OnScriptStop", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
     SaveSettings()
  end)
 
-Pyx.System.RegisterCallback("OnDrawGui", function() 
+Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function() 
     MainWindow.OnDrawGuiCallback()
 end)
 
-Pyx.System.RegisterCallback("OnPulse", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnPulse", function()
     MainWindow.OnPulse()
 end)
 
-Pyx.System.RegisterCallback("OnRender3D", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnRender3D", function()
 
 end)
 

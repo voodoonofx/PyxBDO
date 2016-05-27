@@ -41,19 +41,19 @@ function CombatPullState:NeedToRun()
     local monsters = GetMonsters()
     table.sort(monsters, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(monsters) do
-        if v.IsVisible and
-            v.IsAlive and
+        if v.IsVisible == true and
+            v.IsAlive == true and
             math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
             --v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
-            v.CanAttack and
-            not self.MobIgnoreList:Contains(v.Key) and
-            not table.find(Bot.Settings.PullSettings.DontPull, v.Name) and
+            v.CanAttack == true and
+            self.MobIgnoreList:Contains(v.Key) == false and
+            table.find(Bot.Settings.PullSettings.DontPull, v.Name) == nil and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.PullDistance and
             (Bot.MeshDisabled == true or Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
-            ProfileEditor.CurrentProfile:CanAttackMonster(v) and
-            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
-            Navigator.CanMoveTo(v.Position) then
+            ProfileEditor.CurrentProfile:CanAttackMonster(v) == true and
+            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight == true) and
+            Navigator.CanMoveTo(v.Position) == true then
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true
             else

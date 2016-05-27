@@ -12,3 +12,4 @@ file=Helpers.lua
 
 [dependencies]
 file=../libtable/script.def
+file=../libtimers/script.def

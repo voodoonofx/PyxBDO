@@ -1,16 +1,15 @@
-Pyx.System.RegisterCallback("OnScriptStart", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStart", function()
     Bot.LoadSettings()
  end)
  
-Pyx.System.RegisterCallback("OnScriptStop", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
     Bot.SaveSettings()
  end)
 
-Pyx.System.RegisterCallback("OnDrawGui", function() 
+Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function() 
     MainWindow:OnDrawGuiCallback()
 end)
 
-Pyx.System.RegisterCallback("OnPulse", function()
-    --Navigator.OnPulse()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnPulse", function()
     Bot.OnPulse()
 end)

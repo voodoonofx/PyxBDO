@@ -20,6 +20,7 @@ MainWindow.FoodComboBoxSelected = 0
 MainWindow.WarehouseComboSelectedIndex = 0
 MainWindow.WarehouseSelectedIndex = 0
 MainWindow.WarehouseName = { }
+MainWindow.WarehouseName = { }
 
 
 MainWindow.DontPullComboSelectedIndex = 0

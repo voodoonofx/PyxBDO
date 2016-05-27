@@ -26,7 +26,9 @@ function HookFishState:NeedToRun()
         return false
     end
     
-    if Pyx.System.TickCount - self.LastHookFishTickCount < 4000 then
+--    print(Pyx.Win32.GetTickCount())
+
+    if Pyx.Win32.GetTickCount() - self.LastHookFishTickCount < 4000 then
         return false
     end
 
@@ -37,5 +39,5 @@ function HookFishState:Run()
     local selfPlayer = GetSelfPlayer()
     print("Got a fish !")
     selfPlayer:DoAction("FISHING_HOOK_START")
-    self.LastHookFishTickCount = Pyx.System.TickCount
+    self.LastHookFishTickCount = Pyx.Win32.GetTickCount()
 end

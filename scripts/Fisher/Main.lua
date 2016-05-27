@@ -1,15 +1,15 @@
-Pyx.System.RegisterCallback("OnScriptStart", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStart", function()
     Bot.LoadSettings()
  end)
  
-Pyx.System.RegisterCallback("OnScriptStop", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
     Bot.SaveSettings()
     Navigation.MesherEnabled = false
     Navigation.RenderMesh = false
     Navigation.ClearMesh()
  end)
 
-Pyx.System.RegisterCallback("OnDrawGui", function() 
+Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function() 
     MainWindow:OnDrawGuiCallback()
     ProfileEditor.OnDrawGuiCallback()
     LibConsumableWindow:OnDrawGuiCallback()
@@ -17,12 +17,10 @@ Pyx.System.RegisterCallback("OnDrawGui", function()
 
 end)
 
-Pyx.System.RegisterCallback("OnPulse", function()
-    --Navigator.OnPulse()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnPulse", function()
     Bot.OnPulse()
 end)
 
-Pyx.System.RegisterCallback("OnRender3D", function()
-    --Navigator.OnRender3D()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnRender3D", function()
     ProfileEditor.OnRender3D()
 end)
