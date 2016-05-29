@@ -104,14 +104,14 @@ function Bot.Stop()
     Bot.VendorState:Reset()
     Bot.TradeManagerState:Reset()
     Navigator.Stop()
- 
+
 end
 
 function Bot.ResetStats()
     Bot.Stats = {
         Loots = 0,
         AverageLootTime = 0,
-        LootQuality = {},
+        LootQuality = { },
         Relics = 0,
         Keys = 0,
     }
@@ -119,10 +119,10 @@ end
 
 function Bot.OnPulse()
     if Bot.Running then
-if Bot.Fsm.CurrentState == Bot.MoveToFishingSpotState then
+        if Bot.Fsm.CurrentState == Bot.MoveToFishingSpotState then
             if ProfileEditor.CurrentProfile:GetFishSpotPosition().Distance3DFromMe < 100 then
-            print("Stopping")
-                Navigator.Stop()
+                print("Stopping")
+                Navigator.Stop(true)
             end
         end
         Bot.Fsm:Pulse()
@@ -149,7 +149,7 @@ function Bot.LoadSettings()
     Bot.Settings.HookFishHandleGameSettings = Bot.HookFishHandleGameState.Settings
     Bot.Settings.RepairSettings = Bot.RepairState.Settings
     Bot.Settings.MoveToFishingSpotSettings = Bot.MoveToFishingSpotState.Settings
-        Bot.Settings.DeathSettings = Bot.DeathState.Settings
+    Bot.Settings.DeathSettings = Bot.DeathState.Settings
 
     table.merge(Bot.Settings, json:decode(Pyx.FileSystem.ReadFile("Settings.json")))
     if string.len(Bot.Settings.LastProfileName) > 0 then
@@ -177,7 +177,7 @@ end
 function Bot.Death(state)
     if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
         Bot.Stop()
-        else
+    else
         Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
@@ -243,17 +243,17 @@ function Bot.RepairCheck()
     end
 
     for k, v in pairs(selfPlayer.EquippedItems) do
---    print ("Eq : "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        --    print ("Eq : "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
         if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
-        print("Need Repair Equipped")
+            print("Need Repair Equipped")
             return true
         end
     end
 
     for k, v in pairs(selfPlayer.Inventory.Items) do
---    print ("Inv: "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        --    print ("Inv: "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
         if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
-        print("Need Repair Inventory")
+            print("Need Repair Inventory")
             return true
         end
     end
