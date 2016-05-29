@@ -90,6 +90,9 @@ function Bot.Start()
             Navigator.CanMoveTo = function(p) return true end
         end
 
+        ProfileEditor.MeshConnectEnabled = false
+        Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
+
         Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()

@@ -119,7 +119,14 @@ end
 
 function Bot.OnPulse()
     if Bot.Running then
+if Bot.Fsm.CurrentState == Bot.MoveToFishingSpotState then
+            if ProfileEditor.CurrentProfile:GetFishSpotPosition().Distance3DFromMe < 100 then
+            print("Stopping")
+                Navigator.Stop()
+            end
+        end
         Bot.Fsm:Pulse()
+
     end
 end
 

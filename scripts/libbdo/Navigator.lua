@@ -230,10 +230,12 @@ function Navigator.Stop()
     Navigator.StuckCount = 0
 
     local selfPlayer = GetSelfPlayer()
+
     if selfPlayer then
         selfPlayer:MoveTo(Vector3(0, 0, 0))
     end
-end
+    GetSelfPlayer():DoAction("RUN_SHORTSTOP")
+    end
 
 function Navigator.OnPulse()
     local selfPlayer = GetSelfPlayer()
@@ -305,6 +307,7 @@ function Navigator.OnPulse()
                 selfPlayer:DoAction("BT_RUN_SPRINT")
             end
         end
+
     end
 
 end

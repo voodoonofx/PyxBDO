@@ -11,6 +11,9 @@ ProfileEditor.AttackableMonstersSelectedIndex = 0
 ProfileEditor.AttackableMonstersComboSelectedIndex = 0
 ProfileEditor.MonstersName = { }
 ProfileEditor.CurrentProfileSaveName = "Unamed"
+ProfileEditor.CurrentMeshConnect = { }
+ProfileEditor.MeshConnectEnabled = false
+ProfileEditor.LastPosition = Vector3(0, 0, 0)
 
 -----------------------------------------------------------------------------
 -- ProfileEditor Functions
@@ -18,6 +21,14 @@ ProfileEditor.CurrentProfileSaveName = "Unamed"
 
 function ProfileEditor.DrawProfileEditor()
     local shouldDraw
+    local selfPlayer = GetSelfPlayer()
+
+        if ProfileEditor.MeshConnectEnabled == true and ProfileEditor.LastPosition.Distance3DFromMe > 200 then
+        ProfileEditor.CurrentMeshConnect[#ProfileEditor.CurrentMeshConnect + 1] = {X=selfPlayer.Position.X,Y=selfPlayer.Position.Y,Z=selfPlayer.Position.Z}
+        ProfileEditor.LastPosition = selfPlayer.Position
+        --    print("Connect Node: "..selfPlayer.Position)
+    end
+
     if ProfileEditor.Visible then
         _, ProfileEditor.Visible = ImGui.Begin("Profile editor", ProfileEditor.Visible, ImVec2(300, 400), -1.0)
         
@@ -46,6 +57,47 @@ function ProfileEditor.DrawProfileEditor()
             if ImGui.Button("Build navigation##id_profile_editor_build_navigation", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                 Navigation.BuildNavigation()
             end
+                        if ImGui.Button("Add Mesh Connect##id_profile_add_connect", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                if Navigator.MeshConnectEnabled == false then
+                    Navigation.MesherEnabled = false
+                    ProfileEditor.MeshConnectEnabled = true
+                    ProfileEditor.CurrentMeshConnect = { }
+                    ProfileEditor.CurrentMeshConnect[#ProfileEditor.CurrentMeshConnect + 1] = {X=selfPlayer.Position.X,Y=selfPlayer.Position.Y,Z=selfPlayer.Position.Z}
+                    ProfileEditor.LastPosition = selfPlayer.Position
+                    ProfileEditor.CurrentProfile.MeshConnects[#ProfileEditor.CurrentProfile.MeshConnects + 1] = ProfileEditor.CurrentMeshConnect
+                end
+            end
+            ImGui.Columns(3)
+            for key, value in pairs(ProfileEditor.CurrentProfile.MeshConnects) do
+                if ProfileEditor.MeshConnectEnabled == true and key == table.length(ProfileEditor.CurrentProfile.MeshConnects) then
+                    ImGui.Text("Running..")
+                    ImGui.NextColumn()
+                    local dispDistance = Vector3(value[1].X,value[1].Y,value[1].Z)
+                    ImGui.Text(math.floor(dispDistance.Distance3DFromMe) / 100)
+                    ImGui.NextColumn()
+                    if ImGui.Button("Set End##id_profile_end_connect") then
+                        -- , ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                        value[#value + 1] = {X=selfPlayer.Position.X,Y=selfPlayer.Position.Y,Z=selfPlayer.Position.Z}
+                        ProfileEditor.MeshConnectEnabled = false
+                    end
+                    ImGui.NextColumn()
+                else
+                if ImGui.SmallButton("Delete") then
+                table.remove(ProfileEditor.CurrentProfile.MeshConnects,key)
+                else
+                    ImGui.NextColumn()
+                    local dispDistance = Vector3(value[1].X,value[1].Y,value[1].Z)
+                    ImGui.Text(math.floor(dispDistance.Distance3DFromMe) / 100)
+                    ImGui.NextColumn()
+                    dispDistance = Vector3(value[#value].X,value[#value].Y,value[#value].Z)
+
+                    ImGui.Text(math.floor(dispDistance.Distance3DFromMe) / 100)
+                    ImGui.NextColumn()
+                    end
+                end
+            end
+            ImGui.Columns(1)
+
         end
         
         if ImGui.CollapsingHeader("Hotspots", "id_profile_editor_hotspots", true, false) then
@@ -249,6 +301,12 @@ function ProfileEditor.OnRender3D()
             Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 100, v.Z, 100, 150, 0xAAFF0000, 0xAAFF00FF))
         end
         
+                for key, value in pairs(ProfileEditor.CurrentProfile.MeshConnects) do
+            for k, v in pairs(value) do
+            Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 25, v.Z, 25, 38, 0xAAFF0000, 0xAAFF00FF))
+            end
+        end
+
     end
     
 end

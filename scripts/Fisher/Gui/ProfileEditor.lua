@@ -59,7 +59,7 @@ function ProfileEditor.DrawProfileEditor()
             if ImGui.Button("Build navigation##id_profile_editor_build_navigation", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                 Navigation.BuildNavigation()
             end
-            if ImGui.Button("Add Connect##id_profile_add_connect", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+            if ImGui.Button("Add Mesh Connect##id_profile_add_connect", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                 if Navigator.MeshConnectEnabled == false then
                     Navigation.MesherEnabled = false
                     ProfileEditor.MeshConnectEnabled = true

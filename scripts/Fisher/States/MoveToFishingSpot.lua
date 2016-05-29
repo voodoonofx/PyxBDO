@@ -39,5 +39,6 @@ function MoveToFishingSpotState:NeedToRun()
 end
 
 function MoveToFishingSpotState:Run()
+
     Navigator.MoveTo(ProfileEditor.CurrentProfile:GetFishSpotPosition(),nil,self.Settings.PlayerRun)
 end
