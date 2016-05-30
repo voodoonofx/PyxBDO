@@ -90,6 +90,9 @@ function Bot.Start()
             Navigator.CanMoveTo = function(p) return true end
         end
 
+        ProfileEditor.MeshConnectEnabled = false
+        Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
+
         Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
@@ -126,8 +129,8 @@ function Bot.Start()
             Bot.Fsm:AddState(Bot.BuildNavigationState)
             Bot.Fsm:AddState(Bot.DeathState)
             Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.CombatFightState)
+            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.VendorState)
             Bot.Fsm:AddState(Bot.WarehouseState)
             Bot.Fsm:AddState(Bot.RepairState)

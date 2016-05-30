@@ -100,16 +100,16 @@ function Navigator.GetPath(startPoint, endPoint)
 
             if (table.length(canmesha) > 0 and canmesha[#canmesha]:GetDistance3D(Vector3(value[1].X, value[1].Y, value[1].Z)) < 500) and
                 (table.length(canmeshb) > 0 and canmeshb[#canmeshb]:GetDistance3D(endPoint) < 500) then
---                print("Forward Connect")
+                --                print("Forward Connect")
                 return Navigator.AppendPath(Navigator.AppendPath(canmesha, Navigator.MeshConnectToVector3(value)), canmeshb)
             end
             if ((table.length(canmeshc) > 0 and canmeshc[#canmeshc]:GetDistance3D(Vector3(value[#value].X, value[#value].Y, value[#value].Z)) < 500)) and
                 ((table.length(canmeshd) > 0 and canmeshd[#canmeshd]:GetDistance3D(endPoint) < 500)) then
---                print("Reverse Connect")
+                --                print("Reverse Connect")
 
                 local testb = Navigator.MeshConnectToVector3(Navigator.ReversePath(value))
-                --return testb
-                        return Navigator.AppendPath(Navigator.AppendPath(canmeshc, testb),canmeshd)
+                -- return testb
+                return Navigator.AppendPath(Navigator.AppendPath(canmeshc, testb), canmeshd)
 
             end
         end
@@ -120,7 +120,7 @@ function Navigator.GetPath(startPoint, endPoint)
             --        print ("A: "..tostring(table.length(canmesha)).." "..tostring(canmesha[#canmesha]:GetDistance3D(endPoint)))
             --        print ("B: "..tostring(table.length(canmeshb)).." "..tostring(canmeshb[#canmeshb]:GetDistance3D(endPoint)))
             if (table.length(canmesha) > 0 and canmesha[#canmesha]:GetDistance3D(endPoint) < 500) then
---                print("Connects forward")
+                --                print("Connects forward")
                 local point = Navigator.MeshConnectToVector3(value)
                 local closestPoint = Navigator.FindClosestPoint(point)
                 if (point[closestPoint].Distance3DFromMe < 500) then
@@ -128,7 +128,7 @@ function Navigator.GetPath(startPoint, endPoint)
                 end
             end
             if (table.length(canmeshb) > 0 and canmeshb[#canmeshb]:GetDistance3D(endPoint) < 500) then
-  --              print("Connects reverse")
+                --              print("Connects reverse")
                 local point = Navigator.ReversePath(Navigator.MeshConnectToVector3(value))
                 local closestPoint = Navigator.FindClosestPoint(point)
                 if (point[closestPoint].Distance3DFromMe < 500) then
@@ -195,7 +195,7 @@ function Navigator.MoveTo(destination, forceRecalculate, playerRun)
         --        Pyx.Win32.GetTickCount() - Navigator.LastFindPathTick < 500 and
         (table.length(Navigator.Waypoints) > 0 or Navigator.LastWayPoint == true) and
         Navigator.LastPosition.Distance2DFromMe < 150
-         then
+    then
         return true
     end
 
@@ -222,7 +222,7 @@ function Navigator.MoveTo(destination, forceRecalculate, playerRun)
 
 end
 
-function Navigator.Stop()
+function Navigator.Stop(shortStop)
     Navigator.Waypoints = { }
     Navigator.Running = false
     Navigator.Destination = Vector3(0, 0, 0)
@@ -230,8 +230,12 @@ function Navigator.Stop()
     Navigator.StuckCount = 0
 
     local selfPlayer = GetSelfPlayer()
+
     if selfPlayer then
         selfPlayer:MoveTo(Vector3(0, 0, 0))
+    end
+    if shortStop ~= nil and shortStop == true then
+        GetSelfPlayer():DoAction("RUN_SHORTSTOP")
     end
 end
 
@@ -257,8 +261,8 @@ function Navigator.OnPulse()
             if (Navigator.LastStuckCheckPosition.Distance2DFromMe < 35) then
                 print("I'm stuck, jump forward !")
                 if Navigator.StuckCount < 20 then
-                Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
-                --[[
+                    Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
+                    --[[
                     if selfPlayer.IsBattleMode == false and selfPlayer.IsSwimming == false then
                         selfPlayer:DoAction("JUMP_F_A")
                     elseif selfPlayer.IsBattleMode == false and selfPlayer.IsSwimming == true then
@@ -299,12 +303,13 @@ function Navigator.OnPulse()
             end
         end
         if Navigator.LastWayPoint == false and Navigator.PlayerRun == true and selfPlayer.StaminaPercent >= 100 and selfPlayer.IsSwimming == false and table.length(Navigator.Waypoints) > 6 then
-         if selfPlayer.IsBattleMode == false then
-               selfPlayer:DoAction("RUN_SPRINT_FAST_ST")
+            if selfPlayer.IsBattleMode == false then
+                selfPlayer:DoAction("RUN_SPRINT_FAST_ST")
             else
                 selfPlayer:DoAction("BT_RUN_SPRINT")
             end
         end
+
     end
 
 end
