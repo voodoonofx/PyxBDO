@@ -25,6 +25,7 @@ function WarehouseState.new()
     self.DepositedMoney = false
     --TEST ADD
     self.ExchangedGold = false
+    self.GoldIndex = nil
     self.Forced = false
 
     -- Overideable functions
@@ -38,7 +39,6 @@ end
 function WarehouseState:NeedToRun()
 
     local selfPlayer = GetSelfPlayer()
-
 
     if not selfPlayer then
         return false
@@ -88,6 +88,7 @@ function WarehouseState:Reset()
         self.Forced = false
         -- TEST ADD
         self.ExchangedGold = false
+        self.GoldIndex = nil
         self.DepositedMoney = false
 
 end
@@ -106,6 +107,7 @@ function WarehouseState:Exit()
         self.Forced = false
         -- TEST ADD
         self.ExchangedGold = false
+        self.GoldIndex = nil
         self.DepositedMoney = false
 
     end
@@ -115,7 +117,6 @@ end
 function WarehouseState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
-
 
     if vendorPosition.Distance3DFromMe > 300 then
         if self.CallWhileMoving then
@@ -185,9 +186,8 @@ function WarehouseState:Run()
                 self.SleepTimer:Start()
                 return
             end
-            local playerMoney = selfPlayer.Inventory.Money
-            if (playerMoney > 100100) and shopOpen then
-                BDOLua.Execute("npcShop_doBuy(0, 1, 0, 0)")
+            if self:BarAmount() and shopOpen then
+                BDOLua.Execute("npcShop_doBuy(".. self.GoldIndex ..", 1, 0, 0)")
                 self.SleepTimer = PyxTimer:New(0.5)
                 self.SleepTimer:Start()
                 return
@@ -270,6 +270,31 @@ function WarehouseState:OpenExchange()
     HandleClickedFuncButton(buttonIndex)
     ]]
     BDOLua.Execute(code)
+end
+
+function WarehouseState:BarAmount()
+    local selfPlayer = GetSelfPlayer()
+
+    if not selfPlayer then
+        return false
+    end
+
+    local playerMoney = selfPlayer.Inventory.Money
+    if (playerMoney / 100100000) >= 1 then
+        self.GoldIndex = 3
+        return true
+    elseif (playerMoney / 10010000) >= 1 then
+        self.GoldIndex = 2
+        return true
+    elseif (playerMoney / 1001000) >= 1 then
+        self.GoldIndex = 1
+        return true
+    elseif (playerMoney / 100100) >= 1 then
+        self.GoldIndex = 0
+        return true
+    else
+        return false
+    end
 end
 
 function WarehouseState:HasNpc()
