@@ -23,7 +23,6 @@ function WarehouseState.new()
     self.SleepTimer = nil
     self.CurrentDepositList = { }
     self.DepositedMoney = false
-    --TEST ADD
     self.ExchangedGold = false
     self.GoldIndex = nil
     self.Forced = false
@@ -86,7 +85,6 @@ function WarehouseState:Reset()
         self.LastUseTimer = nil
         self.SleepTimer = nil
         self.Forced = false
-        -- TEST ADD
         self.ExchangedGold = false
         self.GoldIndex = nil
         self.DepositedMoney = false
@@ -105,7 +103,6 @@ function WarehouseState:Exit()
         self.LastUseTimer:Start()
         self.SleepTimer = nil
         self.Forced = false
-        -- TEST ADD
         self.ExchangedGold = false
         self.GoldIndex = nil
         self.DepositedMoney = false
@@ -176,11 +173,9 @@ function WarehouseState:Run()
     end
 
     if self.State == 3 then
-        -- TEST ADD
         if self.ExchangedGold == false and self.Settings.ExchangeGold == true then
             local shopOpen = BDOLua.Execute("return Panel_Window_NpcShop:GetShow()")
             if not shopOpen then
-                print("[DEBUG]: shop not open")
                 self:OpenExchange()
                 self.SleepTimer = PyxTimer:New(0.5)
                 self.SleepTimer:Start()
@@ -254,7 +249,6 @@ function WarehouseState:GetItems()
     return items
 end
 
--- TEST FUNCTION
 function WarehouseState:OpenExchange()
     local code = [[
     local dialogData = ToClient_GetCurrentDialogData()
@@ -274,19 +268,11 @@ end
 
 function WarehouseState:BarAmount()
     local selfPlayer = GetSelfPlayer()
-
     if not selfPlayer then
         return false
     end
-
     local playerMoney = selfPlayer.Inventory.Money
-    if (playerMoney / 100100000) >= 1 then
-        self.GoldIndex = 3
-        return true
-    elseif (playerMoney / 10010000) >= 1 then
-        self.GoldIndex = 2
-        return true
-    elseif (playerMoney / 1001000) >= 1 then
+    if (playerMoney / 1001000) >= 1 then
         self.GoldIndex = 1
         return true
     elseif (playerMoney / 100100) >= 1 then
