@@ -176,7 +176,7 @@ function WarehouseState:Run()
         if self.ExchangedGold == false and self.Settings.ExchangeGold == true then
             local shopOpen = BDOLua.Execute("return Panel_Window_NpcShop:GetShow()")
             if not shopOpen then
-                self:OpenExchange()
+                BDOLua.Execute("npcShop_requestList()")
                 self.SleepTimer = PyxTimer:New(0.5)
                 self.SleepTimer:Start()
                 return
@@ -228,7 +228,6 @@ function WarehouseState:Run()
 
 end
 
-
 function WarehouseState:GetItems()
     local items = { }
     local selfPlayer = GetSelfPlayer()
@@ -249,38 +248,21 @@ function WarehouseState:GetItems()
     return items
 end
 
-function WarehouseState:OpenExchange()
-    local code = [[
-    local dialogData = ToClient_GetCurrentDialogData()
-    local buttonIndex = nil
-    for i = 0, 5 do
-        local btn = dialogData:getFuncButtonAt(i)
-        local type = tonumber(btn._param)
-        if type == CppEnums.ContentsType.Contents_Shop then
-            buttonIndex = i
-            break
-        end
-    end
-    HandleClickedFuncButton(buttonIndex)
-    ]]
-    BDOLua.Execute(code)
-end
-
 function WarehouseState:BarAmount()
     local selfPlayer = GetSelfPlayer()
-    if not selfPlayer then
-        return false
-    end
     local playerMoney = selfPlayer.Inventory.Money
-    if (playerMoney / 1001000) >= 1 then
-        self.GoldIndex = 1
-        return true
-    elseif (playerMoney / 100100) >= 1 then
-        self.GoldIndex = 0
-        return true
-    else
-        return false
+    if selfPlayer then
+        if (playerMoney / 1001000) >= 1 then
+            self.GoldIndex = 1
+            return true
+        elseif (playerMoney / 100100) >= 1 then
+            self.GoldIndex = 0
+            return true
+        else
+            return false
+        end
     end
+    return false
 end
 
 function WarehouseState:HasNpc()
