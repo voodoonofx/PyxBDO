@@ -13,7 +13,7 @@ setmetatable(WarehouseState, {
 function WarehouseState.new()
     local self = setmetatable( { }, WarehouseState)
 
-    self.Settings = {PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
+    self.Settings = {PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, ExchangeGold = true, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
@@ -23,6 +23,8 @@ function WarehouseState.new()
     self.SleepTimer = nil
     self.CurrentDepositList = { }
     self.DepositedMoney = false
+    self.ExchangedGold = false
+    self.GoldIndex = nil
     self.Forced = false
 
     -- Overideable functions
@@ -36,7 +38,6 @@ end
 function WarehouseState:NeedToRun()
 
     local selfPlayer = GetSelfPlayer()
-
 
     if not selfPlayer then
         return false
@@ -84,7 +85,10 @@ function WarehouseState:Reset()
         self.LastUseTimer = nil
         self.SleepTimer = nil
         self.Forced = false
+        self.ExchangedGold = false
+        self.GoldIndex = nil
         self.DepositedMoney = false
+
 end
 
 
@@ -99,6 +103,8 @@ function WarehouseState:Exit()
         self.LastUseTimer:Start()
         self.SleepTimer = nil
         self.Forced = false
+        self.ExchangedGold = false
+        self.GoldIndex = nil
         self.DepositedMoney = false
 
     end
@@ -108,7 +114,6 @@ end
 function WarehouseState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
-
 
     if vendorPosition.Distance3DFromMe > 300 then
         if self.CallWhileMoving then
@@ -168,6 +173,22 @@ function WarehouseState:Run()
     end
 
     if self.State == 3 then
+        if self.ExchangedGold == false and self.Settings.ExchangeGold == true then
+            local shopOpen = BDOLua.Execute("return Panel_Window_NpcShop:GetShow()")
+            if not shopOpen then
+                self:OpenExchange()
+                self.SleepTimer = PyxTimer:New(0.5)
+                self.SleepTimer:Start()
+                return
+            end
+            if self:BarAmount() and shopOpen then
+                BDOLua.Execute("npcShop_doBuy(".. self.GoldIndex ..", 1, 0, 0)")
+                self.SleepTimer = PyxTimer:New(0.5)
+                self.SleepTimer:Start()
+                return
+            end
+            self.ExchangedGold = true
+        end
         if self.DepositedMoney == false and self.Settings.DepositMoney == true then
             local toDeposit = selfPlayer.Inventory.Money - self.Settings.MoneyToKeep
             if toDeposit > 0 then
@@ -228,7 +249,39 @@ function WarehouseState:GetItems()
     return items
 end
 
+function WarehouseState:OpenExchange()
+    local code = [[
+    local dialogData = ToClient_GetCurrentDialogData()
+    local buttonIndex = nil
+    for i = 0, 5 do
+        local btn = dialogData:getFuncButtonAt(i)
+        local type = tonumber(btn._param)
+        if type == CppEnums.ContentsType.Contents_Shop then
+            buttonIndex = i
+            break
+        end
+    end
+    HandleClickedFuncButton(buttonIndex)
+    ]]
+    BDOLua.Execute(code)
+end
 
+function WarehouseState:BarAmount()
+    local selfPlayer = GetSelfPlayer()
+    if not selfPlayer then
+        return false
+    end
+    local playerMoney = selfPlayer.Inventory.Money
+    if (playerMoney / 1001000) >= 1 then
+        self.GoldIndex = 1
+        return true
+    elseif (playerMoney / 100100) >= 1 then
+        self.GoldIndex = 0
+        return true
+    else
+        return false
+    end
+end
 
 function WarehouseState:HasNpc()
     return string.len(self.Settings.NpcName) > 0
