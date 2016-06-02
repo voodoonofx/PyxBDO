@@ -14,6 +14,7 @@ function Settings.new()
     self.CombatScript = ""
     
     self.WarehouseSettings = {}
+	self.TurninSettings = {}
     self.VendorSettings = {}
     self.DeathSettings = {}
     self.RepairSettings = {}
@@ -23,6 +24,8 @@ function Settings.new()
     self.PullSettings = {}
 
 	self.WarehouseAfterVendor = true
+	self.WarehouseAfterTurnin = true
+	self.RepairAfterWarehouse = true
     self.AttackPvpFlagged = true
     self.RunToHotSpots = false
 

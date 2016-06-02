@@ -16,6 +16,8 @@ function Profile.new()
     self.VendorNpcPosition = { X = 0, Y = 0, Z = 0 }
     self.WarehouseNpcName = ""
     self.WarehouseNpcPosition = { X = 0, Y = 0, Z = 0 }
+	self.TurninNpcName = ""
+    self.TurninNpcPosition = { X = 0, Y = 0, Z = 0 }
     self.RepairNpcName = ""
     self.RepairNpcPosition = { X = 0, Y = 0, Z = 0 }
         self.MeshConnects = {}
@@ -52,12 +54,20 @@ function Profile:GetWarehousePosition()
     return Vector3(self.WarehouseNpcPosition.X, self.WarehouseNpcPosition.Y, self.WarehouseNpcPosition.Z)
 end
 
+function Profile:GetTurninPosition()
+    return Vector3(self.TurninNpcPosition.X, self.TurninNpcPosition.Y, self.TurninNpcPosition.Z)
+end
+
 function Profile:HasVendor()
     return string.len(self.VendorNpcName) > 0
 end
 
 function Profile:HasWarehouse()
     return string.len(self.WarehouseNpcName) > 0
+end
+
+function Profile:HasTurnin()
+    return string.len(self.TurninNpcName) > 0
 end
 
 function Profile:HasRepair()
