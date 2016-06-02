@@ -85,13 +85,13 @@ function MainWindow.DrawMainWindow()
                 end
                 
                 
-		if ImGui.Button("Force exchange", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                    Bot.TurninState.Forced = true
-                end
-		ImGui.SameLine()
-		if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.WarehouseState.Forced = true
-                end
+	--	if ImGui.Button("Force exchange", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+        --            Bot.TurninState.Forced = true
+        --        end
+	--	ImGui.SameLine()
+	--	if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+        --            Bot.WarehouseState.Forced = true
+        --        end
                 
                
             end
