@@ -16,11 +16,11 @@ function Profile.new()
     self.VendorNpcPosition = { X = 0, Y = 0, Z = 0 }
     self.WarehouseNpcName = ""
     self.WarehouseNpcPosition = { X = 0, Y = 0, Z = 0 }
-	self.TurninNpcName = ""
+    self.TurninNpcName = ""
     self.TurninNpcPosition = { X = 0, Y = 0, Z = 0 }
     self.RepairNpcName = ""
     self.RepairNpcPosition = { X = 0, Y = 0, Z = 0 }
-        self.MeshConnects = {}
+    self.MeshConnects = {}
 
   return self
 end
