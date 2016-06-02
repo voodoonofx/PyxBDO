@@ -49,7 +49,7 @@ function ProfileEditor.DrawProfileEditor()
             ProfileEditor.CurrentProfile = Profile()
             ProfileEditor.CurrentProfileSaveName = "Unamed"
         end
-		if ImGui.Button("Clear mesh##id_mesh_clear", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+	if ImGui.Button("Clear mesh##id_mesh_clear", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
             Navigation.ClearMesh()
         end
         
@@ -221,7 +221,7 @@ function ProfileEditor.DrawProfileEditor()
             end
         end
 		
-		        if ImGui.CollapsingHeader("TurnIn npc", "id_profile_editor_Turnin", true, false) then
+	if ImGui.CollapsingHeader("TurnIn npc", "id_profile_editor_Turnin", true, false) then
             if string.len(ProfileEditor.CurrentProfile.TurninNpcName) > 0 then
                 ImGui.Text("Name : " .. ProfileEditor.CurrentProfile.TurninNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetTurninPosition().Distance3DFromMe / 100) .. "y)")
             else
