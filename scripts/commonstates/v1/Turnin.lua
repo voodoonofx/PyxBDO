@@ -68,7 +68,7 @@ function TurninState:NeedToRun()
 	
 	if self.Settings.TurninOnWeight and
         selfPlayer.WeightPercent >= 95 and
-        table.length(self:ItemCheck()) > 0 and
+        table.length(self:GetItems()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = true
         return true
@@ -158,7 +158,7 @@ function TurninState:Run()
 			    if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
 				return
 				end
-				for k, v in pairs(self:ItemCheck()) do
+				for k, v in pairs(self:GetItems()) do
 					for index = 0, 3 do
 					    if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
 						return
@@ -222,15 +222,12 @@ function TurninState:ItemCheck()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         for k, v in pairs(selfPlayer.Inventory.Items) do
-		
-
             if self.ItemCheckFunction ~= nil then
                 if self.ItemCheckFunction(v) == true then
                     table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count, key = v.ItemEnchantStaticStatus.ItemId })
                 end
             else
                 if table.find(self.Settings.TurninItemsNamed, v.ItemEnchantStaticStatus.Name) and v.Count >= self.Settings.TurninCount then
-			
                     table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count, key = v.ItemEnchantStaticStatus.ItemId })
                 end
 
@@ -240,6 +237,26 @@ function TurninState:ItemCheck()
     return items
 end
 
+
+function TurninState:GetItems()
+    local items = { }
+    local selfPlayer = GetSelfPlayer()
+    if selfPlayer then
+        for k, v in pairs(selfPlayer.Inventory.Items) do
+            if self.ItemCheckFunction ~= nil then
+                if self.ItemCheckFunction(v) == true then
+                    table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count, key = v.ItemEnchantStaticStatus.ItemId })
+                end
+            else
+                if table.find(self.Settings.TurninItemsNamed, v.ItemEnchantStaticStatus.Name) and v.Count >= 100 then
+                    table.insert(items, { slot = v.InventoryIndex, name = v.ItemEnchantStaticStatus.Name, count = v.Count, key = v.ItemEnchantStaticStatus.ItemId })
+                end
+
+            end
+        end
+    end
+    return items
+end
 
 
 function TurninState:HasNpc()
