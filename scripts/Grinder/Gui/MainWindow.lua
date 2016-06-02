@@ -37,68 +37,77 @@ MainWindow.DontPullSelectedIndex = 0
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0)
+    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
     if shouldDisplay then
         MainWindow.UpdateInventoryList()
-        if ImGui.CollapsingHeader("Bot status", "id_gui_status", true, true) then
-            local player = GetSelfPlayer()
-            ImGui.Columns(2)
-            ImGui.Text("State")
-            ImGui.NextColumn()
-            ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
-            ImGui.NextColumn()
-            ImGui.Text("Name")
-            ImGui.NextColumn()
-            ImGui.Text(( function(player) if player then return player.Name else return 'Disconnected' end end)(player))
-            ImGui.NextColumn()
-            ImGui.Text("Health")
-            ImGui.NextColumn()
-            ImGui.Text(( function(player) if player then return player.Health .. " / " .. player.MaxHealth else return 'N / A' end end)(player))
-            ImGui.NextColumn()
-            ImGui.Text("Free slots")
-            ImGui.NextColumn()
-            ImGui.Text(( function(player) if player then return player.Inventory.FreeSlots else return 'N / A' end end)(player))
-            ImGui.NextColumn()
-            ImGui.Columns(1)
-            if not Bot.Running then
-                if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                    Bot.Start()
-                end
-                ImGui.SameLine()
-                if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    ProfileEditor.Visible = true
-                end
-            else
-                if ImGui.Button("Stop##btn_stop_bot", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.Stop()
-                end
-                if ImGui.Button("Force vendor", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                    Bot.VendorState.Forced = true
-                end
-                ImGui.SameLine()
-                if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.RepairState.Forced = true
-                end
+        local player = GetSelfPlayer()
+        ImGui.Columns(2)
+        ImGui.Text("State")
+        ImGui.NextColumn()
+        ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
+        ImGui.NextColumn()
+        ImGui.Text("Health")
+        ImGui.NextColumn()
+        ImGui.Text(( function(player) if player then return player.Health .. " / " .. player.MaxHealth else return 'N / A' end end)(player))
+        ImGui.NextColumn()
+        ImGui.Text("Free slots")
+        ImGui.NextColumn()
+        ImGui.Text(( function(player) if player then return player.Inventory.FreeSlots else return 'N / A' end end)(player))
+        ImGui.NextColumn()
+        ImGui.Columns(1)
+        if not Bot.Running then
+            if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                Bot.Start()
             end
-            if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                LibConsumableWindow.Visible = true
-            end
-
             ImGui.SameLine()
-            if Bot.MeshDisabled then
-                if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = false
+            if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                ProfileEditor.Visible = true
+            end
+        else
+            if ImGui.Button("Stop##btn_stop_bot", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.Stop()
+            end
+            if ImGui.Button("Force vendor", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                Bot.VendorState.Forced = true
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.RepairState.Forced = true
+            end
+        end
+        if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+            LibConsumableWindow.Visible = true
+        end
+
+        ImGui.SameLine()
+        if Bot.MeshDisabled then
+            if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = false
+            end
+        else
+            if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = true
+            end
+        end
+
+        if Bot.Combat.Gui then
+            if Bot.Combat.Gui.ShowGui then
+                if ImGui.Button("Close Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = false
                 end
             else
-                if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = true
+                if ImGui.Button("Open Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = true
                 end
             end
-
+            ImGui.SameLine()
+            if ImGui.Button("Save Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                MainWindow.SaveCombatSettings()
+            end
         end
 
         if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
-        MainWindow.UpdateMonsters()
+            MainWindow.UpdateMonsters()
             if not table.find(MainWindow.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(MainWindow.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -106,6 +115,7 @@ function MainWindow.DrawMainWindow()
             if valueChanged then
                 Bot.Settings.CombatScript = MainWindow.AvailablesCombats[MainWindow.CombatsComboBoxSelected]
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
+                Bot.LoadCombat()
             end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
             valueChanged, MainWindow.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", MainWindow.DontPullComboSelectedIndex, MainWindow.MonsterNames)
@@ -352,6 +362,20 @@ function MainWindow.OnDrawGuiCallback()
     MainWindow.DrawMainWindow()
 end
 
+function MainWindow.SaveCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    Pyx.FileSystem.WriteFile("Combats\\Configs\\"..settings..".json", json:encode_pretty(Bot.Combat.Gui))
+end
+
+function MainWindow.LoadCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    table.merge(Bot.Combat.Gui,json:decode(Pyx.FileSystem.ReadFile("Combats\\Configs\\"..settings..".json")))
+end
+
 function MainWindow.RefreshAvailableProfiles()
     MainWindow.AvailablesCombats = { }
     for k, v in pairs(Pyx.FileSystem.GetFiles("Combats\\*.lua")) do
@@ -359,7 +383,5 @@ function MainWindow.RefreshAvailableProfiles()
 
     end
 end
-
-
 
 MainWindow.RefreshAvailableProfiles()
