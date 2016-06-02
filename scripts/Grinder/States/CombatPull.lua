@@ -61,24 +61,22 @@ function CombatPullState:NeedToRun()
             end
 			
 			
-         Residualswitch = true
-	
-					local characters = GetActors();
-				table.sort(characters, function(a,b) return a.Position.Distance3DFromMe < b.Position.Distance3DFromMe end)
-				for k,v in pairs(characters) do
-					if v.IsPlayer and v.IsAlive and v.Position.Distance3DFromMe < 3500 and v.Position.Distance3DFromMe ~= 0 then
-        
-					Residualswitch = false
-					break
-						end
-					end
-					if Residualswitch == false then
-					self.MobIgnoreList:Add(v.Key, 10)
-					print("Pull Added :" .. v.Key .. " to Ignore list because of Player")	
-					else
-					self.CurrentCombatActor = v
-					return true
-			end
+            Playerswitch = true
+	    local characters = GetActors();
+	    table.sort(characters, function(a,b) return a.Position.Distance3DFromMe < b.Position.Distance3DFromMe end)
+	    for k,v in pairs(characters) do
+	    	if v.IsPlayer and v.IsAlive and v.Position.Distance3DFromMe < 3500 and v.Position.Distance3DFromMe ~= 0 then
+	    		Playerswitch = false
+	    		break
+	    	end
+	    end
+	    if Residualswitch == false then
+	    	self.MobIgnoreList:Add(v.Key, 10)
+	    	print("Pull Added :" .. v.Key .. " to Ignore list because of Player")	
+	    	else
+	    		self.CurrentCombatActor = v
+	    		return true
+	    end
         end
     end
 
