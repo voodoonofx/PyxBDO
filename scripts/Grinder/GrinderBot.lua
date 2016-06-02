@@ -293,17 +293,17 @@ function Bot.StateComplete(state)
         end
     end
 	
-	 if state == Bot.TurninState then
+    if state == Bot.TurninState then
         if Bot.Settings.VendorAfterTurnin == true then
             Bot.VendorState.Forced = true
         end
     end
 	
-	if state == Bot.WarehouseState then
-		if Bot.Settings.RepairAfterWarehouse == true then
-		Bot.RepairState.Forced = true
-		end
-		end
+   if state == Bot.WarehouseState then
+	if Bot.Settings.RepairAfterWarehouse == true then
+	   Bot.RepairState.Forced = true
+	end
+   end
 	
 end
 
