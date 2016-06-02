@@ -44,7 +44,7 @@ function Bot.Start()
         Bot.Combat = nil
         Bot.RepairState.Forced = false
         Bot.WarehouseState.Forced = false
-		Bot.TurninState.Forced = false
+	Bot.TurninState.Forced = false
         Bot.VendorState.Forced = false
 
         Bot.SaveSettings()
@@ -96,7 +96,7 @@ function Bot.Start()
         Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
 
         Bot.WarehouseState:Reset()
-		Bot.TurninState:Reset()
+	Bot.TurninState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
         Bot.DeathState:Reset()
@@ -138,11 +138,11 @@ function Bot.Start()
             Bot.Fsm:AddState(Bot.DeathState)
             Bot.Fsm:AddState(LibConsumables.ConsumablesState)
             Bot.Fsm:AddState(Bot.CombatFightState)
-			Bot.Fsm:AddState(Bot.TurninState)
+            Bot.Fsm:AddState(Bot.TurninState)
             Bot.Fsm:AddState(Bot.VendorState)
             Bot.Fsm:AddState(Bot.WarehouseState)
             Bot.Fsm:AddState(Bot.RepairState)
-			Bot.Fsm:AddState(Bot.LootState)
+            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.InventoryDeleteState)
             Bot.Fsm:AddState(Bot.CombatPullState)
             Bot.Fsm:AddState(RoamingState())
@@ -257,7 +257,7 @@ function Bot.LoadSettings()
     local json = JSON:new()
     Bot.Settings = Settings()
     Bot.Settings.WarehouseSettings = Bot.WarehouseState.Settings
-	Bot.Settings.TurninSettings = Bot.TurninState.Settings
+    Bot.Settings.TurninSettings = Bot.TurninState.Settings
     Bot.Settings.VendorSettings = Bot.VendorState.Settings
     Bot.Settings.DeathSettings = Bot.DeathState.Settings
     Bot.Settings.RepairSettings = Bot.RepairState.Settings
@@ -293,17 +293,17 @@ function Bot.StateComplete(state)
         end
     end
 	
-	 if state == Bot.TurninState then
+    if state == Bot.TurninState then
         if Bot.Settings.VendorAfterTurnin == true then
             Bot.VendorState.Forced = true
         end
     end
 	
-	if state == Bot.WarehouseState then
-		if Bot.Settings.RepairAfterWarehouse == true then
-		Bot.RepairState.Forced = true
-		end
-		end
+    if state == Bot.WarehouseState then
+    	if Bot.Settings.RepairAfterWarehouse == true then
+    		Bot.RepairState.Forced = true
+    	end
+    end
 	
 end
 
