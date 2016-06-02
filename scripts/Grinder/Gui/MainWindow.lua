@@ -83,11 +83,11 @@ function MainWindow.DrawMainWindow()
                 if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                     Bot.RepairState.Forced = true
                 end
-				                if ImGui.Button("Force Turnin", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+		if ImGui.Button("Force Turnin", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
                     Bot.TurninState.Forced = true
                 end
-				ImGui.SameLine()
-				 if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+		ImGui.SameLine()
+		if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                     Bot.WarehouseState.Forced = true
                 end
             end
@@ -294,18 +294,16 @@ function MainWindow.DrawMainWindow()
 
         end
 		
-		if ImGui.CollapsingHeader("Exchange Items", "id_gui_turnin", true, false) then
-			_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
-			_, Bot.Settings.VendorAfterTurnin = ImGui.Checkbox("Vendor after Exchange##id_guid_vendor_after_turnin", Bot.Settings.VendorAfterTurnin)
-			_, Bot.Settings.VendorSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
-			
-			ImGui.Text("Try to Exchange these Items")
-			valueChanged, MainWindow.TurninComboSelectedIndex = ImGui.Combo("##id_guid_turnin_inventory_combo_select", MainWindow.TurninComboSelectedIndex, MainWindow.InventoryName)
-            if valueChanged then
-                local inventoryName = MainWindow.InventoryName[MainWindow.TurninComboSelectedIndex]
-                if not table.find(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName) then
-
-                    table.insert(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName)
+	if ImGui.CollapsingHeader("Exchange Items", "id_gui_turnin", true, false) then
+		_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
+		_, Bot.Settings.VendorAfterTurnin = ImGui.Checkbox("Vendor after Exchange##id_guid_vendor_after_turnin", Bot.Settings.VendorAfterTurnin)
+		_, Bot.Settings.VendorSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
+		ImGui.Text("Try to Exchange these Items")
+		valueChanged, MainWindow.TurninComboSelectedIndex = ImGui.Combo("##id_guid_turnin_inventory_combo_select", MainWindow.TurninComboSelectedIndex, MainWindow.InventoryName)
+		if valueChanged then
+			local inventoryName = MainWindow.InventoryName[MainWindow.TurninComboSelectedIndex]
+			if not table.find(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName) then
+				table.insert(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName)
                 end
                 MainWindow.TurninComboSelectedIndex = 0
             end
@@ -330,7 +328,7 @@ function MainWindow.DrawMainWindow()
             ImGui.NextColumn()
             _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Warehouse##id_guid_advanced_run_Warehouse", Bot.Settings.WarehouseSettings.PlayerRun)
 	    ImGui.NextColumn()
-            _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To TurnIn##id_guid_advanced_run_Turnin", Bot.Settings.TurninSettings.PlayerRun)
+            _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Exchange##id_guid_advanced_run_Turnin", Bot.Settings.TurninSettings.PlayerRun)
             ImGui.Columns(1)
             ImGui.Text("Change with caution!!!")
             ImGui.Text(" ")
