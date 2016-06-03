@@ -301,7 +301,7 @@ function MainWindow.DrawMainWindow()
 	if ImGui.CollapsingHeader("Exchange Items", "id_gui_turnin", true, false) then
 		_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
 		_, Bot.Settings.VendorAfterTurnin = ImGui.Checkbox("Vendor after Exchange##id_guid_vendor_after_turnin", Bot.Settings.VendorAfterTurnin)
-		_, Bot.Settings.VendorSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
+		_, Bot.Settings.TurninSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
 		ImGui.Text("Try to Exchange these Items")
 		valueChanged, MainWindow.TurninComboSelectedIndex = ImGui.Combo("##id_guid_turnin_inventory_combo_select", MainWindow.TurninComboSelectedIndex, MainWindow.InventoryName)
 		if valueChanged then
