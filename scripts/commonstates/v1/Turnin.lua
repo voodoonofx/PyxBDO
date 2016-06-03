@@ -47,6 +47,11 @@ function TurninState:NeedToRun()
         self.Forced = false
         return false
     end
+    
+    if selfPlayer.WeightPercent >= 100 then
+    	self.Forced = false
+    	return false
+    end
 
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
     self.Forced = false
@@ -59,7 +64,7 @@ function TurninState:NeedToRun()
 	    if self.LastUseTimer ~= nil and not self.LastUseTimer:Expired() then
         return false
     end
-	
+
     if table.length(self:ItemCheck()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = true
