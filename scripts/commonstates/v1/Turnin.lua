@@ -21,7 +21,7 @@ function TurninState.new()
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
-	self.TurnedIn = false
+self.TurnedIn = false
 
     -- Overideable functions
     self.ItemCheckFunction = nil
@@ -87,8 +87,7 @@ function TurninState:Reset()
         self.LastUseTimer = nil
         self.SleepTimer = nil
         self.Forced = false
-        self.DepositedMoney = false
-		self.TurnedIn = false
+	self.TurnedIn = false
 end
 
 
