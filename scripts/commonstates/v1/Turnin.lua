@@ -201,6 +201,7 @@ function TurninState:Run()
 				self.SleepTimer = PyxTimer:New(0.2)
 				self.SleepTimer:Start()
 				self.TurnedIn = true
+				self:Exit()
 				return
 			end
 		end
