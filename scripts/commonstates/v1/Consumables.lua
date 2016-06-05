@@ -48,7 +48,8 @@ function ConsumablesState:NeedToRun()
     end
 
     if self.Forced == true then
-        return true
+        self:Run()
+        return false
     end
 
 
@@ -64,7 +65,8 @@ function ConsumablesState:NeedToRun()
 
     if table.length(self:GetItems()) >= 1 then
         self.Forced = true
-        return true
+        self:Run()
+        return false
     end
     return false
 end
