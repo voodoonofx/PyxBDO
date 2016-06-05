@@ -1,13 +1,22 @@
 Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStart", function()
     LoadSettings()
- end)
- 
-Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
-    SaveSettings()
+    MainWindow.LoadCombat()
  end)
 
-Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function() 
+Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
+    SaveSettings()
+    if MainWindow.Combat.Gui then
+        MainWindow.SaveCombatSettings()
+    end
+ end)
+
+Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function()
     MainWindow.OnDrawGuiCallback()
+    if MainWindow.Combat.Gui then
+        if MainWindow.Combat.Gui.ShowGui then
+            MainWindow.CallGui()
+        end
+    end
 end)
 
 Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnPulse", function()
