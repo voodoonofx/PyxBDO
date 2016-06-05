@@ -51,5 +51,4 @@ function RoamingState:Run()
         end
         print("Moving to hotspot #" .. tostring(self.CurrentHotspotIndex))
     end
-    
 end
