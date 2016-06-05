@@ -142,7 +142,7 @@ function VendorState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
 
-    if vendorPosition.Distance3DFromMe > 300 then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
