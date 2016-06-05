@@ -41,7 +41,7 @@ MainWindow.DontPullSelectedIndex = 0
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
+    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0)
     if shouldDisplay then
         MainWindow.UpdateInventoryList()
         if ImGui.CollapsingHeader("Bot status", "id_gui_status", true, true) then
