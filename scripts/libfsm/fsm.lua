@@ -12,6 +12,7 @@ function FSM.new()
   self.States = { }
   self.CurrentState = nil
   self.ShowOutput = false
+  self.Reset = false
   return self
 end
 
@@ -34,6 +35,14 @@ function FSM:AddState(state)
 end
 
 function FSM:Pulse()
+if self.Reset == true then
+    for _,state in pairs(self.States) do
+    if state.Reset ~= nil then
+    state:Reset()
+    end
+end
+self.Reset = false
+end
     for _,state in pairs(self.States) do
         if state:NeedToRun() then
             

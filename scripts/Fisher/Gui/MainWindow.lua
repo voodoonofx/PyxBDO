@@ -253,6 +253,7 @@ function MainWindow.DrawMainWindow()
         if ImGui.CollapsingHeader("Warehouse", "id_gui_warehouse", true, false) then
             _, Bot.Settings.WarehouseAfterVendor = ImGui.Checkbox("Deposit after Vendor##id_guid_warehouse_after_vendor", Bot.Settings.WarehouseAfterVendor)
             _, Bot.Settings.WarehouseAfterTradeManager = ImGui.Checkbox("Deposit after trader##id_guid_warehouse_after_trader", Bot.Settings.WarehouseAfterTradeManager)
+            _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
             _, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("Deposit Money##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
             _, Bot.Settings.WarehouseSettings.MoneyToKeep = ImGui.SliderInt("Money to Keep##id_gui_warehouse_keep_money", Bot.Settings.WarehouseSettings.MoneyToKeep, 0, 1000000)
             _, Bot.Settings.WarehouseSettings.DepositItems = ImGui.Checkbox("Deposit Items##id_guid_warehouse_deposit_items", Bot.Settings.WarehouseSettings.DepositItems)

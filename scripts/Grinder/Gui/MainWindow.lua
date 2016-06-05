@@ -41,7 +41,7 @@ MainWindow.DontPullSelectedIndex = 0
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0)
+    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
     if shouldDisplay then
         MainWindow.UpdateInventoryList()
         if ImGui.CollapsingHeader("Bot status", "id_gui_status", true, true) then
@@ -95,25 +95,55 @@ function MainWindow.DrawMainWindow()
                 
                
             end
-            if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                LibConsumableWindow.Visible = true
-            end
-
             ImGui.SameLine()
-            if Bot.MeshDisabled then
-                if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = false
+            if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                ProfileEditor.Visible = true
+            end
+        else
+            if ImGui.Button("Stop##btn_stop_bot", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.Stop()
+            end
+            if ImGui.Button("Force vendor", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                Bot.VendorState.Forced = true
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.RepairState.Forced = true
+            end
+        end
+        if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+            LibConsumableWindow.Visible = true
+        end
+
+        ImGui.SameLine()
+        if Bot.MeshDisabled then
+            if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = false
+            end
+        else
+            if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = true
+            end
+        end
+
+        if Bot.Combat.Gui then
+            if Bot.Combat.Gui.ShowGui then
+                if ImGui.Button("Close Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = false
                 end
             else
-                if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = true
+                if ImGui.Button("Open Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = true
                 end
             end
-
+            ImGui.SameLine()
+            if ImGui.Button("Save Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                MainWindow.SaveCombatSettings()
+            end
         end
 
         if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
-        MainWindow.UpdateMonsters()
+            MainWindow.UpdateMonsters()
             if not table.find(MainWindow.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(MainWindow.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -121,6 +151,7 @@ function MainWindow.DrawMainWindow()
             if valueChanged then
                 Bot.Settings.CombatScript = MainWindow.AvailablesCombats[MainWindow.CombatsComboBoxSelected]
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
+                Bot.LoadCombat()
             end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
             valueChanged, MainWindow.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", MainWindow.DontPullComboSelectedIndex, MainWindow.MonsterNames)
@@ -336,25 +367,23 @@ function MainWindow.DrawMainWindow()
             ImGui.Columns(1)
             ImGui.Text("Change with caution!!!")
             ImGui.Text(" ")
+--          _, Bot.Settings.PathingMode = ImGui.Checkbox("Fallback to BDO Nav##id_guid_advanced_fall_back", Bot.Settings.PathingMode)
+  --             valueChanged, Bot.Settings.PathingMode = ImGui.Combo("Pathing System##id_guid_adv_path_mode", Bot.Settings.PathingMode, {"Pyx", "BDO Internal"})
+
             _, Bot.Settings.Advanced.PvpAttackRadius = ImGui.SliderInt("Pvp Attack Radius##id_gui_advanced_pvp_radius", Bot.Settings.Advanced.PvpAttackRadius, 500, 10000)
             _, Bot.Settings.Advanced.HotSpotRadius = ImGui.SliderInt("Hotspot Radius##id_gui_advanced_hs_radius", Bot.Settings.Advanced.HotSpotRadius, 500, 10000)
             _, Bot.Settings.LootSettings.LootRadius = ImGui.SliderInt("Loot Radius##id_gui_advanced_loot_radius", Bot.Settings.LootSettings.LootRadius, 500, 10000)
             _, Bot.Settings.Advanced.PullDistance = ImGui.SliderInt("Pull Distance##id_gui_advanced_pull_distance", Bot.Settings.Advanced.PullDistance, 500, 10000)
             _, Bot.Settings.Advanced.PullSecondsUntillIgnore = ImGui.SliderInt("Pull Seconds untill ignore##id_gui_advanced_pull_seconds", Bot.Settings.Advanced.PullSecondsUntillIgnore, 5, 30)
             _, Bot.Settings.Advanced.CombatMaxDistanceFromMe = ImGui.SliderInt("Combat Max Distance##id_gui_advanced_combat_maxdistance", Bot.Settings.Advanced.CombatMaxDistanceFromMe, 1000, 5000)
-            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
-            ImGui.NextColumn()
-            ImGui.Text("Skip Pull between hotspots")
-            ImGui.SameLine()
-            _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
-            ImGui.Text("Ignore in combat between hotspots")
-            ImGui.SameLine()
+            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("Ignore in combat between hotspots##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+            _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("Skip Pull between hotspots##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
 
 
 
-            ImGui.Text("Draw obstacles")
-            ImGui.SameLine()
-            _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
+--            ImGui.Text("Draw obstacles")
+--            ImGui.SameLine()
+--            _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
         end
 
         ImGui.End()
@@ -396,6 +425,20 @@ function MainWindow.OnDrawGuiCallback()
     MainWindow.DrawMainWindow()
 end
 
+function MainWindow.SaveCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    Pyx.FileSystem.WriteFile("Combats\\Configs\\"..settings..".json", json:encode_pretty(Bot.Combat.Gui))
+end
+
+function MainWindow.LoadCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    table.merge(Bot.Combat.Gui,json:decode(Pyx.FileSystem.ReadFile("Combats\\Configs\\"..settings..".json")))
+end
+
 function MainWindow.RefreshAvailableProfiles()
     MainWindow.AvailablesCombats = { }
     for k, v in pairs(Pyx.FileSystem.GetFiles("Combats\\*.lua")) do
@@ -403,7 +446,5 @@ function MainWindow.RefreshAvailableProfiles()
 
     end
 end
-
-
 
 MainWindow.RefreshAvailableProfiles()

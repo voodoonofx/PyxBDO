@@ -1,387 +1,428 @@
 Magician = { }
 Magician.__index = Magician
-Magician.version = "1.22"
+Magician.version = "2.0"
+Magician.author = "torx"
+Magician.Gui = { }
+Magician.Gui.ShowGui = false
 
-------------- Witch and Wizard Skills ------------------------------------------------------------------------------------
-Magician.BLIZZARD_ID 					= { 845, 844, 843 } -- lvl 25, 35, 45					-- TESTING
-Magician.CONCENTRATED_MAGIC_ARROW_ID 	= { 889, 888, 887 } -- lvl 38 26 12						-- DONE
-Magician.DAGGER_STAB_ID 				= { 897, 896, 895, 894, 893 } -- lvl 49 37 24 12 1		-- DONE
-Magician.EARTHS_RESPONSE_ID 			= { 914, 913, 912 } -- lvl 38 23 1						-- TESTING
-Magician.EARTHQUAKE_ID 					= { 789, 788, 787, 786 } -- lvl 52 45 38 30				-- NO
-Magician.FIREBALL_ID 					= { 821, 820, 819, 818 } -- lvl 30 20 13 3 				-- DONE
-Magician.FIREBALL_EXPLOSION_ID 			= { 849, 848, 847 } -- lvl 46 34 18						-- DONE
-Magician.FREEZE_ID 						= { 838, 837, 836, 835, 834 } -- lvl 40 31 23 15 9		-- NO
-Magician.FRIGID_FOG_ID 					= { 842, 841, 840, 839 } -- lvl 42 34 27 21				-- NO
-Magician.HEALING_AURA_ID 				= { 903, 902, 901, 900, 899 } -- lvl 45 36 27 19 10		-- DONE
-Magician.HEALING_LIGHTHOUSE_ID 			= { 796, 795, 794, 793 } -- lvl 48 41 34 27				-- DONE
-Magician.LIGHTNING_CHAIN_ID 			= { 830, 829, 828, 827 } -- lvl 46 37 28 0				-- DONE
-Magician.LIGHTNING_ID 					= { 826, 825, 824, 823, 822 } -- lvl 46 37 29 21 14		-- DONE
-Magician.LIGHTNING_STORM_ID 			= { 833, 832, 831 } -- lvl 49 35 23						-- TESTING
-Magician.MAGIC_ARROW_ID 				= { 854, 853, 852, 851, 850 } -- lvl 43 39 26 10 1		-- DONE
-Magician.MAGIC_LIGHTHOUSE_ID 			= { 1622, 1621, 1620 } -- lvl 49 34 21					-- DONE
-Magician.MAGICAL_EVASION_ID 			= { 876, 875, 874, 873, 872 } -- lvl 40 31 20 11 1		-- TESTING
-Magician.MAGICAL_SHIELD_ID 				= { 871, 870, 869, 868 } -- lvl 40 29 20 11				-- DONE				
-Magician.MAGICAL_ABSORPTION_ID 			= { 867, 866, 865 } -- lvl 45 30 0						-- DONE
-Magician.METEOR_SHOWER_ID 				= { 792, 791, 790 } -- lvl 50 40 0						-- TESTING
-Magician.MULTIPLE_MAGIC_ARROWS_ID 		= { 855 } -- lvl 49										-- DONE
-Magician.PROTECTED_AREA_ID 				= { 864, 863, 862, 861, 860 } -- lvl 54 46 38 31 25		-- NO
-Magician.RESIDUAL_LIGHTNING_ID 			= { 859, 858, 857, 856 } -- lvl 40 33 26 19				-- DONE
-Magician.RESURRECTION_ID 				= { 892, 891, 890 } -- lvl 54 50 45						-- NO
-Magician.SAGES_MEMORY_ID 				= { 898 } -- lvl 20										-- NO
-Magician.SPEED_SPELL_ID 				= { 1122, 1121, 1120 } -- lvl 48 32 15					-- NO
-Magician.SPELLBOUND_HEART_ID 			= { 908, 907, 906, 905, 904 } -- lvl 55 47 38 29 20		-- DONE
-Magician.STAFF_ATTACK_ID 				= { 886, 885, 884, 883, 882, 881, 880, 879, 878, 877 } -- lvl 43 39 35 31 27 23 19 14 9 1 -- NO
-Magician.TELEPORT_ID 					= { 911, 910, 909 } -- lvl 51 38 13						-- TESTING
-Magician.ULTIMATE_BLIZZARD_ID 			= { 846 } -- lvl 52 									-- NO
+------------- Gui Settings -----------------------------------------------------------------------------------------------
+-- Fireball Options
+Magician.Gui.Fireball = true
+Magician.Gui.FireballExplosion = true
+-- Lightning Options
+Magician.Gui.LightningChain = true
+Magician.Gui.Lightning = true
+Magician.Gui.LightningStorm = true
+Magician.Gui.ResidualLightning = true
+-- Magic Arrow Options
+Magician.Gui.MagicArrow = true
+Magician.Gui.MultiArrow = true
+Magician.Gui.ConcentratedArrow = true
+-- Melee Options
+Magician.Gui.DaggerStab = true
+-- Health Options
+Magician.Gui.HealingAura = true
+Magician.Gui.LockHA = false
+Magician.Gui.HealingAuraHealthPercent = 75
+Magician.Gui.HealingAuraManaPercent = 60
+Magician.Gui.HealingLighthouse = true
+Magician.Gui.LockHL = false
+Magician.Gui.HealingLighthouseHealthPercent = 50
+Magician.Gui.HealingLighthouseManaPercent = 30
+-- Mana Options
+Magician.Gui.MagicAbsorb = true
+Magician.Gui.LockMA = false
+Magician.Gui.MagicAbsorbManaPercent = 50
+Magician.Gui.SpellboundHeart = true
+Magician.Gui.LockSB = false
+Magician.Gui.SpellboundHeartManaPercent = 80
+-- Defense Options
+Magician.Gui.MagicShield = true
+Magician.Gui.LockMS = false
+Magician.Gui.MagicShieldHealthPercent = 50
+Magician.Gui.MagicLighthouse = true
+Magician.Gui.LockML = false
+Magician.Gui.MagicLighthouseHealthPercent = 40
+-- Cooldown Options
+Magician.Gui.SagesMemory = true
+Magician.Gui.MeteorShower = true
+Magician.Gui.Blizzard = true
 
-------------- Testing Toggles --------------------------------------------------------------------------------------------
-Magician.USECOOLDOWNS = true
-Magician.USETELEPORT = false
-Magician.EARTHSRESPONSE = false
---------------------------------------------------------------------------------------------------------------------------
-
---blackspirit rage
-	-- BT_Party_Skill_Lightning_Bolt_Cast_Lv3
-	-- BT_Party_Skill_Lightning_Bolt_Att_Lv3
-	-- BT_Party_Skill_Lightning_Bolt_End
+-- NOT YET IMPLEMENTED
+-- Magician.Gui.EarthsResponse = true
+-- Magician.Gui.Earthquake = true
+-- Magician.Gui.Freeze = true
+-- Magician.Gui.FrigidFog = true
+-- Magician.Gui.MagicEvasion = true
+-- Magician.Gui.ProtectedArea = true
+-- Magician.Gui.SpeedSpell = true
+-- Magician.Gui.StaffAttck = true
+-- Magician.Gui.Teleport = true
 
 ------------- SetActionState Buttons -------------------------------------------------------------------------------------
-Magician.LMB 		= ACTION_FLAG_MAIN_ATTACK
-Magician.RMB 		= ACTION_FLAG_SECONDARY_ATTACK
-Magician.Shift 		= ACTION_FLAG_EVASION
-Magician.Space 		= ACTION_FLAG_JUMP
-Magician.Q 			= ACTION_FLAG_SPECIAL_ACTION_1
-Magician.E 			= ACTION_FLAG_SPECIAL_ACTION_2
-Magician.F 			= ACTION_FLAG_SPECIAL_ACTION_3
-Magician.W 			= ACTION_FLAG_MOVE_FORWARD
-Magician.S 			= ACTION_FLAG_MOVE_BACKWARD
-Magician.A 			= ACTION_FLAG_MOVE_LEFT
-Magician.D 			= ACTION_FLAG_MOVE_RIGHT
-Magician.Z 			= ACTION_FLAG_PARTNER_COMMAND_1
-Magician.X 			= ACTION_FLAG_PARTNER_COMMAND_2
-Magician.C 			= ACTION_FLAG_AWEKENED_GEAR
-Magician.V 			= ACTION_FLAG_EMERGENCY_ESCAPE
---------------------------------------------------------------------------------------------------------------------------
---Magician.USEDODGE = false
--- if Magician.USEDODGE and monsterPosition.Distance3DFromMe < monster.BodySize + 300 and selfPlayer.HealthPercent < 30 then
-	-- local rnd = math.random(1,3)
-	-- local direction = { self.A, self.S, self.D }
-	-- print("low hp try to dodge [TESTING]")
-	-- selfPlayer:SetActionState(self.Shift | direction[rnd], 100)
-	-- if string.match(selfPlayer.CurrentActionName, "BT_ROLL_") then
-	-- end
-	-- return
--- end
--- if selfPlayer.HealthPercent > 99 then
-	-- DodgeCount = 0
--- end
---------------------------------------------------------------------------------------------------------------------------
-setmetatable(Magician, { 
-	__call = function(cls, ...)
-		return cls.new(...)
-	end,
-})
-------------- Setup New Magician -----------------------------------------------------------------------------------------
+Magician.LMB        = ACTION_FLAG_MAIN_ATTACK
+Magician.RMB        = ACTION_FLAG_SECONDARY_ATTACK
+Magician.Shift      = ACTION_FLAG_EVASION
+Magician.Space      = ACTION_FLAG_JUMP
+Magician.Q          = ACTION_FLAG_SPECIAL_ACTION_1
+Magician.E          = ACTION_FLAG_SPECIAL_ACTION_2
+Magician.F          = ACTION_FLAG_SPECIAL_ACTION_3
+Magician.W          = ACTION_FLAG_MOVE_FORWARD
+Magician.S          = ACTION_FLAG_MOVE_BACKWARD
+Magician.A          = ACTION_FLAG_MOVE_LEFT
+Magician.D          = ACTION_FLAG_MOVE_RIGHT
+Magician.Z          = ACTION_FLAG_PARTNER_COMMAND_1
+Magician.X          = ACTION_FLAG_PARTNER_COMMAND_2
+Magician.C          = ACTION_FLAG_AWEKENED_GEAR
+Magician.V          = ACTION_FLAG_EMERGENCY_ESCAPE
 
-function Magician.new()
-	local self = setmetatable({}, Magician)
-	self.manaabsorb = false
-	local Magical_Absorption = SkillsHelper.GetKnownSkillId(Magician.MAGICAL_ABSORPTION_ID)
-	if Magical_Absorption ~= 0 then
-		self.manaabsorb = true
-	else
-		self.manaabsorb = false
-	end
-		
-	--self.residual_timer = PyxTimer:New(1)
-	
-	return self
-end
 ------------- functions --------------------------------------------------------------------------------------------------
-
-function Magician:SkillReady(Id)
-	local selfPlayer = GetSelfPlayer()
-	if selfPlayer and Id ~= 0 and SkillsHelper.IsSkillUsable(Id) and selfPlayer:IsSkillOnCooldown(Id) == false then
-		return true
-	end
-	return false
-end
-
-function Magician:MonsterCount()
-	local monsters = GetMonsters()
-	local count = 0
-	for k, monsters in pairs(monsters) do
-		if monsters.IsAggro then
-			count = count + 1
-		end
-	end
-	return count
-end
-
 function Magician:FixFire()
-	local selfPlayer = GetSelfPlayer()
-	if selfPlayer:CheckCurrentAction("BT_Skill_Fireball_Ing") then
-		print("Fireball stuck...firing")
-		selfPlayer:DoActionAtPosition("BT_Skill_Fireball_Shot", selfPlayer.Position, 500)
-		return
-	end
-end
-------------- Roaming ----------------------------------------------------------------------------------------------------
+    local selfPlayer = GetSelfPlayer()
+    if selfPlayer:CheckCurrentAction("BT_Skill_Fireball_Ing") then
+        print("Fireball stuck...firing")
+        selfPlayer:DoActionAtPosition("BT_Skill_Fireball_Shot", self.player.Position, 500)
+        return
+    end
 
+end
+
+------------- Attack Rotation --------------------------------------------------------------------------------------------
+function Magician:Attack(monster)
+    local player = GetSelfPlayer()
+    if not monster or not player then
+        self.combos = nil
+        return
+    end
+
+    if isPull and player.IsActionPending then
+        return
+    end
+
+    local distance = monster.Position.Distance2DFromMe - monster.BodySize - player.BodySize
+
+    if distance > 1200 or not monster.IsLineOfSight then
+        Navigator.MoveTo(monster.Position)
+        self.combos = nil
+        return
+    end
+
+    if player.CurrentActionName == "BT_WAIT_HOLD_ON" then
+        print("Stunned")
+        self.combos = nil
+        return
+    end
+
+    EdanScout.Update()
+    player:FacePosition(monster.Position)
+
+    -- Combo routine variables
+    self.distance = distance
+    self.player = player
+    self.monster = monster
+    self.ispull = isPull
+
+    -- Execute combos
+    if self.combos == nil or coroutine.status(self.combos) == 'dead' then
+        self.combos = coroutine.create(Magician.Combos)
+    end
+
+    local result,err = coroutine.resume(self.combos, self)
+    if err then
+        print("Combo error: "..err)
+    end
+
+end
+
+------------- Combos -----------------------------------------------------------------------------------------------------
+function Magician:Combos()
+    if self.player.IsActionPending then
+        return
+    end
+
+    Navigator.Stop()
+
+    -- Use Healing Aura
+    if Magician.Gui.HealingAura and (self.player.HealthPercent <= Magician.Gui.HealingAuraHealthPercent or self.player.ManaPercent < Magician.Gui.HealingAuraManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_AURA) then
+        print( "Casting Healing Aura" )
+        EdanCombo.PressAndWait( Magician.E, self.player.CrosshairPosition )
+        return
+    end
+
+    -- Use Healing Lighthouse
+    if Magician.Gui.HealingLighthouse and (self.player.HealthPercent <= Magician.Gui.HealingLighthouseHealthPercent or self.player.ManaPercent <= HealingLighthouseManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_LIGHTHOUSE) then
+        print("Casting Healing Lighthouse")
+        EdanCombo.PressAndWait( Magician.Shift | Magician.E )
+        return
+    end
+
+    -- Use Magical Absoption
+    if Magician.Gui.MagicAbsorb and ((EdanScout.MonstersInMeleeRange == 0 and self.player.ManaPercent < Magician.Gui.MagicAbsorbManaPercent) or self.player.ManaPercent < 10) and EdanSkills.SkillUsableCooldown(WITCH_MANA_ABSORPTION) then
+        print("Casting Magical Absorption")
+        EdanCombo.PressAndWait( Magician.Shift|Magician.LMB, self.monster.Position )
+        EdanCombo.Wait(1000)
+        return
+    end
+
+    -- Use Spellbound Heart (Mana Orb)
+    if Magician.Gui.SpellboundHeart and self.player.ManaPercent <= Magician.Gui.SpellboundHeartManaPercent and EdanSkills.SkillUsableCooldown(WITCH_SPELLBOUND_HEART) then
+        print("Casting Mana Orb")
+        EdanCombo.UseSkillAtPosition( WITCH_SPELLBOUND_HEART, self.player.Position, 500 )
+        return
+    end
+
+    -- Use Magic Shield
+    if Magician.Gui.MagicShield and ((self.player.HealthPercent <= 70 and EdanScout.MonstersInMeleeRange >= 2) or self.player.HealthPercent <= Magician.Gui.MagicShieldHealthPercent) and self.player.ManaPercent >= 30 and EdanSkills.SkillUsableCooldown(WITCH_MAGICAL_SHIELD) and not self.player:HasBuffById(617) then
+        print("Casting Magical Shield")
+        EdanCombo.PressAndWait( Magician.Q, self.player.CrosshairPosition )
+        return
+    end
+
+    -- Use Magic Lighthouse
+    if EdanScout.MonstersInMeleeRange > 2 and self.player.HealthPercent <= Magician.Gui.MagicLighthouseHealthPercent and EdanSkills.SkillUsableCooldown(WITCH_MAGIC_LIGHTHOUSE) then
+        print("Casting Taunt Orb")
+        EdanCombo.UseSkillAtPosition( WITCH_MAGIC_LIGHTHOUSE, self.monster.Position, 500 )
+        return
+    end
+
+    -- Use Sages Wisdom
+    if Magician.Gui.SagesMemory and #EdanScout.Monsters >= 3 and EdanSkills.SkillUsableCooldown(WITCH_SAGES_MEMORY)  and not self.player:HasBuffById(110) and (EdanSkills.SkillUsableCooldown(WITCH_METEOR_SHOWER) or (EdanSkills.SkillUsableCooldown(WITCH_BLIZZARD) or EdanSkills.SkillUsableCooldown(WITCH_ULTIMATE_BLIZZARD))) then
+        print("Casting Sages Wisdom")
+        EdanCombo.UseSkill( WITCH_SAGES_MEMORY )
+        EdanCombo.WaitUntilDone()
+        EdanCombo.Wait(300)
+        return
+    end
+
+    -- Use Meteor Shower
+    if Magician.Gui.MeteorShower and self.player:HasBuffById(110) and EdanSkills.SkillUsableCooldown(WITCH_METEOR_SHOWER) then
+        print("Casting Meteor Shower")
+        EdanCombo.SetActionStateAtPosition( Magician.S | Magician.LMB | Magician.RMB, self.monster.Position, 4000 )
+        return
+    end
+
+    -- Use Blizzard
+    if Magician.Gui.Blizzard and self.player:HasBuffById(110) and (EdanSkills.SkillUsableCooldown(WITCH_BLIZZARD) or EdanSkills.SkillUsableCooldown(WITCH_ULTIMATE_BLIZZARD)) then
+        print("Casting Blizzard")
+        EdanCombo.SetActionStateAtPosition( Magician.Shift | Magician.LMB | Magician.RMB, self.monster.Position, 4000 )
+        return
+    end
+
+    -- Use Lightning + Residual
+    if Magician.Gui.Lightning and EdanSkills.SkillUsableCooldown(WITCH_LIGHTNING) and (self.player.BlackRage < 100 or #EdanScout.Monsters >= 3) then
+        if Magician.Gui.ResidualLightning and EdanSkills.SkillUsableCooldown(WITCH_RESIDUAL_LIGHTNING) then
+            print("Casting Lightning with Residual to follow")
+            EdanCombo.SetActionStateAtPosition( Magician.S | Magician.F, self.monster.Position, 1000 )
+            print("Casting Residual Lightning after Lightning")
+            EdanCombo.PressAndWait( Magician.RMB, self.monster.Position, 1000 )
+            EdanCombo.Wait(1000)
+        else
+            print("Casting Lightning")
+            EdanCombo.PressAndWait( Magician.S | Magician.F, self.player.CrosshairPosition, 500 )
+            EdanCombo.Wait(500)
+        end
+        return
+    end
+
+    -- Use Fireball + Explosion
+    if Magician.Gui.Fireball and EdanSkills.SkillUsableCooldown(WITCH_FIREBALL) and self.player.ManaPercent > 10 then
+        Navigator.Stop()
+        print("Casting Fireball")
+        EdanCombo.SetActionState( Magician.S | Magician.LMB, 500 )
+        if EdanScout.MonstersInMeleeRange == 0 then
+            EdanCombo.WaitUntilNotDoing("^BT_Skill_Fireball_Cast_")
+        end
+        EdanCombo.PressAndWait(Magician.RMB, self.monster.Position)
+        if Magician.Gui.FireballExplosion and self.player:HasBuffById(1001) and EdanSkills.SkillUsableCooldown(WITCH_FIREBALL_EXPLOSION) then
+            print("Casting Fireball Explosion")
+            EdanCombo.SetActionStateAtPosition( Magician.RMB, self.monster.Position, 1000 )
+        end
+        return
+    end
+
+    -- Use Multiple Magic Arrows
+    if Magician.Gui.MultiArrow and EdanSkills.SkillUsableCooldown(WITCH_MULTIPLE_MAGIC_ARROWS) then
+        print("Casting Multiple Magic Arrows")
+        EdanCombo.UseSkillAtPosition(WITCH_MULTIPLE_MAGIC_ARROWS, self.monster.Position, 500)
+        return
+    end
+
+    -- Use Lightning Chain + Storm
+    if Magician.Gui.LightningChain and self.player.ManaPercent > 30 and EdanSkills.SkillUsable(WITCH_LIGHTNING_CHAIN) then
+        if Magician.Gui.LightningStorm and self.player:HasBuffById(1002) and EdanSkills.SkillUsable(WITCH_LIGHTNING_STORM) then
+            print("Casting Lightning Chain with Storm to follow")
+            EdanCombo.SetActionStateAtPosition( Magician.Shift | Magician.RMB, self.monster.Position, 1500 )
+        else
+            print("Casting Lightning")
+            EdanCombo.HoldUntilDone( Magician.Shift | Magician.RMB, self.monster.Position )
+        end
+        return
+    end
+
+    -- Use Concentrated Magical Arrow
+    if Magician.Gui.ConcentratedArrow and EdanSkills.SkillUsable(WITCH_CONCENTRATED_MAGIC_ARROW) and self.player.ManaPercent > 15 then
+        print("Casting Concentrated Magic Arrow")
+        EdanCombo.SetActionStateAtPosition( Magician.LMB | Magician.RMB, self.monster.Position, 1000 )
+        return
+    end
+
+    -- Use Magic Arrow
+    if Magician.Gui.MagicArrow and EdanSkills.SkillUsable(WITCH_MAGIC_ARROW) then
+        print("Casting Magic Arrow")
+        EdanCombo.SetActionStateAtPosition( Magician.RMB, self.monster.Position )
+        return
+    end
+
+    -- Use Dagger Stab
+    if Magician.Gui.DaggerStab and EdanScout.MonstersInMeleeRange > 0 and EdanSkills.SkillUsableCooldown(WITCH_DAGGER_STAB) then
+        print("Using Dagger Stab")
+        EdanCombo.SetActionStateAtPosition( Magician.F, self.monster.Position, 200 )
+        EdanCombo.Wait(500)
+        return
+    end
+
+end
+
+------------- Roaming ----------------------------------------------------------------------------------------------------
 function Magician:Roaming()
     local selfPlayer = GetSelfPlayer()
     if not selfPlayer then return end
-	local playerPosition = selfPlayer.Position
-	
+
     self:FixFire()
-	
-    local Healing_Aura = SkillsHelper.GetKnownSkillId(Magician.HEALING_AURA_ID)
-    if selfPlayer.HealthPercent <= 70 and self:SkillReady(Healing_Aura) then
-		print("Health Low out of comabt using Healing Aura")
-    	selfPlayer:SetActionState(self.E)
-    	return
+    self.combos = nil
+
+    if selfPlayer.IsActionPending then
+        return
     end
-	
-	--speed spell buff ids (lvl 3 22548 22688 22828) (lvl 2 22541 22681 22821) (lvl 1 22534 22674 22814)
-	-- local Speed_Spell = SkillsHelper.GetKnownSkillId(Magician.SPEED_SPELL_ID)
-	-- if self:SkillReady(Speed_Spell) and selfPlayer.ManaPercent > 15 and not (selfPlayer:HasBuffById(22548) or selfPlayer:HasBuffById(22541) or selfPlayer:HasBuffById(22534)) then
-		-- print("Using Speed Spell - Sweet Sweet Buffs")
-		-- selfPlayer:UseSkillAtPosition(Speed_Spell, playerPosition, 100)
-		-- return
-	-- end		
+
+    if selfPlayer.HealthPercent <= Magician.Gui.HealingAuraHealthPercent and EdanSkills.SkillUsableCooldown(WITCH_HEALING_AURA) then
+        print("Health Low out of comabt using Healing Aura")
+        selfPlayer:SetActionState( Magician.E )
+        return
+    end
+
 end
-------------- Attack Rotation --------------------------------------------------------------------------------------------
+------------- User Interface ---------------------------------------------------------------------------------------------
+function Magician:UserInterface()
+  if Magician.Gui.ShowGui then
+    _, Magician.Gui.ShowGui = ImGui.Begin("Magician - Options", true, ImVec2(150, 50), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
 
-function Magician:Attack(monster)
-	local selfPlayer = GetSelfPlayer()
-	if monster and selfPlayer then
-		local monsterPosition = monster.Position
-		local playerPosition = selfPlayer.Position
-		
-		self:FixFire()
-		if string.match(selfPlayer.CurrentActionName, "BT_Skill_Meteor_Ing") or string.match(selfPlayer.CurrentActionName, "BT_Skill_Blizzard_CastIng") or string.match(selfPlayer.CurrentActionName, "BT_Skill_Magic_Blaster_Ing") then -- or string.match(selfPlayer.CurrentActionName, "BT_Skill_Fireball_Ing")
-			selfPlayer:SetActionState(self.LMB, 500)
-		end
-		
-		if (monsterPosition.Distance3DFromMe > monster.BodySize + 1200) or not monster.IsLineOfSight then
-			Navigator.MoveTo(monsterPosition)
-		else
-			Navigator.Stop()
-			if not selfPlayer.IsActionPending then
-				-- Pre Mana Drain Rotation for lower level chain etc etc
-				if not self.manaabsorb then
+    if ImGui.CollapsingHeader( "Spell Options","id_spell_options" ,true ,true) then
 
-					local Healing_Aura = SkillsHelper.GetKnownSkillId(Magician.HEALING_AURA_ID)
-					if (selfPlayer.HealthPercent <= 75 or selfPlayer.ManaPercent < 60) and self:SkillReady(Healing_Aura) and not string.match(selfPlayer.CurrentActionName, "Lightning") and not string.match(selfPlayer.CurrentActionName, "Mana_Drain") and not string.match(selfPlayer.CurrentActionName, "Fireball") then
-						print("Health is under 75% Using Healing Aura")
-						selfPlayer:SetActionState(self.E)
-						return
-					end
-					
-					local Magical_Shield = SkillsHelper.GetKnownSkillId(Magician.MAGICAL_SHIELD_ID)
-					if ((selfPlayer.HealthPercent <= 70 and Magician:MonsterCount() >= 2) or selfPlayer.HealthPercent <= 50) and selfPlayer.ManaPercent >= 30 and self:SkillReady(Magical_Shield) and not selfPlayer:HasBuffById(617) then
-						print("Health low, mobs around using defensive Magical Shield")
-						selfPlayer:SetActionStateAtPosition(self.Q, monsterPosition, 100)
-						return
-					end
-				
-					local Lightning_Chain = SkillsHelper.GetKnownSkillId(Magician.LIGHTNING_CHAIN_ID)
-					if self:SkillReady(Lightning_Chain) and monster.IsLineOfSight and selfPlayer.ManaPercent >= 50 and not self:SkillReady(Fireball) and not self:SkillReady(Lightning) and (Magician.MonsterCount() > 1 or monster.HealthPercent > 95) then
-						print("USING CHAIN MOBS > 3")
-						selfPlayer:SetActionStateAtPosition(self.Shift | self.RMB, monsterPosition, 3500)
-						return
-					end
-					
-					local Fireball = SkillsHelper.GetKnownSkillId(Magician.FIREBALL_ID)
-					if self:SkillReady(Fireball) and selfPlayer.ManaPercent > 10  and monster.HealthPercent > 10 and not string.match(selfPlayer.CurrentActionName, "Lightning") and not string.match(selfPlayer.CurrentActionName, "Mana_Drain") then
-						if monsterPosition.Distance3DFromMe > monster.BodySize + 900 then
-							Navigator.Stop()
-							print("Casting Fireball")
-							selfPlayer:SetActionStateAtPosition(self.S | self.LMB, monsterPosition, 1500)
-						else
-							Navigator.Stop()
-							selfPlayer:SetActionStateAtPosition(self.S | self.LMB, monsterPosition, 2000)
-							if string.match(selfPlayer.CurrentActionName, "Fireball_Cast_") then
-								print("Mob close range: Casting quick fireball")
-								selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 2000)
-							end
-						end
-						return
-					end
-					
-					local Magic_Arrow = SkillsHelper.GetKnownSkillId(Magician.MAGIC_ARROW_ID)
-					if self:SkillReady(Magic_Arrow) then
-						print("Using Magic Arrow")
-						selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 300)
-						return
-					end
-					
-				else
-				
-					local Healing_Aura = SkillsHelper.GetKnownSkillId(Magician.HEALING_AURA_ID)
-					if (selfPlayer.HealthPercent <= 75 or selfPlayer.ManaPercent < 60) and self:SkillReady(Healing_Aura) then
-						print("Health is under 75% Using Healing Aura")
-						selfPlayer:SetActionState(self.E)
-						return
-					end
+        if ImGui.TreeNode("Fireball Options") then
+            _, Magician.Gui.Fireball = ImGui.Checkbox("Use Fireball##id_gui_fireball", Magician.Gui.Fireball)
+            _, Magician.Gui.FireballExplosion = ImGui.Checkbox("Use Fireball Explosion##id_gui_fireballexplosion", Magician.Gui.FireballExplosion)
+            ImGui.TreePop()
+        end
 
-					local Healing_Lighthouse = SkillsHelper.GetKnownSkillId(Magician.HEALING_LIGHTHOUSE_ID)  
-					if (selfPlayer.HealthPercent <= 50 or selfPlayer.ManaPercent <= 30) and self:SkillReady(Healing_Lighthouse) and selfPlayer.ManaPercent >= 10 then
-						print("Health is under 50% or Mana is under 30% Using Healing Lighthouse")
-						selfPlayer:SetActionState(self.Shift | self.E, 3000)
-						return
-					end
+        if ImGui.TreeNode("Lightning Options") then
+            _, Magician.Gui.Lightning = ImGui.Checkbox("Use Lightning##id_gui_lightning", Magician.Gui.Lightning)
+            _, Magician.Gui.ResidualLightning = ImGui.Checkbox("Use Residual Lightning##id_gui_residuallightning", Magician.Gui.ResidualLightning)
+            _, Magician.Gui.LightningChain = ImGui.Checkbox("Use Chain Lightning##id_gui_lightningchain", Magician.Gui.LightningChain)
+            _, Magician.Gui.LightningStorm = ImGui.Checkbox("Use Lightning Storm##id_gui_lightningstorm", Magician.Gui.LightningStorm)
+            ImGui.TreePop()
+        end
 
-					local Magical_Absorption = SkillsHelper.GetKnownSkillId(Magician.MAGICAL_ABSORPTION_ID)
-					if selfPlayer.ManaPercent <= 55 and self:SkillReady(Magical_Absorption) and not string.match(selfPlayer.CurrentActionName, "Lightning") and not string.match(selfPlayer.CurrentActionName, "Fireball") then
-						Navigator.Stop()
-						print("Mana is under 55% Using Magical Absorption")
-						selfPlayer:SetActionStateAtPosition(self.Shift | self.LMB, monsterPosition, 4000)
-						return
-					end
-					
-					local Spellbound_Heart = SkillsHelper.GetKnownSkillId(Magician.SPELLBOUND_HEART_ID)
-					if selfPlayer.ManaPercent <= 80 and self:SkillReady(Spellbound_Heart) then
-						print("Mana Orb Going out")
-						selfPlayer:UseSkillAtPosition(Spellbound_Heart, playerPosition, 500)
-						return
-					end
+        if ImGui.TreeNode("Magic Arrow Options") then
+            _, Magician.Gui.MagicArrow = ImGui.Checkbox("Use Magic Arrow##id_gui_magicarrow", Magician.Gui.MagicArrow)
+            _, Magician.Gui.MultiArrow = ImGui.Checkbox("Use Multiple Magic Arrow##id_gui_multiarrow", Magician.Gui.MultiArrow)
+            _, Magician.Gui.ConcentratedArrow = ImGui.Checkbox("Use Concentrated Magic Arrow##id_gui_concentratedarrow", Magician.Gui.ConcentratedArrow)
+            ImGui.TreePop()
+        end
 
-					local Magical_Shield = SkillsHelper.GetKnownSkillId(Magician.MAGICAL_SHIELD_ID)
-					if ((selfPlayer.HealthPercent <= 70 and Magician:MonsterCount() >= 2) or selfPlayer.HealthPercent <= 50) and selfPlayer.ManaPercent >= 30 and self:SkillReady(Magical_Shield) and not selfPlayer:HasBuffById(617) then
-						print("Health low, mobs around using defensive Magical Shield")
-						selfPlayer:SetActionStateAtPosition(self.Q, monsterPosition, 100)
-						return
-					end
-					
-					local Magic_Lighthouse = SkillsHelper.GetKnownSkillId(Magician.MAGIC_LIGHTHOUSE_ID)
-					if Magician.MonsterCount() > 2 and selfPlayer.HealthPercent <= 40 and self:SkillReady(Magic_Lighthouse) then
-						print("Using Taunt Orb")
-						selfPlayer:UseSkillAtPosition(Magic_Lighthouse, monsterPosition, 500)
-						return
-					end			
-					
-					local Teleport = SkillsHelper.GetKnownSkillId(Magician.TELEPORT_ID)
-					if Magician.USETELEPORT and selfPlayer.HealthPercent < 40 and monsterPosition.Distance3DFromMe < monster.BodySize + 400 and self:SkillReady(Teleport) and not (self:SkillReady(Healing_Aura) or self:SkillReady(Healing_Lighthouse)) then
-						print("[TESTING] Health under 40% and mobs close using Teleport [TEST]")
-						selfPlayer:SetActionState(self.Shift | self.Space, 1500)
-						return
-					end
-					
-					local Sage_Memory = SkillsHelper.GetKnownSkillId(Magician.SAGES_MEMORY_ID) -- buff 110
-					local Blizzard = SkillsHelper.GetKnownSkillId(Magician.BLIZZARD_ID)
-					local Meteor_Shower = SkillsHelper.GetKnownSkillId(Magician.METEOR_SHOWER_ID)
-					if self:SkillReady(Sage_Memory) and not selfPlayer:HasBuffById(110) and (self:SkillReady(Blizzard) or self:SkillReady(Meteor_Shower)) and Magician.MonsterCount() >= 3 then
-						print("Casting Sage Memory [Instant Cast Cooldowns")
-						selfPlayer:UseSkillAtPosition(Sage_Memory, monsterPosition, 1000)
-						return
-					end
-					
-					if Magician.USECOOLDOWNS and selfPlayer.BlackRage < 100 and self:SkillReady(Blizzard) and selfPlayer.ManaPercent >= 60 and selfPlayer:HasBuffById(110) and not string.match(selfPlayer.CurrentActionName, "BT_Skill_Meteor")  and Magician.MonsterCount() >= 3 then
-						print("Casting Blizzard [TEST]")
-						selfPlayer:SetActionStateAtPosition(self.Shift | self.LMB | self.RMB, monsterPosition, 4000)
-						return
-					end
-					
-					if Magician.USECOOLDOWNS and selfPlayer.BlackRage < 100 and selfPlayer.ManaPercent >= 50 and selfPlayer:HasBuffById(110) and self:SkillReady(Meteor_Shower) and not string.match(selfPlayer.CurrentActionName, "BT_Skill_Blizzard") and Magician.MonsterCount() >= 3 then
-						print("Casting Meteor [TEST]")
-						selfPlayer:SetActionStateAtPosition(self.S | self.LMB | self.RMB, monsterPosition, 4000)
-						return
-					end
-					
-					local Lightning = SkillsHelper.GetKnownSkillId(Magician.LIGHTNING_ID)
-					if self:SkillReady(Lightning) and selfPlayer.ManaPercent > 10 and not string.match(selfPlayer.CurrentActionName, "Fireball") and not string.match(selfPlayer.CurrentActionName, "Mana_Drain") and not string.match(selfPlayer.CurrentActionName, "Chain_Lightning") then --and (selfPlayer.BlackRage < 100 or Magician.MonsterCount() >= 3)
-						print("Casting Lightning")
-						selfPlayer:SetActionStateAtPosition(self.S | self.F, monsterPosition, 500)
-						return
-					end
-					
-					local Residual_Lightning = SkillsHelper.GetKnownSkillId(Magician.RESIDUAL_LIGHTNING_ID)
-					if self:SkillReady(Residual_Lightning) and string.match(selfPlayer.CurrentActionName, "Lightning") and selfPlayer.ManaPercent >= 10 then
-						print("Lightning has been cast: Using Residual Lightning")
-						selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 2000)
-						return
-					end
-					
-					local Fireball = SkillsHelper.GetKnownSkillId(Magician.FIREBALL_ID)
-					if self:SkillReady(Fireball) and selfPlayer.ManaPercent > 10 and not string.match(selfPlayer.CurrentActionName, "Lightning") and not string.match(selfPlayer.CurrentActionName, "Mana_Drain") then
-						if monsterPosition.Distance3DFromMe > monster.BodySize + 900 then
-							Navigator.Stop()
-							print("Casting Fireball")
-							selfPlayer:SetActionStateAtPosition(self.S | self.LMB, monsterPosition, 1500)
-						else
-							Navigator.Stop()
-							selfPlayer:SetActionStateAtPosition(self.S | self.LMB, monsterPosition, 2000)
-							if string.match(selfPlayer.CurrentActionName, "Fireball_Cast_") then
-								print("Mob close range: Casting quick fireball")
-								selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 2000)
-							end
-						end
-						return
-					end
+        if ImGui.TreeNode("Melee Options") then
+            _, Magician.Gui.DaggerStab = ImGui.Checkbox("Use Dagger Stab##id_gui_daggerstab", Magician.Gui.DaggerStab)
+            ImGui.TreePop()
+        end
 
-					local Fireball_Explosion = SkillsHelper.GetKnownSkillId(Magician.FIREBALL_EXPLOSION_ID)
-					if selfPlayer:HasBuffById(1001) and self:SkillReady(Fireball_Explosion) and string.match(selfPlayer.CurrentActionName, "Fireball") then
-						print("Casting Fireball Explosion following Fireball")
-						selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 1000)
-						return
-					end
-					
-					local Multiple_Magic_Arrow = SkillsHelper.GetKnownSkillId(Magician.MULTIPLE_MAGIC_ARROWS_ID)
-					if self:SkillReady(Multiple_Magic_Arrow) and not string.match(selfPlayer.CurrentActionName, "Lightning") and not string.match(selfPlayer.CurrentActionName, "Fireball") and not string.match(selfPlayer.CurrentActionName, "Mana_Drain") then
-						print("Firing Multiple Magic Arrows")
-						selfPlayer:UseSkillAtPosition(Multiple_Magic_Arrow, monsterPosition, 500)
-						return
-					end
-					
-					local Lightning_Storm = SkillsHelper.GetKnownSkillId(Magician.LIGHTNING_STORM_ID)
-					if selfPlayer:HasBuffById(1002) and self:SkillReady(Lightning_Storm) and selfPlayer.ManaPercent > 10 then
-						print("Using Lightning Storm after Chain Lightning")
-						selfPlayer:UseSkillAtPosition(Lightning_Storm, monsterPosition, 1000)
-						----selfPlayer:SetActionStateAtPosition(self.LMB | self.RMB, monsterPosition, 1500)
-						return
-					end
-					
-					local Lightning_Chain = SkillsHelper.GetKnownSkillId(Magician.LIGHTNING_CHAIN_ID)
-					if self:SkillReady(Lightning_Chain) and selfPlayer.ManaPercent >= 30 and not self:SkillReady(Fireball) and not self:SkillReady(Lightning) then
-						print("Using Chain Lightning")
-						selfPlayer:SetActionStateAtPosition(self.Shift | self.RMB, monsterPosition, 3500)
-						return
-					end
-					
-					local Earths_Response = SkillsHelper.GetKnownSkillId(Magician.EARTHS_RESPONSE_ID)
-					if Magician.EARTHSRESPONSE and self:SkillReady(Earths_Response) and Magician.MonsterCount() > 2 and monsterPosition.Distance3DFromMe < monster.BodySize + 300 and selfPlayer.HealthPercent < 40 then
-						local rnd = math.random(1,2)
-						local direction = { self.A, self.D }
-						print("Dodge + Earths Response [TESTING]")
-						selfPlayer:SetActionStateAtPosition(direction[rnd] | self.LMB, monsterPosition, 500)
-						return
-					end
-					
-					local Concentrated_Magic_Arrow = SkillsHelper.GetKnownSkillId(Magician.CONCENTRATED_MAGIC_ARROW_ID)
-					if self:SkillReady(Concentrated_Magic_Arrow) and selfPlayer.ManaPercent > 15 then
-						print("Concentrated Magic Arrow Firing")
-						selfPlayer:SetActionStateAtPosition(self.LMB | self.RMB, monsterPosition, 1000)
-						return
-					end
-					
-					local Magic_Arrow = SkillsHelper.GetKnownSkillId(Magician.MAGIC_ARROW_ID)
-					if self:SkillReady(Magic_Arrow) then
-						selfPlayer:SetActionStateAtPosition(self.RMB, monsterPosition, 100)
-						print("Using Magic Arrow")
-						return
-					end
-					
-					local Dagger_Stab = SkillsHelper.GetKnownSkillId(Magician.DAGGER_STAB_ID)
-					if self:SkillReady(Dagger_Stab) and monsterPosition.Distance3DFromMe < monster.BodySize + 150 then
-						print("Dagger Stab mob in melee")
-						selfPlayer:SetActionStateAtPosition(self.F, monsterPosition)
-						return
-					end
-				end
-			end
-		end
-	end
+    end
+
+    if ImGui.CollapsingHeader( "Recovery + Defense Options","id_defensive_options" ,true ,true) then
+
+        if ImGui.TreeNode("Health Recovery Options") then
+
+            _, Magician.Gui.HealingAura = ImGui.Checkbox("Use Healing Aura##id_gui_healingaura", Magician.Gui.HealingAura)
+            ImGui.SameLine()
+            _, Magician.Gui.LockHA = ImGui.Checkbox("Lock Values##id_gui_lockhealingaura", Magician.Gui.LockHA)
+            if Magician.Gui.HealingAura and not Magician.Gui.LockHA then
+                _, Magician.Gui.HealingAuraHealthPercent = ImGui.SliderInt("HP%##id_gui_healingaura_hp", Magician.Gui.HealingAuraHealthPercent, 1, 95)
+                _, Magician.Gui.HealingAuraManaPercent = ImGui.SliderInt("MP%##id_gui_healingaura_mp", Magician.Gui.HealingAuraManaPercent, 1, 95)
+            end
+
+            _, Magician.Gui.HealingLighthouse = ImGui.Checkbox("Use Healing Lighthouse##id_gui_healinglighthouse", Magician.Gui.HealingLighthouse)
+            ImGui.SameLine()
+            _, Magician.Gui.LockHL = ImGui.Checkbox("Lock Values##id_gui_lockhealinglighthouse", Magician.Gui.LockHL)
+            if Magician.Gui.HealingLighthouse and not Magician.Gui.LockHL then
+                _, Magician.Gui.HealingLighthouseHealthPercent = ImGui.SliderInt("HP%##id_gui_healinglighthouse_hp", Magician.Gui.HealingLighthouseHealthPercent, 1, 95)
+                _, Magician.Gui.HealingLighthouseManaPercent = ImGui.SliderInt("MP%##id_gui_healinglighthouse_mp", Magician.Gui.HealingLighthouseManaPercent, 1, 95)
+            end
+
+            ImGui.TreePop()
+        end
+
+        if ImGui.TreeNode("Mana Recovery Options") then
+
+            _, Magician.Gui.MagicAbsorb = ImGui.Checkbox("Use Mana Drain##id_gui_manadrain", Magician.Gui.MagicAbsorb)
+            ImGui.SameLine()
+            _, Magician.Gui.LockMA = ImGui.Checkbox("Lock Value##id_gui_lockmanadrain", Magician.Gui.LockMA)
+            if Magician.Gui.MagicAbsorb and not Magician.Gui.LockMA then
+                _, Magician.Gui.MagicAbsorbManaPercent = ImGui.SliderInt("MP%##id_gui_manadrain_mp", Magician.Gui.MagicAbsorbManaPercent, 1, 95)
+            end
+
+            _, Magician.Gui.SpellboundHeart = ImGui.Checkbox("Use Spellbound Heart##id_gui_spellboundheart", Magician.Gui.SpellboundHeart)
+            ImGui.SameLine()
+            _, Magician.Gui.LockSB = ImGui.Checkbox("Lock Value##id_gui_lockspellboundheart", Magician.Gui.LockSB)
+            if Magician.Gui.SpellboundHeart and not Magician.Gui.LockSB then
+                _, Magician.Gui.SpellboundHeartManaPercent = ImGui.SliderInt("MP%##id_gui_spellboundheart_mp", Magician.Gui.SpellboundHeartManaPercent, 1, 95)
+            end
+
+            ImGui.TreePop()
+        end
+
+        if ImGui.TreeNode("Defense Options") then
+
+            _, Magician.Gui.MagicShield = ImGui.Checkbox("Use Magic Shield##id_gui_magicshield", Magician.Gui.MagicShield)
+            ImGui.SameLine()
+            _, Magician.Gui.LockMS = ImGui.Checkbox("Lock Value##id_gui_lockmagicshield", Magician.Gui.LockMS)
+            if Magician.Gui.MagicShield and not Magician.Gui.LockMS then
+                _, Magician.Gui.MagicShieldHealthPercent = ImGui.SliderInt("HP%##id_gui_magicshield_hp", Magician.Gui.MagicShieldHealthPercent, 1, 95)
+            end
+
+            _, Magician.Gui.MagicLighthouse = ImGui.Checkbox("Use Magic Lighthouse##id_gui_magiclighthouse", Magician.Gui.MagicLighthouse)
+            ImGui.SameLine()
+            _, Magician.Gui.LockML = ImGui.Checkbox("Lock Value##id_gui_lockmagiclighthouse", Magician.Gui.LockML)
+            if Magician.Gui.MagicLighthouse and not Magician.Gui.LockML then
+                _, Magician.Gui.MagicLighthouseHealthPercent = ImGui.SliderInt("HP%##id_gui_magiclighthouse_hp", Magician.Gui.MagicLighthouseHealthPercent, 1, 95)
+            end
+
+            ImGui.TreePop()
+        end
+
+    end
+
+    if ImGui.CollapsingHeader( "Cooldown Options","id_cd_options" ,true ,true) then
+
+        _, Magician.Gui.SagesMemory = ImGui.Checkbox("Use Sages Memory##id_gui_sagememory", Magician.Gui.SagesMemory)
+        if Magician.Gui.SagesMemory then
+            _, Magician.Gui.Blizzard = ImGui.Checkbox("Use Blizzard##id_gui_blizzard", Magician.Gui.Blizzard)
+            _, Magician.Gui.MeteorShower = ImGui.Checkbox("Use Meteor Shower##id_gui_meteorshower", Magician.Gui.MeteorShower)
+        end
+
+    end
+    ImGui.End()
+
+    -- NOT YET IMPLEMENTED
+    -- _, Magician.Gui.MagicEvasion = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.StaffAttck = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.Teleport = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.Freeze = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.FrigidFog = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.EarthsResponse = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.Earthquake = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.ProtectedArea = ImGui.Checkbox("##id_gui_", )
+    -- _, Magician.Gui.SpeedSpell = ImGui.Checkbox("##id_gui_", )
+  end
 end
+
 --------------------------------------------------------------------------------------------------------------------------
-return Magician()
+return setmetatable({}, Magician)

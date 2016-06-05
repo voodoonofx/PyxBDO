@@ -105,7 +105,7 @@ function TradeManagerState:Run()
     local selfPlayer = GetSelfPlayer()
     local TradeManagerPosition = self:GetPosition()
 
-    if TradeManagerPosition.Distance3DFromMe > 300 then
+    if TradeManagerPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
