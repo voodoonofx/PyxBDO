@@ -126,7 +126,7 @@ function MainWindow.DrawMainWindow()
             end
         end
 
-        if Bot.Combat.Gui then
+        if Bot.Combat ~=nil and Bot.Combat.Gui then
             if Bot.Combat.Gui.ShowGui then
                 if ImGui.Button("Close Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
                     Bot.Combat.Gui.ShowGui = false
