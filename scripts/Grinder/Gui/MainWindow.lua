@@ -20,7 +20,12 @@ MainWindow.FoodComboBoxSelected = 0
 MainWindow.WarehouseComboSelectedIndex = 0
 MainWindow.WarehouseSelectedIndex = 0
 MainWindow.WarehouseName = { }
+MainWindow.WarehouseName = { }
 
+MainWindow.TurninComboSelectedIndex = 0
+MainWindow.TurninSelectedIndex = 0
+MainWindow.TurninName = { }
+MainWindow.TurninName = { }
 
 MainWindow.DontPullComboSelectedIndex = 0
 MainWindow.MonsterNames = { }
@@ -36,7 +41,7 @@ MainWindow.DontPullSelectedIndex = 0
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0)
+    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
     if shouldDisplay then
         MainWindow.UpdateInventoryList()
         if ImGui.CollapsingHeader("Bot status", "id_gui_status", true, true) then
@@ -78,26 +83,67 @@ function MainWindow.DrawMainWindow()
                 if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                     Bot.RepairState.Forced = true
                 end
+                
+                
+	--	if ImGui.Button("Force exchange", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+        --            Bot.TurninState.Forced = true
+        --        end
+	--	ImGui.SameLine()
+	--	if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+        --            Bot.WarehouseState.Forced = true
+        --        end
+                
+               
             end
-            if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                LibConsumableWindow.Visible = true
-            end
-
             ImGui.SameLine()
-            if Bot.MeshDisabled then
-                if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = false
+            if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                ProfileEditor.Visible = true
+            end
+        else
+            if ImGui.Button("Stop##btn_stop_bot", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.Stop()
+            end
+            if ImGui.Button("Force vendor", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                Bot.VendorState.Forced = true
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.RepairState.Forced = true
+            end
+        end
+        if ImGui.Button("Consumables##btn_con_show", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+            LibConsumableWindow.Visible = true
+        end
+
+        ImGui.SameLine()
+        if Bot.MeshDisabled then
+            if ImGui.Button("Mesh Disabled##btn_mesh_off", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = false
+            end
+        else
+            if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.MeshDisabled = true
+            end
+        end
+
+        if Bot.Combat.Gui then
+            if Bot.Combat.Gui.ShowGui then
+                if ImGui.Button("Close Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = false
                 end
             else
-                if ImGui.Button("Mesh Enabled##btn_mesh_on", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                    Bot.MeshDisabled = true
+                if ImGui.Button("Open Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = true
                 end
             end
-
+            ImGui.SameLine()
+            if ImGui.Button("Save Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                MainWindow.SaveCombatSettings()
+            end
         end
 
         if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
-        MainWindow.UpdateMonsters()
+            MainWindow.UpdateMonsters()
             if not table.find(MainWindow.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(MainWindow.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -105,6 +151,7 @@ function MainWindow.DrawMainWindow()
             if valueChanged then
                 Bot.Settings.CombatScript = MainWindow.AvailablesCombats[MainWindow.CombatsComboBoxSelected]
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
+                Bot.LoadCombat()
             end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
             valueChanged, MainWindow.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", MainWindow.DontPullComboSelectedIndex, MainWindow.MonsterNames)
@@ -256,9 +303,12 @@ function MainWindow.DrawMainWindow()
 
         if ImGui.CollapsingHeader("Warehouse", "id_gui_warehouse", true, false) then
             _, Bot.Settings.WarehouseAfterVendor = ImGui.Checkbox("Deposit after Vendor##id_guid_warehouse_after_vendor", Bot.Settings.WarehouseAfterVendor)
+	    _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
+	    _, Bot.Settings.RepairAfterWarehouse = ImGui.Checkbox("Repair after Vendor##id_guid_repair_after_warehouse", Bot.Settings.RepairAfterWarehouse)
             _, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("Deposit Money##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
             _, Bot.Settings.WarehouseSettings.MoneyToKeep = ImGui.SliderInt("Money to Keep##id_gui_warehouse_keep_money", Bot.Settings.WarehouseSettings.MoneyToKeep, 0, 1000000)
             _, Bot.Settings.WarehouseSettings.DepositItems = ImGui.Checkbox("Deposit Items##id_guid_warehouse_deposit_items", Bot.Settings.WarehouseSettings.DepositItems)
+			
             ImGui.Text("Never Deposit these Items")
             valueChanged, MainWindow.WarehouseComboSelectedIndex = ImGui.Combo("##id_guid_warehouse_inventory_combo_select", MainWindow.WarehouseComboSelectedIndex, MainWindow.InventoryName)
             if valueChanged then
@@ -271,13 +321,38 @@ function MainWindow.DrawMainWindow()
             end
             _, MainWindow.WarehouseSelectedIndex = ImGui.ListBox("##id_guid_warehouse_neverdeposit", MainWindow.WarehouseSelectedIndex, Bot.Settings.WarehouseSettings.IgnoreItemsNamed, 5)
             if ImGui.Button("Remove Item##id_guid_warehouse_neverdeposit_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                if MainWindow.WarehouseSelectedIndex > 0 and MainWindow.WarehouseSelectedIndex <= table.length(Bot.Settings.NeverWarehouse) then
+                if MainWindow.WarehouseSelectedIndex > 0 and MainWindow.WarehouseSelectedIndex <= table.length(Bot.Settings.WarehouseSettings.IgnoreItemsNamed) then
                     table.remove(Bot.Settings.WarehouseSettings.IgnoreItemsNamed, MainWindow.WarehouseSelectedIndex)
                     MainWindow.WarehouseSelectedIndex = 0
                 end
             end
 
         end
+		
+	if ImGui.CollapsingHeader("Exchange Items", "id_gui_turnin", true, false) then
+		_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
+		_, Bot.Settings.VendorAfterTurnin = ImGui.Checkbox("Vendor after Exchange##id_guid_vendor_after_turnin", Bot.Settings.VendorAfterTurnin)
+		_, Bot.Settings.TurninSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
+		ImGui.Text("Try to Exchange these Items")
+		valueChanged, MainWindow.TurninComboSelectedIndex = ImGui.Combo("##id_guid_turnin_inventory_combo_select", MainWindow.TurninComboSelectedIndex, MainWindow.InventoryName)
+		if valueChanged then
+			local inventoryName = MainWindow.InventoryName[MainWindow.TurninComboSelectedIndex]
+			if not table.find(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName) then
+				table.insert(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName)
+                end
+                MainWindow.TurninComboSelectedIndex = 0
+            end
+            _, MainWindow.TurninSelectedIndex = ImGui.ListBox("##id_guid_turnin_items", MainWindow.TurninSelectedIndex, Bot.Settings.TurninSettings.TurninItemsNamed, 5)
+            if ImGui.Button("Remove Item##id_guid_turnin_neverdeposit_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                if MainWindow.TurninSelectedIndex > 0 and MainWindow.TurninSelectedIndex <= table.length(Bot.Settings.TurninSettings.TurninItemsNamed) then
+                    table.remove(Bot.Settings.TurninSettings.TurninItemsNamed, MainWindow.TurninSelectedIndex)
+                    MainWindow.TurninSelectedIndex = 0
+                end
+            end
+
+        end
+		
+		
         if ImGui.CollapsingHeader("Advanced", "id_gui_advanced", true, false) then
             ImGui.Columns(2)
             _, Bot.Settings.RunToHotSpots = ImGui.Checkbox("Run To Hotspots##id_guid_advanced_run_HotSpots", Bot.Settings.RunToHotSpots)
@@ -287,28 +362,28 @@ function MainWindow.DrawMainWindow()
             _, Bot.Settings.RepairSettings.PlayerRun = ImGui.Checkbox("Run To Repair##id_guid_advanced_run_Repair", Bot.Settings.RepairSettings.PlayerRun)
             ImGui.NextColumn()
             _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Warehouse##id_guid_advanced_run_Warehouse", Bot.Settings.WarehouseSettings.PlayerRun)
+	    ImGui.NextColumn()
+            _, Bot.Settings.TurninSettings.PlayerRun = ImGui.Checkbox("Run To Exchange##id_guid_advanced_run_Turnin", Bot.Settings.TurninSettings.PlayerRun)
             ImGui.Columns(1)
             ImGui.Text("Change with caution!!!")
             ImGui.Text(" ")
+--          _, Bot.Settings.PathingMode = ImGui.Checkbox("Fallback to BDO Nav##id_guid_advanced_fall_back", Bot.Settings.PathingMode)
+  --             valueChanged, Bot.Settings.PathingMode = ImGui.Combo("Pathing System##id_guid_adv_path_mode", Bot.Settings.PathingMode, {"Pyx", "BDO Internal"})
+
             _, Bot.Settings.Advanced.PvpAttackRadius = ImGui.SliderInt("Pvp Attack Radius##id_gui_advanced_pvp_radius", Bot.Settings.Advanced.PvpAttackRadius, 500, 10000)
             _, Bot.Settings.Advanced.HotSpotRadius = ImGui.SliderInt("Hotspot Radius##id_gui_advanced_hs_radius", Bot.Settings.Advanced.HotSpotRadius, 500, 10000)
             _, Bot.Settings.LootSettings.LootRadius = ImGui.SliderInt("Loot Radius##id_gui_advanced_loot_radius", Bot.Settings.LootSettings.LootRadius, 500, 10000)
             _, Bot.Settings.Advanced.PullDistance = ImGui.SliderInt("Pull Distance##id_gui_advanced_pull_distance", Bot.Settings.Advanced.PullDistance, 500, 10000)
             _, Bot.Settings.Advanced.PullSecondsUntillIgnore = ImGui.SliderInt("Pull Seconds untill ignore##id_gui_advanced_pull_seconds", Bot.Settings.Advanced.PullSecondsUntillIgnore, 5, 30)
             _, Bot.Settings.Advanced.CombatMaxDistanceFromMe = ImGui.SliderInt("Combat Max Distance##id_gui_advanced_combat_maxdistance", Bot.Settings.Advanced.CombatMaxDistanceFromMe, 1000, 5000)
-            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
-            ImGui.NextColumn()
-            ImGui.Text("Skip Pull between hotspots")
-            ImGui.SameLine()
-            _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
-            ImGui.Text("Ignore in combat between hotspots")
-            ImGui.SameLine()
+            _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("Ignore in combat between hotspots##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+            _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("Skip Pull between hotspots##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
 
 
 
-            ImGui.Text("Draw obstacles")
-            ImGui.SameLine()
-            _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
+--            ImGui.Text("Draw obstacles")
+--            ImGui.SameLine()
+--            _, Navigation.RenderObstacles = ImGui.Checkbox("##id_guid_advanced_draw_obstacles", Navigation.RenderObstacles)
         end
 
         ImGui.End()
@@ -350,6 +425,20 @@ function MainWindow.OnDrawGuiCallback()
     MainWindow.DrawMainWindow()
 end
 
+function MainWindow.SaveCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    Pyx.FileSystem.WriteFile("Combats\\Configs\\"..settings..".json", json:encode_pretty(Bot.Combat.Gui))
+end
+
+function MainWindow.LoadCombatSettings()
+    local json = JSON:new()
+    local string = Bot.Settings.CombatScript
+    local settings = string.gsub(string, ".lua", "")
+    table.merge(Bot.Combat.Gui,json:decode(Pyx.FileSystem.ReadFile("Combats\\Configs\\"..settings..".json")))
+end
+
 function MainWindow.RefreshAvailableProfiles()
     MainWindow.AvailablesCombats = { }
     for k, v in pairs(Pyx.FileSystem.GetFiles("Combats\\*.lua")) do
@@ -357,7 +446,5 @@ function MainWindow.RefreshAvailableProfiles()
 
     end
 end
-
-
 
 MainWindow.RefreshAvailableProfiles()

@@ -14,6 +14,7 @@ function Settings.new()
     self.CombatScript = ""
     
     self.WarehouseSettings = {}
+    self.TurninSettings = {}
     self.VendorSettings = {}
     self.DeathSettings = {}
     self.RepairSettings = {}
@@ -22,9 +23,11 @@ function Settings.new()
     self.LibConsumablesSettings = {}
     self.PullSettings = {}
 
-	self.WarehouseAfterVendor = true
+    self.WarehouseAfterVendor = true
+    self.WarehouseAfterTurnin = true
+    self.RepairAfterWarehouse = true
     self.AttackPvpFlagged = true
-    self.RunToHotSpots = true
+    self.RunToHotSpots = false
 
     self.Advanced = {PvpAttackRadius = 1800, HotSpotRadius = 3000, IgnorePullBetweenHotSpots = true, IgnoreInCombatBetweenHotSpots = false, PullDistance = 2500, PullSecondsUntillIgnore = 10, CombatMaxDistanceFromMe = 2200, CombatSecondsUntillIgnore = 15, IgnoreCombatOnVendor = true, IgnoreCombatOnRepair = true}
 

@@ -44,15 +44,15 @@ function LootActorState:NeedToRun()
         return false
     end
     
-    local nearestAttacker = self:GetNeareastAttacker()
+--    local nearestAttacker = self:GetNeareastAttacker()
 
     local actors = GetActors()
     table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(actors) do
         if v.IsLootable and
             v.Position.Distance3DFromMe < self.Settings.LootRadius and
-            (not self.BlacklistActors[v.Guid] or Pyx.System.TickCount - self.BlacklistActors[v.Guid] < 2000) and
-            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
+            (not self.BlacklistActors[v.Guid] or Pyx.Win32.GetTickCount() - self.BlacklistActors[v.Guid] < 2000) and
+--            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
 --            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
         then
@@ -98,12 +98,12 @@ function LootActorState:Run()
         
         if not self.CurrentLootActor.IsLootInteraction then
             print("Not lootable yet, black list !"  )
-            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.System.TickCount - 30 * 1000 -- Not lootable for now
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000 -- Not lootable for now
             return false
         end
         
         if not self.BlacklistActors[self.CurrentLootActor.Guid] then
-            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.System.TickCount
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount()
             return false
         end
         

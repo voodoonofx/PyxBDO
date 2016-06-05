@@ -48,7 +48,7 @@ function Spell:cast(targetPosition)
 	
 	print("Casting spell - " .. self.Name)
 	selfPlayer:UseSkillAtPosition(self.SkillID,targetPosition,self.DURATION)
-	self.LastCast = Pyx.System.TickCount
+	self.LastCast = Pyx.Win32.GetTickCount()
 	return true
 end
 
@@ -68,7 +68,7 @@ function Spell:castHoldKey(targetPosition,shouldFaceTarget)
 	end
 	
 	selfPlayer:SetActionState(self.CastFlags)
-	self.LastCast = Pyx.System.TickCount
+	self.LastCast = Pyx.Win32.GetTickCount()
 	return true
 end
 
@@ -87,7 +87,7 @@ function Spell:isUsable()
 		isOnCooldown = GetSelfPlayer():IsSkillOnCooldown(self.SkillID) 
 	else 
 		--print("Custom CD")
-		isOnCooldown = Pyx.System.TickCount - self.LastCast > self.ForcedCooldown 
+		isOnCooldown = Pyx.Win32.GetTickCount() - self.LastCast > self.ForcedCooldown 
 	end
 
 	--print("Spell " .. self.Name .. " Known " .. tostring(self.Known) .. " IsUsable : " .. tostring(SkillsHelper.IsSkillUsable(self.SkillID)) .. " IsOnCd : " .. tostring(isOnCooldown))

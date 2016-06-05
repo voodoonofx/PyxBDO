@@ -40,25 +40,25 @@ function MainWindow.DrawMainWindow()
             ImGui.NextColumn()
             ImGui.Columns(1)
             if ImGui.BeginPopup("Confirm") then
-            ImGui.Text("WARNING!")
-            ImGui.Text("You Have Delete Used Up Fishing Rods enabled")
+                ImGui.Text("WARNING!")
+                ImGui.Text("You Have Delete Used Up Fishing Rods enabled")
                 if ImGui.Button("Ok##btn_ok_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-            Bot.Start()
-            ImGui.CloseCurrentPopup()
-            end
-            ImGui.SameLine()
+                    Bot.Start()
+                    ImGui.CloseCurrentPopup()
+                end
+                ImGui.SameLine()
                 if ImGui.Button("Cancel##btn_cancel_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-            ImGui.CloseCurrentPopup()
-            end
-            ImGui.EndPopup()
+                    ImGui.CloseCurrentPopup()
+                end
+                ImGui.EndPopup()
             end
             if not Bot.Running then
                 if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                if Bot.Settings.DeleteUsedRods == true then
-                ImGui.OpenPopup("Confirm")
-                else
-                Bot.Start()
-                end
+                    if Bot.Settings.DeleteUsedRods == true then
+                        ImGui.OpenPopup("Confirm")
+                    else
+                        Bot.Start()
+                    end
                 end
                 ImGui.SameLine()
                 if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
@@ -77,6 +77,31 @@ function MainWindow.DrawMainWindow()
             end
 
         end
+        if ImGui.CollapsingHeader("Stats", "id_gui_stats", true, false) then
+            if ImGui.Button("Reset Stats##id_guid_reset_stats", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                Bot.ResetStats()
+            end
+
+            local statLog = ""
+
+            statLog = statLog .. string.format("Loots: %i\n", Bot.Stats.Loots)
+            statLog = statLog .. string.format("Loot Time: %.02f\n", Bot.Stats.AverageLootTime)
+
+            if Bot.Stats.Loots > 0 then
+                statLog = statLog .. string.format("Whites: %i - %.02f%%\n", Bot.Stats.LootQuality[0] or 0,(Bot.Stats.LootQuality[0] or 0) / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Greens: %i - %.02f%%\n", Bot.Stats.LootQuality[1] or 0,(Bot.Stats.LootQuality[1] or 0) / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Blues: %i - %.02f%%\n", Bot.Stats.LootQuality[2] or 0,(Bot.Stats.LootQuality[2] or 0) / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Yellows: %i - %.02f%%\n", Bot.Stats.LootQuality[3] or 0,(Bot.Stats.LootQuality[3] or 0) / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Oranges: %i - %.02f%%\n", Bot.Stats.LootQuality[4] or 0,(Bot.Stats.LootQuality[4] or 0) / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Keys: %i - %.02f%%\n", Bot.Stats.Keys, Bot.Stats.Keys / Bot.Stats.Loots * 100)
+                statLog = statLog .. string.format("Relics: %i - %.02f%%\n", Bot.Stats.Relics, Bot.Stats.Relics / Bot.Stats.Loots * 100)
+            end
+
+            local conSize = ImGui.GetContentRegionAvail()
+                        ImGui.InputTextMultiline("stat_log", statLog, 1024000, ImVec2(conSize.x, 15 * 9), ImGuiInputTextFlags_ReadOnly)
+        end
+
+
         if ImGui.CollapsingHeader("Bait", "id_gui_fish_bait", true, false) then
             MainWindow.UpdateBaitComboBox()
             if not table.find(MainWindow.BaitComboBoxItems, Bot.Settings.ConsumablesSettings.Consumables[1].Name) then
@@ -90,12 +115,14 @@ function MainWindow.DrawMainWindow()
             end
             _, Bot.Settings.ConsumablesSettings.Consumables[1].ConditionValue = ImGui.SliderInt("Mins Lasts for##id_gui_bait_lasts", tonumber(Bot.Settings.ConsumablesSettings.Consumables[1].ConditionValue), 1, 120)
         end
-        if ImGui.CollapsingHeader("Repair", "id_gui_trademanager", true, false) then
+
+        if ImGui.CollapsingHeader("Repair", "id_gui_repair", true, false) then
             _, Bot.Settings.RepairFishingRod = ImGui.Checkbox("Repair fishing rod##id_repair_fishing_rod", Bot.Settings.RepairFishingRod)
         end
 
         if ImGui.CollapsingHeader("Trade Manager", "id_gui_trademanager", true, false) then
             _, Bot.Settings.TradeManagerSettings.TradeManagerOnInventoryFull = ImGui.Checkbox("Sell at trade manager when inventory is full##id_guid_trademanager_full_inventory", Bot.Settings.TradeManagerSettings.TradeManagerOnInventoryFull)
+            _, Bot.Settings.TradeManagerSettings.DoTradeGame = ImGui.Checkbox("Play to Win Trade game##id_guid_trademanager_do_game", Bot.Settings.TradeManagerSettings.DoTradeGame)
         end
 
         if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then
@@ -105,7 +132,7 @@ function MainWindow.DrawMainWindow()
             _, Bot.Settings.LootBlue = ImGui.Checkbox("Loot blues##id_guid_loot_blue", Bot.Settings.LootBlue)
             _, Bot.Settings.LootKey = ImGui.Checkbox("Loot keys##id_guid_loot_key", Bot.Settings.LootKey)
             _, Bot.Settings.LootRelic = ImGui.Checkbox("Loot shards##id_guid_loot_relic", Bot.Settings.LootRelic)
-            _, Bot.Settings.LootAndDeleteUnwantedFish = ImGui.Checkbox("Loot and delete unwanted fish##id_guid_loot_and_delete_unwanted_fish", Bot.Settings.LootAndDeleteUnwantedFish)            
+            _, Bot.Settings.LootAndDeleteUnwantedFish = ImGui.Checkbox("Loot and delete unwanted fish##id_guid_loot_and_delete_unwanted_fish", Bot.Settings.LootAndDeleteUnwantedFish)
         end
         MainWindow.UpdateInventoryList()
         if ImGui.CollapsingHeader("Inventory Management", "id_gui_inv_manage", true, false) then
@@ -184,41 +211,41 @@ function MainWindow.DrawMainWindow()
             ImGui.NextColumn()
             local vbCount = table.length(Bot.VendorState.Settings.BuyItems)
             for key = 1, vbCount do
-            local value = Bot.VendorState.Settings.BuyItems[key]
-            local erase = false
---            for key, value in pairs(Bot.VendorState.Settings.BuyItems) do
-            if ImGui.SmallButton("X##vb_del_"..key) then
-            erase = true
-            end
-            ImGui.SameLine()
-            if value ~= nil then
-                ImGui.Text(value.Name)
-                ImGui.NextColumn()
-                valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.InputFloat("Min##vb_min_"..key, Bot.VendorState.Settings.BuyItems[key].BuyAt, 1, 10, 0, 0)
-                if valueChanged then
-                    if Bot.VendorState.Settings.BuyItems[key].BuyAt < 0 then
-                        Bot.VendorState.Settings.BuyItems[key].BuyAt = 0
-                    end
-                    if Bot.VendorState.Settings.BuyItems[key].BuyAt > 250 then
-                        Bot.VendorState.Settings.BuyItems[key].BuyAt = 250
-                    end
+                local value = Bot.VendorState.Settings.BuyItems[key]
+                local erase = false
+                --            for key, value in pairs(Bot.VendorState.Settings.BuyItems) do
+                if ImGui.SmallButton("X##vb_del_" .. key) then
+                    erase = true
                 end
-                --            _, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.SliderInt("Min##id_gui_vbuy_min_"..key, tonumber(Bot.VendorState.Settings.BuyItems[key].BuyAt), 0, 250)
-                ImGui.NextColumn()
-                valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyMax = ImGui.InputFloat("Max##vb_max_"..key, Bot.VendorState.Settings.BuyItems[key].BuyMax, 1, 10, 0, 0)
-                if valueChanged then
-                    if Bot.VendorState.Settings.BuyItems[key].BuyMax < 1 then
-                        Bot.VendorState.Settings.BuyItems[key].BuyMax = 1
+                ImGui.SameLine()
+                if value ~= nil then
+                    ImGui.Text(value.Name)
+                    ImGui.NextColumn()
+                    valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.InputFloat("Min##vb_min_" .. key, Bot.VendorState.Settings.BuyItems[key].BuyAt, 1, 10, 0, 0)
+                    if valueChanged then
+                        if Bot.VendorState.Settings.BuyItems[key].BuyAt < 0 then
+                            Bot.VendorState.Settings.BuyItems[key].BuyAt = 0
+                        end
+                        if Bot.VendorState.Settings.BuyItems[key].BuyAt > 250 then
+                            Bot.VendorState.Settings.BuyItems[key].BuyAt = 250
+                        end
                     end
-                    if Bot.VendorState.Settings.BuyItems[key].BuyMax > 500 then
-                        Bot.VendorState.Settings.BuyItems[key].BuyMax = 500
+                    --            _, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.SliderInt("Min##id_gui_vbuy_min_"..key, tonumber(Bot.VendorState.Settings.BuyItems[key].BuyAt), 0, 250)
+                    ImGui.NextColumn()
+                    valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyMax = ImGui.InputFloat("Max##vb_max_" .. key, Bot.VendorState.Settings.BuyItems[key].BuyMax, 1, 10, 0, 0)
+                    if valueChanged then
+                        if Bot.VendorState.Settings.BuyItems[key].BuyMax < 1 then
+                            Bot.VendorState.Settings.BuyItems[key].BuyMax = 1
+                        end
+                        if Bot.VendorState.Settings.BuyItems[key].BuyMax > 500 then
+                            Bot.VendorState.Settings.BuyItems[key].BuyMax = 500
+                        end
                     end
-                end
-                ImGui.NextColumn()
-                if erase then
-                table.remove(Bot.VendorState.Settings.BuyItems,key)
-                vbCount = vbCount -1
-                end
+                    ImGui.NextColumn()
+                    if erase then
+                        table.remove(Bot.VendorState.Settings.BuyItems, key)
+                        vbCount = vbCount - 1
+                    end
                 end
             end
             ImGui.Columns(1)
@@ -226,6 +253,7 @@ function MainWindow.DrawMainWindow()
         if ImGui.CollapsingHeader("Warehouse", "id_gui_warehouse", true, false) then
             _, Bot.Settings.WarehouseAfterVendor = ImGui.Checkbox("Deposit after Vendor##id_guid_warehouse_after_vendor", Bot.Settings.WarehouseAfterVendor)
             _, Bot.Settings.WarehouseAfterTradeManager = ImGui.Checkbox("Deposit after trader##id_guid_warehouse_after_trader", Bot.Settings.WarehouseAfterTradeManager)
+            _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
             _, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("Deposit Money##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
             _, Bot.Settings.WarehouseSettings.MoneyToKeep = ImGui.SliderInt("Money to Keep##id_gui_warehouse_keep_money", Bot.Settings.WarehouseSettings.MoneyToKeep, 0, 1000000)
             _, Bot.Settings.WarehouseSettings.DepositItems = ImGui.Checkbox("Deposit Items##id_guid_warehouse_deposit_items", Bot.Settings.WarehouseSettings.DepositItems)
@@ -248,34 +276,28 @@ function MainWindow.DrawMainWindow()
             end
 
         end
-        if ImGui.CollapsingHeader("Cheats", "id_gui_fish_cheats", true, false) then
-            _, Bot.Settings.TradeManagerSettings.DoTradeGame = ImGui.Checkbox("Play/Win Trade game##id_guid_trademanager_do_game", Bot.Settings.TradeManagerSettings.DoTradeGame)
-            _, Bot.Settings.HookFishHandleGameSettings.InstantFish = ImGui.Checkbox("Fast Fish game##id_guid_fish_fast_game", Bot.Settings.HookFishHandleGameSettings.InstantFish)
-            _, Bot.Settings.StartFishingSettings.MaxEnergyCheat = ImGui.Checkbox("Max Energy Cast (uses no energy)##id_guid_hook_fast_game", Bot.Settings.StartFishingSettings.MaxEnergyCheat)
+                if ImGui.CollapsingHeader("Death action", "id_gui_death_action", true, false) then
+            if ImGui.RadioButton("Stop bot##death_action_stop_bot", Bot.Settings.DeathSettings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED) then
+                Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED
+            end
+            if ImGui.RadioButton("Revive at nearest node##death_action_revive_node", Bot.Settings.DeathSettings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_REVIVE_NODE) then
+                Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_REVIVE_NODE
+            end
+            if ImGui.RadioButton("Revive at nearest village##death_action_revive_village", Bot.Settings.DeathSettings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_REVIVE_VILLAGE) then
+                Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_REVIVE_VILLAGE
+            end
         end
 
-        if ImGui.CollapsingHeader("Stats","id_gui_stats", true, false) then
-            if ImGui.Button("Reset Stats##id_guid_reset_stats", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-                Bot.ResetStats()
-            end
+        if ImGui.CollapsingHeader("Run to", "id_gui_fish_running", true, false) then
+            _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Warehouse##id_guid_run_warehouse", Bot.Settings.WarehouseSettings.PlayerRun)
+            _, Bot.Settings.VendorSettings.PlayerRun = ImGui.Checkbox("Run To Vendor##id_guid_run_vendor", Bot.Settings.VendorSettings.PlayerRun)
+            _, Bot.Settings.RepairSettings.PlayerRun = ImGui.Checkbox("Run To Repair##id_guid_run_repair", Bot.Settings.RepairSettings.PlayerRun)
+            _, Bot.Settings.MoveToFishingSpotSettings.PlayerRun = ImGui.Checkbox("Run To Fishing Spot##id_guid_run_fishing", Bot.Settings.MoveToFishingSpotSettings.PlayerRun)
 
-            local statLog = ""
-
-            statLog = statLog .. string.format("Loots: %i\n", Bot.Stats.Loots)
-            statLog = statLog .. string.format("Loot Time: %.02f\n", Bot.Stats.AverageLootTime)
-
-            if Bot.Stats.Loots > 0 then
-                statLog = statLog .. string.format("Whites: %i - %.02f%%\n", Bot.Stats.LootQuality[0] or 0, (Bot.Stats.LootQuality[0] or 0) / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Greens: %i - %.02f%%\n", Bot.Stats.LootQuality[1] or 0, (Bot.Stats.LootQuality[1] or 0) / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Blues: %i - %.02f%%\n", Bot.Stats.LootQuality[2] or 0, (Bot.Stats.LootQuality[2] or 0) / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Yellows: %i - %.02f%%\n", Bot.Stats.LootQuality[3] or 0, (Bot.Stats.LootQuality[3] or 0) / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Oranges: %i - %.02f%%\n", Bot.Stats.LootQuality[4] or 0, (Bot.Stats.LootQuality[4] or 0) / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Keys: %i - %.02f%%\n", Bot.Stats.Keys, Bot.Stats.Keys / Bot.Stats.Loots * 100)
-                statLog = statLog .. string.format("Relics: %i - %.02f%%\n", Bot.Stats.Relics, Bot.Stats.Relics / Bot.Stats.Loots * 100)
-            end
-
-            local conSize = ImGui.GetContentRegionAvail()
-            ImGui.InputTextMultiline("stat_log", statLog, 1024000, ImVec2(conSize.x, 15 * 9), ImGuiInputTextFlags_AutoSelectAll|ImGuiInputTextFlags_ReadOnly)
+        end
+        if ImGui.CollapsingHeader("Cheats", "id_gui_fish_cheats", true, false) then
+            _, Bot.Settings.HookFishHandleGameSettings.InstantFish = ImGui.Checkbox("Fast Fish game##id_guid_fish_fast_game", Bot.Settings.HookFishHandleGameSettings.InstantFish)
+            _, Bot.Settings.StartFishingSettings.MaxEnergyCheat = ImGui.Checkbox("Max Energy Cast (uses no energy)##id_guid_hook_fast_game", Bot.Settings.StartFishingSettings.MaxEnergyCheat)
         end
 
         ImGui.End()

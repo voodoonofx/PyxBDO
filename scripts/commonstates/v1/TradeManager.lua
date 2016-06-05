@@ -19,10 +19,12 @@ function TradeManagerState.new()
     self.LastTradeUseTimer = nil
     self.SleepTimer = nil
     self.CurrentSellList = { }
-
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
+	self.BargainState = 0
+	self.BargainCount = 0
+	self.BargainDice = 0
 
     return self
 end
@@ -103,7 +105,7 @@ function TradeManagerState:Run()
     local selfPlayer = GetSelfPlayer()
     local TradeManagerPosition = self:GetPosition()
 
-    if TradeManagerPosition.Distance3DFromMe > 300 then
+    if TradeManagerPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
@@ -162,13 +164,60 @@ function TradeManagerState:Run()
     end
 
 	if self.State == 4 then
-		if self.Settings.DoTradeGame then
-        print("Playing Trade Game!")
-        BDOLua.Execute("FromClient_TradeGameStart(2,10,5,1)")
-		self.SleepTimer = PyxTimer:New(2)
-        self.SleepTimer:Start()
-        end
-		self.State = 5
+		if self.Settings.DoBargainGame == true then
+			if self.BargainState == 0 then
+				local energy = tonumber(BDOLua.Execute("return getSelfPlayer():getWp()"))
+				if energy >= 5 then
+					BDOLua.Execute("click_TradeGameStart()")
+					BDOLua.Execute("messageBox_YesButtonUp()")
+					self.BargainCount = 0
+					if math.random(2) == 2 then
+						self.BargainDice = 0
+					else
+						self.BargainDice = 1
+					end
+					self.SleepTimer = PyxTimer:New(2)
+					self.SleepTimer:Start()
+					self.BargainState = 1
+				else
+					print("Not enought energy. Skipping trade minigame")
+					self.SleepTimer = PyxTimer:New(2)
+					self.SleepTimer:Start()
+					self.BargainState = 0
+					self.State = 5
+				end
+			elseif self.BargainState == 1 then
+				if BDOLua.Execute("return isTradeGameSuccess()") == true then
+					BDOLua.Execute("Fglobal_TradeGame_Close()")
+					self.SleepTimer = PyxTimer:New(2)
+					self.SleepTimer:Start()
+					self.BargainState = 0
+					self.State = 5
+					self.CurrentSellList = self:GetItems()
+				elseif self.BargainCount >= 3 then
+					BDOLua.Execute("Fglobal_TradeGame_Close()")
+					self.SleepTimer = PyxTimer:New(2)
+					self.SleepTimer:Start()
+					self.BargainState = 0
+				else
+					if self.BargainDice == 0 then
+						-- print("[" .. os.date(Bot.UsedTimezone) .. "] Low dice")
+						BDOLua.Execute("tradeGame_LowDice()")
+						self.BargainDice = 1
+					else
+						-- print("[" .. os.date(Bot.UsedTimezone) .. "] High dice")
+						BDOLua.Execute("tradeGame_HighDice()")
+						self.BargainDice = 0
+					end
+					self.SleepTimer = PyxTimer:New(2)
+					self.SleepTimer:Start()
+					self.BargainCount = self.BargainCount + 1
+				end
+			end
+		else
+			self.State = 5
+		end
+		return
 	end
 	
     if self.State == 5 then

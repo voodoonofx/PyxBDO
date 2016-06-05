@@ -142,7 +142,7 @@ function VendorState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
 
-    if vendorPosition.Distance3DFromMe > 300 then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
@@ -155,7 +155,7 @@ function VendorState:Run()
         self.State = 1
         return true
     end
-    Navigator.Stop()
+    Navigator.Stop(true)
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return true
@@ -198,7 +198,7 @@ function VendorState:Run()
         elseif self.Settings.BuyEnabled then
             self.State = 4
             -- go right to buying
-            self.CurrentBuyList = self.GetBuyItems(self.Settings.BuyWhenAtVendor)
+            self.CurrentBuyList = self:GetBuyItems(self.Settings.BuyWhenAtVendor)
         else
             -- how did we get here!
             self.State = 5

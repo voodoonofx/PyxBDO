@@ -23,6 +23,7 @@ file=../commonstates/v1/InventoryDeleteState.Lua
 file=../commonstates/v1/InventoryDeleteState.Lua
 file=../commonstates/v1/Consumables.lua
 file=../commonstates/v1/Repair.lua
+file=../commonstates/v1/Death.lua
 
 file=Helpers/Rendering.lua
 file=FishBot.lua

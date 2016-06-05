@@ -10,6 +10,9 @@ Bot.ConsumablesState = ConsumablesState()
 Bot.StartFishingState = StartFishingState()
 Bot.HookFishHandleGameState = HookFishHandleGameState()
 Bot.RepairState = RepairState()
+Bot.MoveToFishingSpotState = MoveToFishingSpotState()
+Bot.DeathState = DeathState()
+
 
 function Bot.Start()
     if not Bot.Running then
@@ -63,10 +66,15 @@ function Bot.Start()
 
         ProfileEditor.Visible = false
         Navigation.MesherEnabled = false
-        Bot.TradeManagerForced = false
+        ProfileEditor.MeshConnectEnabled = false
+        Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
+        Bot.DeathState.CallWhenCompleted = Bot.Death
 
+        Bot.TradeManagerForced = false
+        Navigator.ApproachDistance = 80
         Bot.Fsm = FSM()
         Bot.Fsm.ShowOutput = true
+        Bot.Fsm:AddState(Bot.DeathState)
         Bot.Fsm:AddState(BuildNavigationState())
         Bot.Fsm:AddState(LootState())
         Bot.Fsm:AddState(Bot.InventoryDeleteState)
@@ -81,7 +89,7 @@ function Bot.Start()
         Bot.Fsm:AddState(Bot.ConsumablesState)
         Bot.Fsm:AddState(LibConsumables.ConsumablesState)
         Bot.Fsm:AddState(Bot.StartFishingState)
-        Bot.Fsm:AddState(MoveToFishingSpotState())
+        Bot.Fsm:AddState(Bot.MoveToFishingSpotState)
         Bot.Fsm:AddState(IdleState())
         Bot.Running = true
     end
@@ -89,10 +97,13 @@ end
 
 function Bot.Stop()
     Navigator.Stop()
+    Navigation.MesherEnabled = false
+
     Bot.Running = false
     Bot.WarehouseState:Reset()
     Bot.VendorState:Reset()
     Bot.TradeManagerState:Reset()
+    Navigator.Stop()
 
 end
 
@@ -100,7 +111,7 @@ function Bot.ResetStats()
     Bot.Stats = {
         Loots = 0,
         AverageLootTime = 0,
-        LootQuality = {},
+        LootQuality = { },
         Relics = 0,
         Keys = 0,
     }
@@ -108,7 +119,14 @@ end
 
 function Bot.OnPulse()
     if Bot.Running then
+        if Bot.Fsm.CurrentState == Bot.MoveToFishingSpotState then
+            if ProfileEditor.CurrentProfile:GetFishSpotPosition().Distance3DFromMe < 100 then
+                print("Stopping")
+                Navigator.Stop(true)
+            end
+        end
         Bot.Fsm:Pulse()
+
     end
 end
 
@@ -130,6 +148,8 @@ function Bot.LoadSettings()
     Bot.Settings.StartFishingSettings = Bot.StartFishingState.Settings
     Bot.Settings.HookFishHandleGameSettings = Bot.HookFishHandleGameState.Settings
     Bot.Settings.RepairSettings = Bot.RepairState.Settings
+    Bot.Settings.MoveToFishingSpotSettings = Bot.MoveToFishingSpotState.Settings
+    Bot.Settings.DeathSettings = Bot.DeathState.Settings
 
     table.merge(Bot.Settings, json:decode(Pyx.FileSystem.ReadFile("Settings.json")))
     if string.len(Bot.Settings.LastProfileName) > 0 then
@@ -152,6 +172,17 @@ function Bot.StateMoving(state)
 
     end
 
+end
+
+function Bot.Death(state)
+    if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
+        Bot.Stop()
+    else
+        Bot.WarehouseState:Reset()
+        Bot.VendorState:Reset()
+        Bot.RepairState:Reset()
+
+    end
 end
 
 
@@ -212,17 +243,17 @@ function Bot.RepairCheck()
     end
 
     for k, v in pairs(selfPlayer.EquippedItems) do
---    print ("Eq : "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        --    print ("Eq : "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
         if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
-        print("Need Repair Equipped")
+            print("Need Repair Equipped")
             return true
         end
     end
 
     for k, v in pairs(selfPlayer.Inventory.Items) do
---    print ("Inv: "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
+        --    print ("Inv: "..tostring(v.HasEndurance).." "..tostring(v.EndurancePercent).." "..tostring(v.ItemEnchantStaticStatus.IsFishingRod))
         if v.HasEndurance and v.EndurancePercent <= 0 and v.ItemEnchantStaticStatus.IsFishingRod == true then
-        print("Need Repair Inventory")
+            print("Need Repair Inventory")
             return true
         end
     end

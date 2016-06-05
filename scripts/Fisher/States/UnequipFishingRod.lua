@@ -26,7 +26,7 @@ function UnequipFishingRodState:NeedToRun()
         return false
     end
     
-    if Pyx.System.TickCount - self.LastUnequipTickcount < 4000 then
+    if Pyx.Win32.GetTickCount() - self.LastUnequipTickcount < 4000 then
         return false
     end
     
@@ -47,5 +47,5 @@ end
 function UnequipFishingRodState:Run()
     local selfPlayer = GetSelfPlayer()
     selfPlayer:UnequipItem(INVENTORY_SLOT_RIGHT_HAND)
-    self.LastUnequipTickcount = Pyx.System.TickCount
+    self.LastUnequipTickcount = Pyx.Win32.GetTickCount()
 end

@@ -18,6 +18,7 @@ file=States/Idle.lua
 file=States/PlayerPress.lua
 file=../commonstates/v1/Vendor.lua
 file=../commonstates/v1/Warehouse.lua
+file=../commonstates/v1/Turnin.lua
 file=../commonstates/v1/Consumables.lua
 file=../commonstates/v1/InventoryDeleteState.lua
 file=GrinderBot.lua

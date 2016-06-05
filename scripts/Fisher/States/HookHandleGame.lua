@@ -57,12 +57,12 @@ function HookFishHandleGameState:Run()
         if self.Settings.InstantFish then
             selfPlayer:DoAction(fishResult)
         else
-            self.LastGameTick = Pyx.System.TickCount
+            self.LastGameTick = Pyx.Win32.GetTickCount()
             self.RandomWaitTime = math.random(2500, 4500)
             selfPlayer:DoAction(fishResult)
         end
     elseif selfPlayer.CurrentActionName == "FISHING_HOOK_ING_HARDER" then
-        if Pyx.System.TickCount - self.LastGameTick > self.RandomWaitTime then
+        if Pyx.Win32.GetTickCount() - self.LastGameTick > self.RandomWaitTime then
             selfPlayer:DoAction("FISHING_HOOK_ING_SUCCESS")
         end
     end

@@ -1,7 +1,7 @@
-Pyx.System.RegisterCallback("OnPulse", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnPulse", function()
     Navigator.OnPulse()
 end)
 
-Pyx.System.RegisterCallback("OnRender3D", function()
+Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnRender3D", function()
     Navigator.OnRender3D()
 end)

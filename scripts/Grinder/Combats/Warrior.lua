@@ -114,7 +114,7 @@ end
 function WarriorV3:castSpellFrom(spellbook,targetPosition)
 	for _, v in pairs(spellbook) do
 		if v:castHoldKey(targetPosition,true) then
-			self.CastLock = Pyx.System.TickCount + v.Duration
+			self.CastLock = Pyx.Win32.GetTickCount() + v.Duration
 			return
 		end
 	end
@@ -137,7 +137,7 @@ function WarriorV3:Attack(monsterActor)
     local targetPosition = monsterActor.Position   
    	
 		
-	if Pyx.System.TickCount < self.CastLock then
+	if Pyx.Win32.GetTickCount() < self.CastLock then
 		--print("Spell in progress return")
 		return
 	end

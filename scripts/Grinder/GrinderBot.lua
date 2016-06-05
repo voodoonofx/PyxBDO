@@ -6,12 +6,14 @@ Bot.Combat = nil
 Bot.CombatPull = nil
 -- Converted to CommonStates
 Bot.WarehouseState = WarehouseState()
+Bot.TurninState = TurninState()
 Bot.VendorState = VendorState()
 Bot.DeathState = DeathState()
 Bot.RepairState = RepairState()
 Bot.LootState = LootActorState()
 Bot.BuildNavigationState = BuildNavigationState()
 Bot.InventoryDeleteState = InventoryDeleteState()
+Bot.DoReset = false
 
 -- Not Converted yet
 Bot.CombatFightState = CombatFightState()
@@ -36,38 +38,39 @@ function Bot.GetPlayers(onlyPvpFlagged)
     return players
 end
 
+function Bot.LoadCombat()
+    local combatScriptFile = Bot.Settings.CombatScript
+    local code = Pyx.FileSystem.ReadFile("Combats/" .. combatScriptFile)
+    combatScriptFunc,combatScriptError = load(code)
+    if combatScriptFunc == nil then
+        print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
+        return
+    end
+    Bot.Combat = combatScriptFunc()
+
+    if not Bot.Combat then
+        print("Unable to load combat script !")
+        return
+    end
+
+    if not Bot.Combat.Attack then
+        print("Combat script doesn't have .Attack function !")
+        return
+    end
+
+    if Bot.Combat.Gui then
+        MainWindow.LoadCombatSettings()
+    end
+end
+
 function Bot.Start()
     if not Bot.Running then
-
         Bot.ResetStats()
-        Bot.Combat = nil
         Bot.RepairState.Forced = false
         Bot.WarehouseState.Forced = false
+	Bot.TurninState.Forced = false
         Bot.VendorState.Forced = false
-
         Bot.SaveSettings()
-
-        local combatScriptFile = Bot.Settings.CombatScript
-
-        local code = Pyx.FileSystem.ReadFile("Combats/" .. combatScriptFile)
-        combatScriptFunc,combatScriptError = load(code)
-
-        if combatScriptFunc == nil then
-            print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
-            return
-        end
-
-        Bot.Combat = combatScriptFunc()
-
-        if not Bot.Combat then
-            print("Unable to load combat script !")
-            return
-        end
-
-        if not Bot.Combat.Attack then
-            print("Combat script doesn't have .Attack function !")
-            return
-        end
 
         local currentProfile = ProfileEditor.CurrentProfile
 
@@ -80,17 +83,20 @@ function Bot.Start()
             print("Profile require at least 2 hotspots !")
             return
         end
-
         if Bot.MeshDisabled == true then
             Navigator.RealMoveTo = Navigator.MoveTo
             Navigator.MoveTo = function(p)
-                GetSelfPlayer():MoveTo(p)     
+                GetSelfPlayer():MoveTo(p)
             end
             Navigator.RealCanMoveTo = Navigator.CanMoveTo
             Navigator.CanMoveTo = function(p) return true end
         end
 
+        ProfileEditor.MeshConnectEnabled = false
+        Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
+
         Bot.WarehouseState:Reset()
+	Bot.TurninState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
         Bot.DeathState:Reset()
@@ -99,6 +105,11 @@ function Bot.Start()
         Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
         Bot.WarehouseState.CallWhenCompleted = Bot.StateComplete
         Bot.WarehouseState.CallWhileMoving = Bot.StateMoving
+		
+        Bot.TurninState.Settings.NpcName = currentProfile.TurninNpcName
+        Bot.TurninState.Settings.NpcPosition = currentProfile.TurninNpcPosition
+        Bot.TurninState.CallWhenCompleted = Bot.StateComplete
+        Bot.TurninState.CallWhileMoving = Bot.StateMoving
 
         Bot.VendorState.Settings.NpcName = currentProfile.VendorNpcName
         Bot.VendorState.Settings.NpcPosition = currentProfile.VendorNpcPosition
@@ -118,7 +129,6 @@ function Bot.Start()
             Navigation.MesherEnabled = false
         end
         Navigator.OnStuckCall = Bot.OnStuck
-
         Bot.Fsm = FSM()
         Bot.Fsm.ShowOutput = true
 
@@ -126,11 +136,12 @@ function Bot.Start()
             Bot.Fsm:AddState(Bot.BuildNavigationState)
             Bot.Fsm:AddState(Bot.DeathState)
             Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.CombatFightState)
+            Bot.Fsm:AddState(Bot.TurninState)
             Bot.Fsm:AddState(Bot.VendorState)
             Bot.Fsm:AddState(Bot.WarehouseState)
             Bot.Fsm:AddState(Bot.RepairState)
+            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.InventoryDeleteState)
             Bot.Fsm:AddState(Bot.CombatPullState)
             Bot.Fsm:AddState(RoamingState())
@@ -151,9 +162,11 @@ function Bot.Start()
 end
 
 function Bot.Death(state)
+Bot.DoReset = true
     if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
         Bot.Stop()
         else
+		Bot.TurninState:Reset()
                 Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
@@ -162,7 +175,7 @@ function Bot.Death(state)
 end
 
 function Bot.Stop()
-    Navigator.Stop()
+    Navigator.Stop(true)
     Bot.Running = false
 
     if Navigator.RealMoveTo ~= nil then
@@ -213,9 +226,14 @@ function Bot.OnPulse()
     end
 
     if Bot.Running then
+    if Bot.DoReset == true then
+    Bot.Fsm.Reset = true
+    Navigator.Reset()
+    Bot.DoReset = false
+    end
         Bot.Fsm:Pulse()
 
-        if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true then
+        if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true or Bot.TurninState.Forced then
             Bot.CombatPullState.Enabled = false
         else
             Bot.CombatPullState.Enabled = true
@@ -235,6 +253,12 @@ function Bot.CallCombatRoaming()
     end
 end
 
+function Bot.CallGui()
+    if Bot.Combat and Bot.Combat.UserInterface then
+        Bot.Combat:UserInterface()
+    end
+end
+
 function Bot.SaveSettings()
     local json = JSON:new()
     Pyx.FileSystem.WriteFile("Settings.json", json:encode_pretty(Bot.Settings))
@@ -244,6 +268,7 @@ function Bot.LoadSettings()
     local json = JSON:new()
     Bot.Settings = Settings()
     Bot.Settings.WarehouseSettings = Bot.WarehouseState.Settings
+    Bot.Settings.TurninSettings = Bot.TurninState.Settings
     Bot.Settings.VendorSettings = Bot.VendorState.Settings
     Bot.Settings.DeathSettings = Bot.DeathState.Settings
     Bot.Settings.RepairSettings = Bot.RepairState.Settings
@@ -267,7 +292,7 @@ function Bot.OnStuck()
     if Navigator.StuckCount > 15 then
         print("We are too stuck try rescue")
          BDOLua.Execute("callRescue()")
-        
+
     end
 end
 
@@ -278,6 +303,19 @@ function Bot.StateComplete(state)
             Bot.WarehouseState.Forced = true
         end
     end
+	
+    if state == Bot.TurninState then
+        if Bot.Settings.VendorAfterTurnin == true then
+            Bot.VendorState.Forced = true
+        end
+    end
+	
+    if state == Bot.WarehouseState then
+    	if Bot.Settings.RepairAfterWarehouse == true then
+    		Bot.RepairState.Forced = true
+    	end
+    end
+	
 end
 
 
