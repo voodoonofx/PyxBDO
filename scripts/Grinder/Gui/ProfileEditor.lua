@@ -49,6 +49,9 @@ function ProfileEditor.DrawProfileEditor()
             ProfileEditor.CurrentProfile = Profile()
             ProfileEditor.CurrentProfileSaveName = "Unamed"
         end
+	if ImGui.Button("Clear mesh##id_mesh_clear", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+            Navigation.ClearMesh()
+        end
         
         if ImGui.CollapsingHeader("Mesher", "id_profile_editor_mesh", true, true) then
             _,Navigation.MesherEnabled = ImGui.Checkbox("Enable mesher##profile_enable_mesher", Navigation.MesherEnabled)
@@ -215,6 +218,31 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = 0
+            end
+        end
+		
+	if ImGui.CollapsingHeader("TurnIn npc", "id_profile_editor_Turnin", true, false) then
+            if string.len(ProfileEditor.CurrentProfile.TurninNpcName) > 0 then
+                ImGui.Text("Name : " .. ProfileEditor.CurrentProfile.TurninNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetTurninPosition().Distance3DFromMe / 100) .. "y)")
+            else
+                ImGui.Text("Turnin : Not set")
+            end
+            if ImGui.Button("Set##id_profile_set_Turnin" , ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                local npcs = GetNpcs()
+                if table.length(npcs) > 0 then
+                    local TurninNpc = npcs[1]
+                    ProfileEditor.CurrentProfile.TurninNpcName = TurninNpc.Name
+                    ProfileEditor.CurrentProfile.TurninNpcPosition.X = TurninNpc.Position.X
+                    ProfileEditor.CurrentProfile.TurninNpcPosition.Y = TurninNpc.Position.Y
+                    ProfileEditor.CurrentProfile.TurninNpcPosition.Z = TurninNpc.Position.Z
+                end
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Clear##id_profile_clear_Turnin", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                ProfileEditor.CurrentProfile.TurninNpcName = ""
+                ProfileEditor.CurrentProfile.TurninNpcPosition.X = 0
+                ProfileEditor.CurrentProfile.TurninNpcPosition.Y = 0
+                ProfileEditor.CurrentProfile.TurninNpcPosition.Z = 0
             end
         end
         

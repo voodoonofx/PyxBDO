@@ -22,6 +22,10 @@ MainWindow.WarehouseSelectedIndex = 0
 MainWindow.WarehouseName = { }
 MainWindow.WarehouseName = { }
 
+MainWindow.TurninComboSelectedIndex = 0
+MainWindow.TurninSelectedIndex = 0
+MainWindow.TurninName = { }
+MainWindow.TurninName = { }
 
 MainWindow.DontPullComboSelectedIndex = 0
 MainWindow.MonsterNames = { }
@@ -40,24 +44,56 @@ function MainWindow.DrawMainWindow()
     local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(400, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
     if shouldDisplay then
         MainWindow.UpdateInventoryList()
-        local player = GetSelfPlayer()
-        ImGui.Columns(2)
-        ImGui.Text("State")
-        ImGui.NextColumn()
-        ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
-        ImGui.NextColumn()
-        ImGui.Text("Health")
-        ImGui.NextColumn()
-        ImGui.Text(( function(player) if player then return player.Health .. " / " .. player.MaxHealth else return 'N / A' end end)(player))
-        ImGui.NextColumn()
-        ImGui.Text("Free slots")
-        ImGui.NextColumn()
-        ImGui.Text(( function(player) if player then return player.Inventory.FreeSlots else return 'N / A' end end)(player))
-        ImGui.NextColumn()
-        ImGui.Columns(1)
-        if not Bot.Running then
-            if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
-                Bot.Start()
+        if ImGui.CollapsingHeader("Bot status", "id_gui_status", true, true) then
+            local player = GetSelfPlayer()
+            ImGui.Columns(2)
+            ImGui.Text("State")
+            ImGui.NextColumn()
+            ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
+            ImGui.NextColumn()
+            ImGui.Text("Name")
+            ImGui.NextColumn()
+            ImGui.Text(( function(player) if player then return player.Name else return 'Disconnected' end end)(player))
+            ImGui.NextColumn()
+            ImGui.Text("Health")
+            ImGui.NextColumn()
+            ImGui.Text(( function(player) if player then return player.Health .. " / " .. player.MaxHealth else return 'N / A' end end)(player))
+            ImGui.NextColumn()
+            ImGui.Text("Free slots")
+            ImGui.NextColumn()
+            ImGui.Text(( function(player) if player then return player.Inventory.FreeSlots else return 'N / A' end end)(player))
+            ImGui.NextColumn()
+            ImGui.Columns(1)
+            if not Bot.Running then
+                if ImGui.Button("Start##btn_start_bot", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Start()
+                end
+                ImGui.SameLine()
+                if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                    ProfileEditor.Visible = true
+                end
+            else
+                if ImGui.Button("Stop##btn_stop_bot", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                    Bot.Stop()
+                end
+                if ImGui.Button("Force vendor", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.VendorState.Forced = true
+                end
+                ImGui.SameLine()
+                if ImGui.Button("Force repair", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                    Bot.RepairState.Forced = true
+                end
+                
+                
+	--	if ImGui.Button("Force exchange", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+        --            Bot.TurninState.Forced = true
+        --        end
+	--	ImGui.SameLine()
+	--	if ImGui.Button("Force warehouse", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+        --            Bot.WarehouseState.Forced = true
+        --        end
+                
+               
             end
             ImGui.SameLine()
             if ImGui.Button("Profile editor", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
@@ -267,10 +303,12 @@ function MainWindow.DrawMainWindow()
 
         if ImGui.CollapsingHeader("Warehouse", "id_gui_warehouse", true, false) then
             _, Bot.Settings.WarehouseAfterVendor = ImGui.Checkbox("Deposit after Vendor##id_guid_warehouse_after_vendor", Bot.Settings.WarehouseAfterVendor)
-            _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
-             _, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("Deposit Money##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
+	    _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
+	    _, Bot.Settings.RepairAfterWarehouse = ImGui.Checkbox("Repair after Vendor##id_guid_repair_after_warehouse", Bot.Settings.RepairAfterWarehouse)
+            _, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("Deposit Money##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
             _, Bot.Settings.WarehouseSettings.MoneyToKeep = ImGui.SliderInt("Money to Keep##id_gui_warehouse_keep_money", Bot.Settings.WarehouseSettings.MoneyToKeep, 0, 1000000)
             _, Bot.Settings.WarehouseSettings.DepositItems = ImGui.Checkbox("Deposit Items##id_guid_warehouse_deposit_items", Bot.Settings.WarehouseSettings.DepositItems)
+			
             ImGui.Text("Never Deposit these Items")
             valueChanged, MainWindow.WarehouseComboSelectedIndex = ImGui.Combo("##id_guid_warehouse_inventory_combo_select", MainWindow.WarehouseComboSelectedIndex, MainWindow.InventoryName)
             if valueChanged then
@@ -290,6 +328,31 @@ function MainWindow.DrawMainWindow()
             end
 
         end
+		
+	if ImGui.CollapsingHeader("Exchange Items", "id_gui_turnin", true, false) then
+		_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
+		_, Bot.Settings.VendorAfterTurnin = ImGui.Checkbox("Vendor after Exchange##id_guid_vendor_after_turnin", Bot.Settings.VendorAfterTurnin)
+		_, Bot.Settings.TurninSettings.TurninOnWeight = ImGui.Checkbox("Exchange when too heavy##id_guid_vendor_weight", Bot.Settings.TurninSettings.TurninOnWeight)
+		ImGui.Text("Try to Exchange these Items")
+		valueChanged, MainWindow.TurninComboSelectedIndex = ImGui.Combo("##id_guid_turnin_inventory_combo_select", MainWindow.TurninComboSelectedIndex, MainWindow.InventoryName)
+		if valueChanged then
+			local inventoryName = MainWindow.InventoryName[MainWindow.TurninComboSelectedIndex]
+			if not table.find(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName) then
+				table.insert(Bot.Settings.TurninSettings.TurninItemsNamed, inventoryName)
+                end
+                MainWindow.TurninComboSelectedIndex = 0
+            end
+            _, MainWindow.TurninSelectedIndex = ImGui.ListBox("##id_guid_turnin_items", MainWindow.TurninSelectedIndex, Bot.Settings.TurninSettings.TurninItemsNamed, 5)
+            if ImGui.Button("Remove Item##id_guid_turnin_neverdeposit_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                if MainWindow.TurninSelectedIndex > 0 and MainWindow.TurninSelectedIndex <= table.length(Bot.Settings.TurninSettings.TurninItemsNamed) then
+                    table.remove(Bot.Settings.TurninSettings.TurninItemsNamed, MainWindow.TurninSelectedIndex)
+                    MainWindow.TurninSelectedIndex = 0
+                end
+            end
+
+        end
+		
+		
         if ImGui.CollapsingHeader("Advanced", "id_gui_advanced", true, false) then
             ImGui.Columns(2)
             _, Bot.Settings.RunToHotSpots = ImGui.Checkbox("Run To Hotspots##id_guid_advanced_run_HotSpots", Bot.Settings.RunToHotSpots)
@@ -299,6 +362,8 @@ function MainWindow.DrawMainWindow()
             _, Bot.Settings.RepairSettings.PlayerRun = ImGui.Checkbox("Run To Repair##id_guid_advanced_run_Repair", Bot.Settings.RepairSettings.PlayerRun)
             ImGui.NextColumn()
             _, Bot.Settings.WarehouseSettings.PlayerRun = ImGui.Checkbox("Run To Warehouse##id_guid_advanced_run_Warehouse", Bot.Settings.WarehouseSettings.PlayerRun)
+	    ImGui.NextColumn()
+            _, Bot.Settings.TurninSettings.PlayerRun = ImGui.Checkbox("Run To Exchange##id_guid_advanced_run_Turnin", Bot.Settings.TurninSettings.PlayerRun)
             ImGui.Columns(1)
             ImGui.Text("Change with caution!!!")
             ImGui.Text(" ")
