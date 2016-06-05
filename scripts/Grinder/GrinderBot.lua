@@ -37,38 +37,38 @@ function Bot.GetPlayers(onlyPvpFlagged)
     return players
 end
 
+function Bot.LoadCombat()
+    local combatScriptFile = Bot.Settings.CombatScript
+    local code = Pyx.FileSystem.ReadFile("Combats/" .. combatScriptFile)
+    combatScriptFunc,combatScriptError = load(code)
+    if combatScriptFunc == nil then
+        print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
+        return
+    end
+    Bot.Combat = combatScriptFunc()
+
+    if not Bot.Combat then
+        print("Unable to load combat script !")
+        return
+    end
+
+    if not Bot.Combat.Attack then
+        print("Combat script doesn't have .Attack function !")
+        return
+    end
+
+    if Bot.Combat.Gui then
+        MainWindow.LoadCombatSettings()
+    end
+end
+
 function Bot.Start()
     if not Bot.Running then
-
         Bot.ResetStats()
-        Bot.Combat = nil
         Bot.RepairState.Forced = false
         Bot.WarehouseState.Forced = false
         Bot.VendorState.Forced = false
-
         Bot.SaveSettings()
-
-        local combatScriptFile = Bot.Settings.CombatScript
-
-        local code = Pyx.FileSystem.ReadFile("Combats/" .. combatScriptFile)
-        combatScriptFunc,combatScriptError = load(code)
-
-        if combatScriptFunc == nil then
-            print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
-            return
-        end
-
-        Bot.Combat = combatScriptFunc()
-
-        if not Bot.Combat then
-            print("Unable to load combat script !")
-            return
-        end
-
-        if not Bot.Combat.Attack then
-            print("Combat script doesn't have .Attack function !")
-            return
-        end
 
         local currentProfile = ProfileEditor.CurrentProfile
 
@@ -84,7 +84,7 @@ function Bot.Start()
         if Bot.MeshDisabled == true then
             Navigator.RealMoveTo = Navigator.MoveTo
             Navigator.MoveTo = function(p)
-                GetSelfPlayer():MoveTo(p)     
+                GetSelfPlayer():MoveTo(p)
             end
             Navigator.RealCanMoveTo = Navigator.CanMoveTo
             Navigator.CanMoveTo = function(p) return true end
@@ -222,7 +222,6 @@ function Bot.OnPulse()
     Bot.DoReset = false
     end
         Bot.Fsm:Pulse()
-
         if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true then
             Bot.CombatPullState.Enabled = false
         else
@@ -240,6 +239,12 @@ end
 function Bot.CallCombatRoaming()
     if Bot.Combat and Bot.Combat.Roaming then
         Bot.Combat:Roaming()
+    end
+end
+
+function Bot.CallGui()
+    if Bot.Combat and Bot.Combat.UserInterface then
+        Bot.Combat:UserInterface()
     end
 end
 
@@ -275,7 +280,7 @@ function Bot.OnStuck()
     if Navigator.StuckCount > 15 then
         print("We are too stuck try rescue")
          BDOLua.Execute("callRescue()")
-        
+
     end
 end
 
