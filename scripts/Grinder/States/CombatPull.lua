@@ -43,6 +43,8 @@ function CombatPullState:NeedToRun()
     for k, v in pairs(monsters) do
         if v.IsVisible == true and
             v.IsAlive == true and
+           v.HealthPercent == 100 and
+           v.IsAggro == false and
             math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
             --v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
             v.CanAttack == true and

@@ -155,7 +155,7 @@ function VendorState:Run()
         self.State = 1
         return true
     end
-    Navigator.Stop()
+    Navigator.Stop(true)
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return true

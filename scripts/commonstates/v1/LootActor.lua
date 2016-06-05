@@ -44,7 +44,7 @@ function LootActorState:NeedToRun()
         return false
     end
     
-    local nearestAttacker = self:GetNeareastAttacker()
+--    local nearestAttacker = self:GetNeareastAttacker()
 
     local actors = GetActors()
     table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
@@ -52,7 +52,7 @@ function LootActorState:NeedToRun()
         if v.IsLootable and
             v.Position.Distance3DFromMe < self.Settings.LootRadius and
             (not self.BlacklistActors[v.Guid] or Pyx.Win32.GetTickCount() - self.BlacklistActors[v.Guid] < 2000) and
-            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
+--            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
 --            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
         then

@@ -12,6 +12,7 @@ Bot.RepairState = RepairState()
 Bot.LootState = LootActorState()
 Bot.BuildNavigationState = BuildNavigationState()
 Bot.InventoryDeleteState = InventoryDeleteState()
+Bot.DoReset = false
 
 -- Not Converted yet
 Bot.CombatFightState = CombatFightState()
@@ -80,7 +81,6 @@ function Bot.Start()
             print("Profile require at least 2 hotspots !")
             return
         end
-
         if Bot.MeshDisabled == true then
             Navigator.RealMoveTo = Navigator.MoveTo
             Navigator.MoveTo = function(p)
@@ -121,7 +121,6 @@ function Bot.Start()
             Navigation.MesherEnabled = false
         end
         Navigator.OnStuckCall = Bot.OnStuck
-
         Bot.Fsm = FSM()
         Bot.Fsm.ShowOutput = true
 
@@ -154,6 +153,7 @@ function Bot.Start()
 end
 
 function Bot.Death(state)
+Bot.DoReset = true
     if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
         Bot.Stop()
         else
@@ -165,7 +165,7 @@ function Bot.Death(state)
 end
 
 function Bot.Stop()
-    Navigator.Stop()
+    Navigator.Stop(true)
     Bot.Running = false
 
     if Navigator.RealMoveTo ~= nil then
@@ -216,6 +216,11 @@ function Bot.OnPulse()
     end
 
     if Bot.Running then
+    if Bot.DoReset == true then
+    Bot.Fsm.Reset = true
+    Navigator.Reset()
+    Bot.DoReset = false
+    end
         Bot.Fsm:Pulse()
 
         if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true then
