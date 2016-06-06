@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true }
+    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -163,7 +163,13 @@ function RepairState:Run()
     if self.State == 3 then
         self.State = 4
         if self.Settings.RepairEquipped == true then
-            selfPlayer:RepairAllEquippedItems(npc)
+            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then
+				BDOLua.Execute("MessageBoxRepairAllEquippedItem()")
+				BDOLua.Execute("repair_AllItem(CppEnums.ItemWhereType.eWarehouse)")
+				BDOLua.Execute("allClearMessageData()")
+					else
+ 					selfPlayer:RepairAllEquippedItems(npc)
+ 				end
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
         end
@@ -172,7 +178,13 @@ function RepairState:Run()
     if self.State == 4 then
         self.State = 5
         if self.Settings.RepairInventory == true then
-            selfPlayer:RepairAllInventoryItems(npc)
+            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then 
+				BDOLua.Execute("MessageBoxRepairAllInvenItem()")
+				BDOLua.Execute("repair_AllItem(CppEnums.ItemWhereType.eWarehouse)")
+				BDOLua.Execute("allClearMessageData()")
+					else
+					selfPlayer:RepairAllInventoryItems(npc)
+			end
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
         end
