@@ -114,6 +114,24 @@ end
 function RepairState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
+    local flushdialog = [[
+	MessageBox_Empty_function()
+	allClearMessageData()
+	postProcessMessageData()
+	]]
+	local equippedwarehouse = [[
+	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
+	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
+	MessageBoxRepairAllEquippedItem()
+	Repair_AllItem_MessageBox_Confirm()
+	]]
+	local invenwarehouse = [[
+	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
+	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
+	MessageBoxRepairAllInvenItem()
+	Repair_AllItem_MessageBox_Confirm()
+	]]
+
 
     if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
@@ -154,6 +172,7 @@ function RepairState:Run()
 
     if self.State == 2 then
         self.State = 3
+        BDOLua.Execute(flushdialog)
         BDOLua.Execute("Repair_OpenPanel( true)")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
@@ -162,11 +181,11 @@ function RepairState:Run()
 
     if self.State == 3 then
         self.State = 4
+        
         if self.Settings.RepairEquipped == true then
             if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then
-				BDOLua.Execute("MessageBoxRepairAllEquippedItem()")
-				BDOLua.Execute("repair_AllItem(CppEnums.ItemWhereType.eWarehouse)")
-				BDOLua.Execute("allClearMessageData()")
+				BDOLua.Execute(equippedwarehouse)
+				BDOLua.Execute(flushdialog)
 					else
  					selfPlayer:RepairAllEquippedItems(npc)
  				end
@@ -179,9 +198,8 @@ function RepairState:Run()
         self.State = 5
         if self.Settings.RepairInventory == true then
             if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then 
-				BDOLua.Execute("MessageBoxRepairAllInvenItem()")
-				BDOLua.Execute("repair_AllItem(CppEnums.ItemWhereType.eWarehouse)")
-				BDOLua.Execute("allClearMessageData()")
+				BDOLua.Execute(invenwarehouse)
+				BDOLua.Execute(flushdialog)
 					else
 					selfPlayer:RepairAllInventoryItems(npc)
 			end
