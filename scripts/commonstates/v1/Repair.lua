@@ -192,15 +192,15 @@ function RepairState:Run()
         return
     end
     
-    if self.state == 3.5 then
-		self.state = 3.9
+    if self.State == 3.5 then
+		self.State = 3.9
 		BDOLua.Execute(confirm)
 		self.SleepTimer = PyxTimer:New(1)
 		self.SleepTimer:Start()
 		return
 	end
-	if self.state == 3.9 then
-		self.state = 4
+	if self.State == 3.9 then
+		self.State = 4
 		BDOLua.Execute(flushdialog)
 		self.SleepTimer = PyxTimer:New(1)
 		self.SleepTimer:Start()
@@ -221,15 +221,16 @@ function RepairState:Run()
         return
     end
     
-    if self.state == 4.5 then
-		self.state = 4.9
+    if self.State == 4.5 then
+		self.State = 4.9
 		BDOLua.Execute(confirm)
 		self.SleepTimer = PyxTimer:New(1)
 		self.SleepTimer:Start()
+		return
 	end
 	
-    if self.state == 4.9 then
-		self.state = 5
+    if self.State == 4.9 then
+		self.State = 5
 		BDOLua.Execute(flushdialog)
 		self.SleepTimer = PyxTimer:New(1)
 		self.SleepTimer:Start()
