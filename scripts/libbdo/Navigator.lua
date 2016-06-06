@@ -411,7 +411,7 @@ function Navigator.OnRender3D()
         if Navigator.Waypoints ~= nil then
             for k, v in pairs(Navigator.Waypoints) do
                 local count = 0
-                if count <= 50 then ~~ limiting Drawn 3D Triangles
+                if count <= 50 then
                     Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 20, v.Z, 10, 20, 0xFFFFFFFF, 0xFFFFFFFF))
                     count = count + 1
                 end
