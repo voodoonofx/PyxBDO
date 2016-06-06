@@ -410,7 +410,11 @@ function Navigator.OnRender3D()
         local linesList = { }
         if Navigator.Waypoints ~= nil then
             for k, v in pairs(Navigator.Waypoints) do
-                Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 20, v.Z, 10, 20, 0xFFFFFFFF, 0xFFFFFFFF))
+                local count = 0
+                if count <= 50 then ~~ limiting Drawn 3D Triangles
+                    Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 20, v.Z, 10, 20, 0xFFFFFFFF, 0xFFFFFFFF))
+                    count = count + 1
+                end
             end
             local firstPoint = Navigator.Waypoints[1]
             if firstPoint then
