@@ -113,7 +113,7 @@ function TurninState:Run()
     local vendorPosition = self:GetPosition()
 
 
-    if vendorPosition.Distance3DFromMe > 300 then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
@@ -213,11 +213,11 @@ function TurninState:Run()
             return
         end
 
-
+	self:Exit()
         return
     
 
-    self:Exit()
+    
 
 end
 
