@@ -145,7 +145,7 @@ function Magician:Combos()
     -- Use Healing Aura
     if Magician.Gui.HealingAura and (self.player.HealthPercent <= Magician.Gui.HealingAuraHealthPercent or self.player.ManaPercent < Magician.Gui.HealingAuraManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_AURA) then
         print( "Casting Healing Aura" )
-        EdanCombo.PressAndWait( Magician.E, self.player.CrosshairPosition )
+        EdanCombo.PressAndWait( Magician.E, self.player.Position )
         return
     end
 
@@ -174,7 +174,7 @@ function Magician:Combos()
     -- Use Magic Shield
     if Magician.Gui.MagicShield and ((self.player.HealthPercent <= 70 and EdanScout.MonstersInMeleeRange >= 2) or self.player.HealthPercent <= Magician.Gui.MagicShieldHealthPercent) and self.player.ManaPercent >= 30 and EdanSkills.SkillUsableCooldown(WITCH_MAGICAL_SHIELD) and not self.player:HasBuffById(617) then
         print("Casting Magical Shield")
-        EdanCombo.PressAndWait( Magician.Q, self.player.CrosshairPosition )
+        EdanCombo.PressAndWait( Magician.Q, self.player.Position )
         return
     end
 
@@ -218,7 +218,7 @@ function Magician:Combos()
             EdanCombo.Wait(1000)
         else
             print("Casting Lightning")
-            EdanCombo.PressAndWait( Magician.S | Magician.F, self.player.CrosshairPosition, 500 )
+            EdanCombo.PressAndWait( Magician.S | Magician.F, self.monster.Position, 500 )
             EdanCombo.Wait(500)
         end
         return
