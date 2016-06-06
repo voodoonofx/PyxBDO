@@ -177,10 +177,11 @@ function Navigator.CanMoveTo(destination)
 end
 
 function Navigator.MoveToStraight(destination)
-    local selfPlayer = GetSelfPlayer()
-    selfPlayer:MoveTo(destination)
+--    local selfPlayer = GetSelfPlayer()
+    Navigator.Waypoints = { }
+    table.insert(Navigator.Waypoints, destination)
     Navigator.Destination = destination
-    Navigator.PathingMode = 2
+    Navigator.PathingMode = 1
     Navigator.Running = true
     return true
 end
