@@ -8,7 +8,7 @@ Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
     Navigation.MesherEnabled = false
     Navigation.RenderMesh = false
     Navigation.ClearMesh()
-    if Bot.Combat.Gui then
+    if Bot.Combat ~= nil and Bot.Combat.Gui then
         MainWindow.SaveCombatSettings()
     end
  end)
@@ -18,7 +18,7 @@ Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function()
     ProfileEditor.OnDrawGuiCallback()
     LibConsumableWindow:OnDrawGuiCallback()
     LibConsumableAddWindow:OnDrawGuiCallback()
-    if Bot.Combat.Gui then
+    if Bot.Combat ~= nil and Bot.Combat.Gui then
         if Bot.Combat.Gui.ShowGui then
             Bot.CallGui()
         end
