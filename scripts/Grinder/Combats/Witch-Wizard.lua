@@ -150,7 +150,7 @@ function Magician:Combos()
     end
 
     -- Use Healing Lighthouse
-    if Magician.Gui.HealingLighthouse and (self.player.HealthPercent <= Magician.Gui.HealingLighthouseHealthPercent or self.player.ManaPercent <= HealingLighthouseManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_LIGHTHOUSE) then
+    if Magician.Gui.HealingLighthouse and (self.player.HealthPercent <= Magician.Gui.HealingLighthouseHealthPercent or self.player.ManaPercent <= Magician.Gui.HealingLighthouseManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_LIGHTHOUSE) then
         print("Casting Healing Lighthouse")
         EdanCombo.PressAndWait( Magician.Shift | Magician.E )
         return
