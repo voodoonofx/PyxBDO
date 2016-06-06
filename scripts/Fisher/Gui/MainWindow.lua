@@ -118,6 +118,7 @@ function MainWindow.DrawMainWindow()
 
         if ImGui.CollapsingHeader("Repair", "id_gui_repair", true, false) then
             _, Bot.Settings.RepairFishingRod = ImGui.Checkbox("Repair fishing rod##id_repair_fishing_rod", Bot.Settings.RepairFishingRod)
+            _, Bot.Settings.RepairSettings.UseWarehouseMoney = ImGui.Checkbox("Use Warehouse Money", Bot.Settings.RepairSettings.UseWarehouseMoney)
         end
 
         if ImGui.CollapsingHeader("Trade Manager", "id_gui_trademanager", true, false) then
