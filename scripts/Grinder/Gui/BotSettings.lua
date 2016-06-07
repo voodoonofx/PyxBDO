@@ -50,6 +50,8 @@ function BotSettings.DrawBotSettings()
 		
 		    if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
             BotSettings.UpdateMonsters()
+			_, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
+			
             if not table.find(BotSettings.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(BotSettings.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -82,7 +84,7 @@ function BotSettings.DrawBotSettings()
 		
 		if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then
             _, Bot.Settings.LootSettings.TakeLoot = ImGui.Checkbox("Take loots##id_guid_looting_take_loot", Bot.Settings.LootSettings.TakeLoot)
-			_, Bot.Settings.LootSettings.IgnorePlayers = ImGui.Checkbox("Loot if other player in range##id_guid_looting_IgnorePlayers", Bot.Settings.LootSettings.IgnorePlayers)
+			_, Bot.Settings.LootSettings.SkipLootPlayer = ImGui.Checkbox("Skip loot if player in range##id_guid_looting_IgnorePlayers", Bot.Settings.LootSettings.SkipLootPlayer)
         
      
             ImGui.Text("Always Delete these Items")
