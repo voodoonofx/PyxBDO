@@ -57,9 +57,15 @@ function LootActorState:NeedToRun()
 --            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
 --            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
-        then
-            self.CurrentLootActor = v
-            return true
+        then 
+			if self.Settings.SkipLootPlayer and Bot.DetectPlayer() then
+				print("Player in Range, skipping loot."  )
+				self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
+				return false
+				else
+				self.CurrentLootActor = v
+				return true
+			end
         end
     end
 
@@ -70,12 +76,6 @@ function LootActorState:Run()
 
     local selfPlayer = GetSelfPlayer()
     local actorPosition = self.CurrentLootActor.Position
-	
-	if self.Settings.SkipLootPlayer and Bot.DetectPlayer() then
-		print("Player in Range, skipping loot."  )
-		self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
-		return false
-	end
 
     if Looting.IsLooting then
         local numLoots = Looting.ItemCount

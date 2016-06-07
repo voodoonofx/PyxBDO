@@ -61,7 +61,7 @@ function CombatPullState:NeedToRun()
             else
                 self._newTarget = false
             end
-			if not self.Settings.IgnorePlayers and Bot.DetectPlayer() then
+			if self.Settings.SkipPullPlayer and Bot.DetectPlayer() then
 				self.MobIgnoreList:Add(v.Key, 10)
 				print("Pull Added :" .. v.Key .. " to Ignore list because of Player")
 				return false
