@@ -12,6 +12,7 @@ setmetatable(VendorState, {
 function VendorState.new()
     local self = setmetatable( { }, VendorState)
     self.Settings = {
+	Enabled = true,
     PlayerRun = true,
         NpcName = "",
         NpcPosition = { X = 0, Y = 0, Z = 0 },
@@ -65,6 +66,11 @@ function VendorState:NeedToRun()
         self.Forced = false
         return false
     end
+	
+	if not self.Settings.Enabled then
+		self.Forced = false
+			return false
+		end
 
     if self.Settings.SellEnabled == false and self.Settings.BuyEnabled == false then
         return false
