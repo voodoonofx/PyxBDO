@@ -91,6 +91,9 @@ function MainWindow.DrawMainWindow()
 					end
 				end
 				
+				if ImGui.MenuItem("Reset Stats", "") then
+					Bot.ResetStats()
+				end
 				-- DISABLED FOR NOW
 				-- if ImGui.MenuItem("Stats", "ALT+L",Stats.Visible) then
 					-- if not Stats.Visible then
@@ -225,7 +228,7 @@ function MainWindow.DrawMainWindow()
 		ImGui.Text("Kills: ")
 		ImGui.SameLine()
 		ImGui.TextColored(ImVec4(1,0.2,0.2,1),string.format("%i", Bot.Stats.KillCount))
-
+	
 		ImGui.Columns(1)
 		ImGui.Separator()
 

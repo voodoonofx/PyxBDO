@@ -31,8 +31,8 @@ function BotSettings.DrawBotSettings()
 	local valueChanged = false
 
 	if BotSettings.Visible then
+	
 		_, BotSettings.Visible = ImGui.Begin("Settings", BotSettings.Visible, ImVec2(350, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
-
 		if ImGui.Button("Save settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
 			Bot.SaveSettings()
 			print("Settings saved")
@@ -228,27 +228,27 @@ function BotSettings.DrawBotSettings()
 								if value ~= nil then
 									ImGui.Text(value.Name)
 									ImGui.NextColumn()
-
+									ImGui.PushItemWidth(90) 
 									valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.InputFloat("Min##id_guid_vendor_buy_min_items" .. key, Bot.VendorState.Settings.BuyItems[key].BuyAt, 1,10,0,0)
 									if valueChanged then
 										if Bot.VendorState.Settings.BuyItems[key].BuyAt < 0 then
 											Bot.VendorState.Settings.BuyItems[key].BuyAt = 0
 										end
 
-										if Bot.VendorState.Settings.BuyItems[key].BuyAt > 20 then
-											Bot.VendorState.Settings.BuyItems[key].BuyAt = 20
+										if Bot.VendorState.Settings.BuyItems[key].BuyAt > 100 then
+											Bot.VendorState.Settings.BuyItems[key].BuyAt = 100
 										end
 									end
 									ImGui.NextColumn()
-
+									ImGui.PushItemWidth(90)
 									valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyMax = ImGui.InputFloat("Max##id_guid_vendor_buy_max_items" .. key, Bot.VendorState.Settings.BuyItems[key].BuyMax, 1,10,0,0)
 									if valueChanged then
 										if Bot.VendorState.Settings.BuyItems[key].BuyMax < 1 then
 											Bot.VendorState.Settings.BuyItems[key].BuyMax = 1
 										end
 
-										if Bot.VendorState.Settings.BuyItems[key].BuyMax > 200 then
-											Bot.VendorState.Settings.BuyItems[key].BuyMax = 200
+										if Bot.VendorState.Settings.BuyItems[key].BuyMax > 500 then
+											Bot.VendorState.Settings.BuyItems[key].BuyMax = 500
 										end
 									end
 									ImGui.NextColumn()
