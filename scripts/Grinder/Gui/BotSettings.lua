@@ -351,29 +351,7 @@ function BotSettings.DrawBotSettings()
 					end
 			end
 		end
-		if ImGui.CollapsingHeader("Inventory Management", "id_gui_inv_manage", true, false) then
-
-			ImGui.Text("Always delete these items")
-			valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_inv_management_inventory_combo_select", BotSettings.InventoryComboSelectedIndex, BotSettings.InventoryName)
-			if valueChanged then
-				local inventoryName = BotSettings.InventoryName[BotSettings.InventoryComboSelectedIndex]
-
-				if not table.find(Bot.Settings.InventoryDeleteSettings.DeleteItems, inventoryName) then
-					table.insert(Bot.Settings.InventoryDeleteSettings.DeleteItems, inventoryName)
-				end
-
-				BotSettings.InventoryComboSelectedIndex = 0
-			end
-
-			_, BotSettings.InventorySelectedIndex = ImGui.ListBox("##id_guid_inv_management_delete", BotSettings.InventorySelectedIndex,Bot.Settings.InventoryDeleteSettings.DeleteItems, 5)
-			if ImGui.Button("Remove Item##id_guid_inv_management_delete_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
-				if BotSettings.InventorySelectedIndex > 0 and BotSettings.InventorySelectedIndex <= table.length(Bot.Settings.InventoryDeleteSettings.DeleteItems) then
-					table.remove(Bot.Settings.InventoryDeleteSettings.DeleteItems, BotSettings.InventorySelectedIndex)
-					BotSettings.InventorySelectedIndex = 0
-				end
-			end
-		end
-
+		
 		if ImGui.CollapsingHeader("Death action", "id_gui_death_action", true, false) then
 			if ImGui.RadioButton("Stop bot##id_guid_death_action_stop_bot", Bot.Settings.DeathSettings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED) then
 				Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED
