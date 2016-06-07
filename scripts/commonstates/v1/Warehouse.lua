@@ -164,7 +164,8 @@ function WarehouseState:Run()
             self.State = 10
             return
         end
-        BDOLua.Execute("Warehouse_OpenPanelFromDialog()")
+        -- BDOLua.Execute("Warehouse_OpenPanelFromDialog()")
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Warehouse))")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         self.State = 3

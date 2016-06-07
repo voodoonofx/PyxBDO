@@ -15,9 +15,13 @@ Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
 
 Pyx.Scripting.CurrentScript:RegisterCallback("ImGui.OnRender", function()
     MainWindow:OnDrawGuiCallback()
-    ProfileEditor.OnDrawGuiCallback()
-    LibConsumableWindow:OnDrawGuiCallback()
-    LibConsumableAddWindow:OnDrawGuiCallback()
+	ProfileEditor:OnDrawGuiCallback()
+	BotSettings:OnDrawGuiCallback()
+	AdvancedSettings:OnDrawGuiCallback()
+	Stats:OnDrawGuiCallback()
+	InventoryList:OnDrawGuiCallback()
+	LibConsumableWindow:OnDrawGuiCallback()
+	LibConsumableAddWindow:OnDrawGuiCallback()
     if Bot.Combat ~= nil and Bot.Combat.Gui then
         if Bot.Combat.Gui.ShowGui then
             Bot.CallGui()

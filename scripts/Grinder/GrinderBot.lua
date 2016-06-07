@@ -1,6 +1,27 @@
 Bot = { }
 Bot.Settings = Settings()
 Bot.Running = false
+Bot.Paused = false
+Bot.PausedManual = false
+Bot.WasRunning = false
+Bot.PrintConsoleState = false
+Bot.EnableDebug = false
+Bot.EnableDebugMainWindow = false
+Bot.EnableDebugProfileEditor = false
+Bot.EnableDebugInventory = false
+Bot.EnableDebugDeathState = false
+Bot.EnableDebugEquipFishignRodState = false
+Bot.EnableDebugEquipFloatState = false
+Bot.EnableDebugHookFishState = false
+Bot.EnableDebugHookHandleGameState = false
+Bot.EnableDebugInventoryDeleteState = false
+Bot.EnableDebugLootState = false
+Bot.EnableDebugRepairState = false
+Bot.EnableDebugStartFishingState = false
+Bot.EnableDebugTradeManagerState = false
+Bot.EnableDebugVendorState = false
+Bot.EnableDebugWarehouseState = false
+
 Bot.Fsm = FSM()
 Bot.Combat = nil
 Bot.CombatPull = nil
@@ -14,6 +35,15 @@ Bot.LootState = LootActorState()
 Bot.BuildNavigationState = BuildNavigationState()
 Bot.InventoryDeleteState = InventoryDeleteState()
 Bot.DoReset = false
+Bot.SleepTimer = nil
+Bot.LastPauseTick = nil
+Bot.LoopCounter = 0
+Bot.Time = nil
+Bot.Hours = nil
+Bot.Minutes = nil
+Bot.Seconds = nil
+
+Bot.Counter = 0
 
 -- Not Converted yet
 Bot.CombatFightState = CombatFightState()
@@ -21,6 +51,47 @@ Bot.CombatPullState = CombatPullState()
 
 -- Bot.Fsm:AddState(RoamingState())
 -- Bot.Fsm:AddState(IdleState())
+
+function Bot.FormatMoney(amount) -- used the example from here: http://lua-users.org/wiki/FormattingNumbers
+	local formatted = amount
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1.%2') -- comma to separate the thousands
+		if (k == 0) then
+			break
+		end
+	end
+	return formatted
+end
+
+function Bot.ResetStats()
+	Bot.Stats = {
+		SilverInitial = GetSelfPlayer().Inventory.Money,
+		SilverGained = 0,
+		KillCount = 0,
+		-- Loots = 0,
+		-- AverageLootTime = 0,
+		-- LootQuality = {},
+		-- Fishes = 0,
+		-- Shards = 0,
+		-- Keys = 0,
+		-- Eggs = 0,
+		-- Trashes = 0,
+		-- LootTimeCount = 0,
+		-- LastLootTick = 0,
+		-- TotalLootTime = 0,
+		SessionStart = Pyx.Win32.GetTickCount(),
+		TotalSession = 0,
+	}
+end
+
+function Bot.SilverStats(deposit)
+	if not deposit then
+		Bot.Stats.SilverGained = Bot.Stats.SilverGained + (GetSelfPlayer().Inventory.Money - Bot.Stats.SilverInitial)
+	end
+	Bot.Stats.SilverInitial = GetSelfPlayer().Inventory.Money
+end
+
+Bot.ResetStats()
 
 
 function Bot.GetPlayers(onlyPvpFlagged)
@@ -65,13 +136,12 @@ end
 
 function Bot.Start()
     if not Bot.Running then
-        Bot.ResetStats()
         Bot.RepairState.Forced = false
         Bot.WarehouseState.Forced = false
-	Bot.TurninState.Forced = false
+		Bot.TurninState.Forced = false
         Bot.VendorState.Forced = false
         Bot.SaveSettings()
-
+		Bot.Stats.SessionStart = Pyx.Win32.GetTickCount()
         local currentProfile = ProfileEditor.CurrentProfile
 
         if not currentProfile then
@@ -175,9 +245,17 @@ Bot.DoReset = true
 end
 
 function Bot.Stop()
-    Navigator.Stop(true)
+	Bot.RepairState:Reset()
+	Bot.WarehouseState:Reset()
+	Bot.VendorState:Reset()
+	Bot.DeathState:Reset()
+	Bot.TurninState:Reset()
     Bot.Running = false
-
+	Bot.LoopCounter = 0
+	Bot.Paused = false
+	Bot.PausedManual = false
+	Navigator.Stop(true)
+	Bot.Stats.TotalSession = Bot.Stats.TotalSession + (Pyx.Win32.GetTickCount() - Bot.Stats.SessionStart)
     if Navigator.RealMoveTo ~= nil then
         Navigator.MoveTo = Navigator.RealMoveTo
         Navigator.RealMoveTo = nil
@@ -187,30 +265,159 @@ function Bot.Stop()
     end
 end
 
-function Bot.ResetStats()
-
-end
-
 function Bot.OnPulse()
     if Pyx.Input.IsGameForeground() then
         -- pause to start or stop bot
         if Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('S')) then
-            if Bot._startHotKeyPressed ~= true then
-                Bot._startHotKeyPressed = true
-                if Bot.Running then
-                    print("stopping bot from hotkey")
-                    Bot.Stop()
-                else
-                    print("starting bot from hotkey")
-                    Bot.Start()
-                end
-            end
-        else
-            Bot._startHotKeyPressed = false
-        end
-
-        -- alt+F hotspot adding
-        if Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('F')) then
+			if Bot._startHotKeyPressed ~= true then
+				Bot._startHotKeyPressed = true
+				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
+					print("Stopping bot from hotkey")
+					BDOLua.Execute("FGlobal_WorldBossShow('Grinder STOPPED')")
+					Bot.Stop()
+				elseif Bot.Paused then
+					print("Bot remain paused, cause of some options enabled")
+				elseif Bot.PausedManual then
+					print("Unpause the bot first!")
+				else
+					print("Starting bot from hotkey")
+					BDOLua.Execute("FGlobal_WorldBossShow('Grinder STARTED')")
+					Bot.Start()
+				end
+			end
+			-- DISABLED FOR NOW
+		-- elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('P')) then
+			-- if Bot._pauseHotKeyPressed ~= true then
+				-- Bot._pauseHotKeyPressed = true
+				-- if Bot.Running and (not Bot.Paused and not Bot.PausedManual) then
+					-- print("Pausing bot from hotkey")
+					-- BDOLua.Execute("FGlobal_WorldBossShow('Grinder Paused')")
+					-- Bot.PausedManual = true
+				-- elseif not Bot.Paused and Bot.PausedManual then
+					-- print("Unpausing bot from hotkey")
+					-- BDOLua.Execute("FGlobal_WorldBossShow('Grinder Resumed')")
+					-- Bot.PausedManual = false
+				-- end
+			-- end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('E')) then
+			if Bot._profileHotKeyPressed ~= true then
+				Bot._profileHotKeyPressed = true
+				if not ProfileEditor.Visible then
+					ProfileEditor.Visible = true
+				elseif ProfileEditor.Visible then
+					ProfileEditor.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('O')) then
+			if Bot._settingsHotKeyPressed ~= true then
+				Bot._settingsHotKeyPressed = true
+				if not BotSettings.Visible then
+					BotSettings.Visible = true
+				elseif BotSettings.Visible then
+					BotSettings.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('D')) then
+			if Bot._advancedsettingsHotKeyPressed ~= true then
+				Bot._advancedsettingsHotKeyPressed = true
+				if not AdvancedSettings.Visible then
+					AdvancedSettings.Visible = true
+				elseif AdvancedSettings.Visible then
+					AdvancedSettings.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('B')) then
+			if Bot._inventoryHotKeyPressed ~= true then
+				Bot._inventoryHotKeyPressed = true
+				if not InventoryList.Visible then
+					InventoryList.Visible = true
+				elseif InventoryList.Visible then
+					InventoryList.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('C')) then
+			if Bot._consumableHotKeyPressed ~= true then
+				Bot._consumableHotKeyPressed = true
+				if not LibConsumableWindow.Visible then
+					LibConsumableWindow.Visible = true
+				elseif LibConsumableWindow.Visible then
+					LibConsumableWindow.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('L')) then
+			if Bot._statsHotKeyPressed ~= true then
+				Bot._statsHotKeyPressed = true
+				if not Stats.Visible then
+					Stats.Visible = true
+				elseif Stats.Visible then
+					Stats.Visible = false
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('W')) then
+			if Bot._warehouseHotKeyPressed ~= true then
+				Bot._warehouseHotKeyPressed = true
+				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
+					Bot.WarehouseState.Forced = true
+					if Bot.EnableDebug then
+						print("Go to Warehouse")
+					end
+				elseif Bot.Paused then
+					print("Bot remain paused, cause of some options enabled")
+				elseif Bot.PausedManual then
+					print("Unpause the bot first!")
+				else
+					print("Start the bot first!")
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('T')) then
+			if Bot._traderHotKeyPressed ~= true then
+				Bot._traderHotKeyPressed = true
+				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
+					Bot.TradeManagerState.Forced = true
+					if Bot.EnableDebug then
+						print("Go to Trader")
+					end
+				elseif Bot.Paused then
+					print("Bot remain paused, cause of some options enabled")
+				elseif Bot.PausedManual then
+					print("Unpause the bot first!")
+				else
+					print("Start the bot first!")
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('V')) then
+			if Bot._vendorHotKeyPressed ~= true then
+				Bot._vendorHotKeyPressed = true
+				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
+					Bot.VendorState.Forced = true
+					if Bot.EnableDebug then
+						print("Go to Vendor")
+					end
+				elseif Bot.Paused then
+					print("Bot remain paused, cause of some options enabled")
+				elseif Bot.PausedManual then
+					print("Unpause the bot first!")
+				else
+					print("Start the bot first!")
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('R')) then
+			if Bot._repairHotKeyPressed ~= true then
+				Bot._repairHotKeyPressed = true
+				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
+					Bot.RepairState.Forced = true
+					if Bot.EnableDebug then
+						print("Go Repair")
+					end
+				elseif Bot.Paused then
+					print("Bot remain paused, cause of some options enabled")
+				elseif Bot.PausedManual then
+					print("Unpause the bot first!")
+				else
+					print("Start the bot first!")
+				end
+			end
+		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('F')) then
             if Bot._addHotKeyPressed ~= true then
                 Bot._addHotKeyPressed = true
                 print("Adding hotspot through hotkey")
@@ -220,18 +427,48 @@ function Bot.OnPulse()
                     table.insert(ProfileEditor.CurrentProfile.Hotspots, { X = selfPlayerPosition.X, Y = selfPlayerPosition.Y, Z = selfPlayerPosition.Z })
                 end
             end
-        else
-            Bot._addHotKeyPressed = false
-        end
+		
+		else 
+			Bot._startHotKeyPressed = false
+			Bot._pauseHotKeyPressed = false
+			Bot._addHotKeyPressed = false
+			Bot._profileHotKeyPressed = false
+			Bot._settingsHotKeyPressed = false
+			Bot._advancedsettingsHotKeyPressed = false
+			Bot._inventoryHotKeyPressed = false
+			Bot._consumableHotKeyPressed = false
+			Bot._statsHotKeyPressed = false
+			Bot._warehouseHotKeyPressed = false
+			Bot._traderHotKeyPressed = false
+			Bot._vendorHotKeyPressed = false
+			Bot._repairHotKeyPressed = false
+		end
     end
+	
+	if Bot.Paused or Bot.PausedManual then
+		Bot.LoopCounter = Bot.LoopCounter + 1
+	end
+	
+	if Bot.Counter > 0 then
+		Bot.Counter = Bot.Counter - 1
+	end
 
-    if Bot.Running then
-    if Bot.DoReset == true then
-    Bot.Fsm.Reset = true
-    Navigator.Reset()
-    Bot.DoReset = false
-    end
-        Bot.Fsm:Pulse()
+    if Bot.Running or Bot.WasRunning then
+		if Bot.DoReset == true then
+			Bot.Fsm.Reset = true
+			Navigator.Reset()
+			Bot.DoReset = false
+		end
+		
+        if Bot.Running then 
+		
+		Bot.Fsm:Pulse()
+		Stats.GetKills()
+		Bot.Time = math.ceil((Bot.Stats.TotalSession + Pyx.Win32.GetTickCount() - Bot.Stats.SessionStart) / 1000)
+		Bot.Seconds = Bot.Time % 60
+		Bot.Minutes = math.floor(Bot.Time / 60) % 60
+		Bot.Hours = math.floor(Bot.Time / (60 * 60))
+			
 
         if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true or Bot.TurninState.Forced then
             Bot.CombatPullState.Enabled = false
@@ -239,7 +476,8 @@ function Bot.OnPulse()
             Bot.CombatPullState.Enabled = true
         end
     end
-end
+		end
+	end
 
 function Bot.CallCombatAttack(monsterActor, isPull)
     if Bot.Combat and Bot.Combat.Attack then
@@ -318,5 +556,12 @@ function Bot.StateComplete(state)
 	
 end
 
+function Bot.CheckIfLoggedIn()
+	if GetSelfPlayer() then
+		return true
+	end
 
-Bot.ResetStats()
+	return false
+end
+
+

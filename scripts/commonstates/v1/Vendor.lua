@@ -188,7 +188,8 @@ function VendorState:Run()
             self:Exit()
             return false
         end
-        BDOLua.Execute("npcShop_requestList()")
+        -- BDOLua.Execute("npcShop_requestList()")
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Shop))")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         if self.Settings.SellEnabled then

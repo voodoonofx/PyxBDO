@@ -155,7 +155,8 @@ function TradeManagerState:Run()
             self:Exit()
             return
         end
-        BDOLua.Execute("npcShop_requestList()")
+        -- BDOLua.Execute("npcShop_requestList()")
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Shop))")
         self.SleepTimer = PyxTimer:New(2)
         self.SleepTimer:Start()
         self.State = 4

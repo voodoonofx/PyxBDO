@@ -171,7 +171,8 @@ function RepairState:Run()
     if self.State == 2 then
         self.State = 3
         BDOLua.Execute(flushdialog)
-        BDOLua.Execute("Repair_OpenPanel( true)")
+        -- BDOLua.Execute("Repair_OpenPanel( true)") -- doesn't update warehouse money
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Repair))")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         return
