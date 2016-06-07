@@ -222,7 +222,9 @@ function MainWindow.DrawMainWindow()
 		end
 		ImGui.NextColumn()
 		-- ImGui.Text("Loots: " .. string.format("%i", Bot.Stats.Loots))
-		ImGui.Text("Kills: " .. string.format("%i", Bot.Stats.KillCount))
+		ImGui.Text("Kills: ")
+		ImGui.SameLine()
+		ImGui.TextColored(ImVec4(1,0.2,0.2,1),string.format("%i", Bot.Stats.KillCount))
 
 		ImGui.Columns(1)
 		ImGui.Separator()

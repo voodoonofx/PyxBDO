@@ -235,8 +235,8 @@ function BotSettings.DrawBotSettings()
 											Bot.VendorState.Settings.BuyItems[key].BuyAt = 0
 										end
 
-										if Bot.VendorState.Settings.BuyItems[key].BuyAt > 5 then
-											Bot.VendorState.Settings.BuyItems[key].BuyAt = 5
+										if Bot.VendorState.Settings.BuyItems[key].BuyAt > 20 then
+											Bot.VendorState.Settings.BuyItems[key].BuyAt = 20
 										end
 									end
 									ImGui.NextColumn()
@@ -247,8 +247,8 @@ function BotSettings.DrawBotSettings()
 											Bot.VendorState.Settings.BuyItems[key].BuyMax = 1
 										end
 
-										if Bot.VendorState.Settings.BuyItems[key].BuyMax > 20 then
-											Bot.VendorState.Settings.BuyItems[key].BuyMax = 20
+										if Bot.VendorState.Settings.BuyItems[key].BuyMax > 200 then
+											Bot.VendorState.Settings.BuyItems[key].BuyMax = 200
 										end
 									end
 									ImGui.NextColumn()
