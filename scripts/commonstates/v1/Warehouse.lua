@@ -13,7 +13,7 @@ setmetatable(WarehouseState, {
 function WarehouseState.new()
     local self = setmetatable( { }, WarehouseState)
 
-    self.Settings = {PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, ExchangeGold = true, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
+    self.Settings = {Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, ExchangeGold = false, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
@@ -51,6 +51,11 @@ function WarehouseState:NeedToRun()
         self.Forced = false
         return false
     end
+	
+	if not self.Settings.Enabled then
+		self.Forced = false
+			return false
+	end
 
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
     self.Forced = false
@@ -164,8 +169,7 @@ function WarehouseState:Run()
             self.State = 10
             return
         end
-        -- BDOLua.Execute("Warehouse_OpenPanelFromDialog()")
-		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Warehouse))")
+        BDOLua.Execute("Warehouse_OpenPanelFromDialog()")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         self.State = 3

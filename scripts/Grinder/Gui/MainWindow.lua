@@ -94,7 +94,7 @@ function MainWindow.DrawMainWindow()
 				if ImGui.MenuItem("Reset Stats", "") then
 					Bot.ResetStats()
 				end
-
+				
 				-- DISABLED FOR NOW
 				-- if ImGui.MenuItem("Stats", "ALT+L",Stats.Visible) then
 					-- if not Stats.Visible then
