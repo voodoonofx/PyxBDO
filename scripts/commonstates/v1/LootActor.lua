@@ -12,7 +12,7 @@ function LootActorState.new()
     local self = setmetatable( { }, LootActorState)
     self.CurrentLootActor = { }
     self.BlacklistActors = { }
-    self.Settings = { TakeLoot = true, LootRadius = 4000 }
+    self.Settings = { TakeLoot = true, LootRadius = 4000, IgnorePlayers = true }
     self.State = 0
 
     self.ItemCheckFunction = nil
@@ -43,6 +43,8 @@ function LootActorState:NeedToRun()
     if selfPlayer.Inventory.FreeSlots == 0 then
         return false
     end
+	
+
     
 --    local nearestAttacker = self:GetNeareastAttacker()
 
@@ -68,6 +70,12 @@ function LootActorState:Run()
 
     local selfPlayer = GetSelfPlayer()
     local actorPosition = self.CurrentLootActor.Position
+	
+	if not self.Settings.IgnorePlayers and Bot.DetectPlayer() then
+		print("Player in Range, skipping loot."  )
+		self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
+		return false
+	end
 
     if Looting.IsLooting then
         local numLoots = Looting.ItemCount

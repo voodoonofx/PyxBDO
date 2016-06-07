@@ -565,3 +565,14 @@ function Bot.CheckIfLoggedIn()
 end
 
 
+function Bot.DetectPlayer()
+	local selfPlayer = GetSelfPlayer()
+		local characters = GetActors()
+		table.sort(characters, function(a,b) return a.Position.Distance3DFromMe < b.Position.Distance3DFromMe end)
+		for k,v in pairs(characters) do
+			if v.IsPlayer and not v.IsSelfPlayer then
+				return true
+				end
+			end
+		return false
+	end
