@@ -59,7 +59,8 @@ function LootActorState:NeedToRun()
             Navigator.CanMoveTo(v.Position)
         then 
 			if self.Settings.SkipLootPlayer and Bot.DetectPlayer() then
-				self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
+				print("Skipped loot because of Player")
+				self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
 				return false
 				else
 				self.CurrentLootActor = v
