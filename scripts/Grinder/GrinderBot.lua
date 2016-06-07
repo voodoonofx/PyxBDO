@@ -370,12 +370,12 @@ function Bot.OnPulse()
 				end
 			end
 		elseif Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('T')) then
-			if Bot._traderHotKeyPressed ~= true then
-				Bot._traderHotKeyPressed = true
+			if Bot._exchangeHotKeyPressed ~= true then
+				Bot._exchangeHotKeyPressed = true
 				if Bot.Running and (not Bot.Paused or not Bot.PausedManual) then
-					Bot.TradeManagerState.Forced = true
+					Bot.TurninState.Forced = true
 					if Bot.EnableDebug then
-						print("Go to Trader")
+						print("Go to Exchange")
 					end
 				elseif Bot.Paused then
 					print("Bot remain paused, cause of some options enabled")
@@ -439,7 +439,7 @@ function Bot.OnPulse()
 			Bot._consumableHotKeyPressed = false
 			Bot._statsHotKeyPressed = false
 			Bot._warehouseHotKeyPressed = false
-			Bot._traderHotKeyPressed = false
+			Bot._exchangeHotKeyPressed = false
 			Bot._vendorHotKeyPressed = false
 			Bot._repairHotKeyPressed = false
 		end
