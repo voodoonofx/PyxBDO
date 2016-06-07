@@ -14,12 +14,16 @@ function Profile.new()
     self.AttackMonsters = { }
     self.VendorNpcName = ""
     self.VendorNpcPosition = { X = 0, Y = 0, Z = 0 }
+	self.VendorNpcSize = 0
     self.WarehouseNpcName = ""
     self.WarehouseNpcPosition = { X = 0, Y = 0, Z = 0 }
+	self.WarehouseNpcSize = 0
     self.TurninNpcName = ""
     self.TurninNpcPosition = { X = 0, Y = 0, Z = 0 }
+	self.TurninNpcSize = 0
     self.RepairNpcName = ""
     self.RepairNpcPosition = { X = 0, Y = 0, Z = 0 }
+	self.RepairNpcSize = 0
     self.MeshConnects = {}
 
   return self

@@ -10,7 +10,7 @@ setmetatable(TradeManagerState, {
 
 function TradeManagerState.new()
     local self = setmetatable( { }, TradeManagerState)
-    self.Settings = {DoTradeGame = false, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = { }, SecondsBetweenTries = 300, PlayerRun = true }
+    self.Settings = {DoTradeGame = false, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, NpcSize = 0, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = { }, SecondsBetweenTries = 300, PlayerRun = true }
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
@@ -105,7 +105,7 @@ function TradeManagerState:Run()
     local selfPlayer = GetSelfPlayer()
     local TradeManagerPosition = self:GetPosition()
 
-    if TradeManagerPosition.Distance3DFromMe > 200 then
+    if TradeManagerPosition.Distance3DFromMe > 200 + self.Settings.NpcSize then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end

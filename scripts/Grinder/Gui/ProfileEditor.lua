@@ -168,6 +168,7 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.VendorNpcPosition.X = VendorNpc.Position.X
                     ProfileEditor.CurrentProfile.VendorNpcPosition.Y = VendorNpc.Position.Y
                     ProfileEditor.CurrentProfile.VendorNpcPosition.Z = VendorNpc.Position.Z
+					ProfileEditor.CurrentProfile.VendorNpcSize = VendorNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -176,6 +177,7 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.VendorNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.VendorNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.VendorNpcPosition.Z = 0
+				ProfileEditor.CurrentProfile.VendorNpcSize = 0
             end
         end
         
@@ -193,6 +195,7 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.RepairNpcPosition.X = RepairNpc.Position.X
                     ProfileEditor.CurrentProfile.RepairNpcPosition.Y = RepairNpc.Position.Y
                     ProfileEditor.CurrentProfile.RepairNpcPosition.Z = RepairNpc.Position.Z
+					ProfileEditor.CurrentProfile.RepairNpcSize = RepairNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -201,6 +204,7 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.RepairNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.RepairNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.RepairNpcPosition.Z = 0
+				ProfileEditor.CurrentProfile.RepairNpcSize = 0
             end
         end
         
@@ -218,6 +222,7 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.X = WarehouseNpc.Position.X
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.Y = WarehouseNpc.Position.Y
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = WarehouseNpc.Position.Z
+					ProfileEditor.CurrentProfile.WarehouseNpcSize = WarehouseNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -226,6 +231,7 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = 0
+				ProfileEditor.CurrentProfile.WarehouseNpcSize = 0
             end
         end
 		
@@ -243,6 +249,7 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.TurninNpcPosition.X = TurninNpc.Position.X
                     ProfileEditor.CurrentProfile.TurninNpcPosition.Y = TurninNpc.Position.Y
                     ProfileEditor.CurrentProfile.TurninNpcPosition.Z = TurninNpc.Position.Z
+					ProfileEditor.CurrentProfile.TurninNpcSize = TurninNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -251,6 +258,7 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.TurninNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Z = 0
+				ProfileEditor.CurrentProfile.TurninNpcSize = 0
             end
 		end
 		
