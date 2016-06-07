@@ -72,7 +72,7 @@ function BotSettings.DrawBotSettings()
                 BotSettings.DontPullComboSelectedIndex = 0
             end
             _, BotSettings.DontPullSelectedIndex = ImGui.ListBox("##id_guid_spull_Delete", BotSettings.DontPullSelectedIndex,Bot.Settings.PullSettings.DontPull, 5)
-            if ImGui.Button("Remove Item##id_guid_inv_delete_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+            if ImGui.Button("Remove Item##id_guid_combat_delete_remove", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
                 if BotSettings.DontPullSelectedIndex > 0 and BotSettings.DontPullSelectedIndex <= table.length(Bot.Settings.PullSettings.DontPull) then
                     table.remove(Bot.Settings.PullSettings.DontPull, BotSettings.DontPullSelectedIndex)
                     BotSettings.DontPullSelectedIndex = 0
