@@ -73,6 +73,15 @@ function MainWindow.DrawMainWindow()
 						AdvancedSettings.Visible = false
 					end
 				end
+				
+				if ImGui.MenuItem("Mesh"),"",Bot.MeshDisabled) then
+					if not Bot.MeshDisabled then
+						Bot.MeshDisabled = true
+					elseif Bot.MeshDisabled then
+						Bot.meshDisabled = false
+					end
+				end
+
 				ImGui.EndMenu()
 			end
 			if ImGui.BeginMenu("Extra") then
