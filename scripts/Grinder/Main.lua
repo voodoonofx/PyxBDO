@@ -9,7 +9,7 @@ Pyx.Scripting.CurrentScript:RegisterCallback("Pyx.OnScriptStop", function()
     Navigation.RenderMesh = false
     Navigation.ClearMesh()
     if Bot.Combat ~= nil and Bot.Combat.Gui then
-        MainWindow.SaveCombatSettings()
+        BotSettings.SaveCombatSettings()
     end
  end)
 

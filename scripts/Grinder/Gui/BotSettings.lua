@@ -77,13 +77,10 @@ function BotSettings.DrawBotSettings()
         end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
 		   _, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
-			local DontpullInventoryName = BotSettings.MonsterNames
-			for k,v in pairs(Bot.Settings.PullSettings.DontPull) do
-				table.remove(DontpullInventoryName, table.find(DontpullInventoryName, Bot.Settings.PullSettings.DontPull[k]))
-			end
-            valueChanged, BotSettings.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", BotSettings.DontPullComboSelectedIndex, DontpullInventoryName)
+						
+            valueChanged, BotSettings.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", BotSettings.DontPullComboSelectedIndex, BotSettings.MonsterNames)
             if valueChanged then
-                local monsterName = DontpullInventoryName[BotSettings.DontPullComboSelectedIndex]
+                local monsterName = BotSettings.MonsterNames[BotSettings.DontPullComboSelectedIndex]
                 if not table.find(Bot.Settings.PullSettings.DontPull, monsterName) then
 
                     table.insert(Bot.Settings.PullSettings.DontPull, monsterName)
