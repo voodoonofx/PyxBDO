@@ -50,7 +50,6 @@ function BotSettings.DrawBotSettings()
 		
 		    if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
             BotSettings.UpdateMonsters()
-			_, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
 			
             if not table.find(BotSettings.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(BotSettings.AvailablesCombats, Bot.Settings.CombatName)
@@ -61,8 +60,23 @@ function BotSettings.DrawBotSettings()
                 print("Combat script selected : " .. Bot.Settings.CombatScript)
                 Bot.LoadCombat()
             end
+			   if Bot.Combat ~=nil and Bot.Combat.Gui then
+            if Bot.Combat.Gui.ShowGui then
+                if ImGui.Button("Close Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = false
+                end
+            else
+                if ImGui.Button("Open Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
+                    Bot.Combat.Gui.ShowGui = true
+                end
+            end
+            ImGui.SameLine()
+            if ImGui.Button("Save Rotation Settings", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                BotSettings.SaveCombatSettings()
+            end
+        end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
-		   
+		   _, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
 			local DontpullInventoryName = BotSettings.MonsterNames
 			for k,v in pairs(Bot.Settings.PullSettings.DontPull) do
 				table.remove(DontpullInventoryName, table.find(DontpullInventoryName, Bot.Settings.PullSettings.DontPull[k]))

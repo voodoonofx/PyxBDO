@@ -130,7 +130,7 @@ function Bot.LoadCombat()
     end
 
     if Bot.Combat.Gui then
-        MainWindow.LoadCombatSettings()
+        BotSettings.LoadCombatSettings()
     end
 end
 
