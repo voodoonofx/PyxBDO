@@ -178,7 +178,7 @@ function RepairState:Run()
         BDOLua.Execute(flushdialog)
         -- BDOLua.Execute("Repair_OpenPanel( true)")
 		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Repair))")
-        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer = PyxTimer:New(2)
         self.SleepTimer:Start()
         return
     end
@@ -230,7 +230,7 @@ function RepairState:Run()
 					else
 					selfPlayer:RepairAllInventoryItems(npc)
 			end
-            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer = PyxTimer:New(2)
             self.SleepTimer:Start()
         end
         return
