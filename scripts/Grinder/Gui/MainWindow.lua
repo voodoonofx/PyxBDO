@@ -74,7 +74,7 @@ function MainWindow.DrawMainWindow()
 					end
 				end
 				
-				if ImGui.MenuItem("Use Mesh"),"",not Bot.MeshDisabled) then
+				if ImGui.MenuItem("Use Mesh", "", not Bot.MeshDisabled) then
 					if not Bot.MeshDisabled then
 						Bot.MeshDisabled = true
 					elseif Bot.MeshDisabled then
