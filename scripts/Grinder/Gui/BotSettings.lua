@@ -76,11 +76,8 @@ function BotSettings.DrawBotSettings()
             end
         end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
-<<<<<<< HEAD
 		   _, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
 						
-=======
->>>>>>> parent of 7a9f57b... Dropboxes tweak
             valueChanged, BotSettings.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", BotSettings.DontPullComboSelectedIndex, BotSettings.MonsterNames)
             if valueChanged then
                 local monsterName = BotSettings.MonsterNames[BotSettings.DontPullComboSelectedIndex]
