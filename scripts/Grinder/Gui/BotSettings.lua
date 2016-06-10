@@ -76,8 +76,11 @@ function BotSettings.DrawBotSettings()
             end
         end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
+<<<<<<< HEAD
 		   _, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
 						
+=======
+>>>>>>> parent of 7a9f57b... Dropboxes tweak
             valueChanged, BotSettings.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", BotSettings.DontPullComboSelectedIndex, BotSettings.MonsterNames)
             if valueChanged then
                 local monsterName = BotSettings.MonsterNames[BotSettings.DontPullComboSelectedIndex]
@@ -105,13 +108,9 @@ function BotSettings.DrawBotSettings()
         
      
             ImGui.Text("Always Delete these Items")
-			local DeleteInventoryName = BotSettings.InventoryName
-			for k,v in pairs(Bot.Settings.InventoryDeleteSettings.DeleteItems) do
-				table.remove(DeleteInventoryName, table.find(DeleteInventoryName, Bot.Settings.InventoryDeleteSettings.DeleteItems[k]))
-			end
-            valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_inv_inventory_combo_select", BotSettings.InventoryComboSelectedIndex, DeleteInventoryName)
+            valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_inv_inventory_combo_select", BotSettings.InventoryComboSelectedIndex, BotSettings.InventoryName)
             if valueChanged then
-                local inventoryName = DeleteInventoryName[BotSettings.InventoryComboSelectedIndex]
+                local inventoryName = BotSettings.InventoryName[BotSettings.InventoryComboSelectedIndex]
                 if not table.find(Bot.Settings.InventoryDeleteSettings.DeleteItems, inventoryName) then
 
                     table.insert(Bot.Settings.InventoryDeleteSettings.DeleteItems, inventoryName)
@@ -181,14 +180,9 @@ function BotSettings.DrawBotSettings()
 						ImGui.Spacing()
 
 						ImGui.Text("Never deposit these items")
-						
-						local DepositInventoryName = BotSettings.InventoryName
-						for k,v in pairs(Bot.Settings.WarehouseSettings.IgnoreItemsNamed) do
-							table.remove(DepositInventoryName, table.find(DepositInventoryName, Bot.Settings.WarehouseSettings.IgnoreItemsNamed[k]))
-						end
-						valueChanged, BotSettings.WarehouseComboSelectedIndex = ImGui.Combo("##id_guid_warehouse_inventory_combo_select", BotSettings.WarehouseComboSelectedIndex, DepositInventoryName)
+						valueChanged, BotSettings.WarehouseComboSelectedIndex = ImGui.Combo("##id_guid_warehouse_inventory_combo_select", BotSettings.WarehouseComboSelectedIndex, BotSettings.InventoryName)
 						if valueChanged then
-							local inventoryName = DepositInventoryName[BotSettings.WarehouseComboSelectedIndex]
+							local inventoryName = BotSettings.InventoryName[BotSettings.WarehouseComboSelectedIndex]
 
 							if not table.find(Bot.Settings.WarehouseSettings.IgnoreItemsNamed, inventoryName) then
 								table.insert(Bot.Settings.WarehouseSettings.IgnoreItemsNamed, inventoryName)
@@ -320,14 +314,9 @@ function BotSettings.DrawBotSettings()
 							ImGui.Spacing()
 
 							ImGui.Text("Items ignored")
-							local IgnoreitemsInventoryName = BotSettings.InventoryName
-							for k,v in pairs(Bot.Settings.VendorSettings.IgnoreItemsNamed) do
-									table.remove(IgnoreitemsInventoryName, table.find(IgnoreitemsInventoryName, Bot.Settings.VendorSettings.IgnoreItemsNamed[k]))
-							end
-							
-							valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_vendor_ignore_items", BotSettings.InventoryComboSelectedIndex, IgnoreitemsInventoryName)
+							valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_vendor_ignore_items", BotSettings.InventoryComboSelectedIndex, BotSettings.InventoryName)
 							if valueChanged then
-								local inventoryName = IgnoreitemsInventoryName[BotSettings.InventoryComboSelectedIndex]
+								local inventoryName = BotSettings.InventoryName[BotSettings.InventoryComboSelectedIndex]
 								if not table.find(Bot.Settings.VendorSettings.IgnoreItemsNamed, inventoryName) then
 									table.insert(Bot.Settings.VendorSettings.IgnoreItemsNamed, inventoryName)
 								end
