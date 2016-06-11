@@ -298,9 +298,10 @@ function Navigator.Stop(shortStop)
 end
 
 function Navigator.OnPulse()
+
     local selfPlayer = GetSelfPlayer()
 
-    if selfPlayer ~= nil and(Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
+    if selfPlayer ~= nil and (Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
         Navigator.LastStuckTimer:Reset()
         Navigator.LastStuckTimer:Start()
         Navigator.LastStuckCheckPosition = selfPlayer.Position
