@@ -239,3 +239,8 @@ _Pvt_Extensions
 *.json
 *.nav
 *.obj
+inject.bat
+inject.exe
+BDOscripts.sln
+BDOscripts.luaproj
+BDOscripts.config

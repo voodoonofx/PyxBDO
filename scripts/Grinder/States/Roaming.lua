@@ -35,6 +35,12 @@ function RoamingState:Run()
     local hotspot = self.Hotspots[self.CurrentHotspotIndex]
     local selfPlayer = GetSelfPlayer()
 
+    if hotspot == nil then
+    print("hotspot nil "..tostring(self.CurrentHotspotIndex).." "..tostring(table.length(self.Hotspots)))
+    self.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+    return
+    end
+
     if hotspot.Distance3DFromMe > 200 then
         Bot.CallCombatRoaming()
 
@@ -44,11 +50,16 @@ function RoamingState:Run()
         Navigator.MoveTo(hotspot,false,false)
         end
     else
+    self:ChangeHotSpot()
+        print("Moving to hotspot #" .. tostring(self.CurrentHotspotIndex))
+    end
+end
+
+function RoamingState:ChangeHotSpot()
         if self.CurrentHotspotIndex < table.length(self.Hotspots) then
             self.CurrentHotspotIndex = self.CurrentHotspotIndex + 1
         else
             self.CurrentHotspotIndex = 1
         end
-        print("Moving to hotspot #" .. tostring(self.CurrentHotspotIndex))
-    end
+
 end

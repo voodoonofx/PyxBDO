@@ -51,10 +51,12 @@ function MainWindow.DrawMainWindow()
             ImGui.NextColumn()
             ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
             ImGui.NextColumn()
+--[[
             ImGui.Text("Name")
             ImGui.NextColumn()
             ImGui.Text(( function(player) if player then return player.Name else return 'Disconnected' end end)(player))
             ImGui.NextColumn()
+            --]]
             ImGui.Text("Health")
             ImGui.NextColumn()
             ImGui.Text(( function(player) if player then return player.Health .. " / " .. player.MaxHealth else return 'N / A' end end)(player))
@@ -170,6 +172,24 @@ function MainWindow.DrawMainWindow()
                     MainWindow.DontPullSelectedIndex = 0
                 end
             end
+
+        end
+        if ImGui.CollapsingHeader("Security BETA/Experimental", "id_gui_Security", true, false) then
+           _, Bot.Settings.SecuritySettings.PlayerDetection = ImGui.Checkbox("Player Detection##id_guid_security_player_detection", Bot.Settings.SecuritySettings.PlayerDetection)
+           _, Bot.Settings.SecuritySettings.PlayerRange = ImGui.SliderInt("Player Detection Radius##id_guid_security_player_detection_radius", Bot.Settings.SecuritySettings.PlayerRange, 500, 5000)
+           _, Bot.Settings.SecuritySettings.PlayerTimeAlarmSeconds = ImGui.SliderInt("Seconds in range until alarm##id_guid_security_player_detection_alarmsecs", Bot.Settings.SecuritySettings.PlayerTimeAlarmSeconds, 1, 30)
+           _, Bot.Settings.SecuritySettings.PlayerRemoveAfterSeconds = ImGui.SliderInt("Seconds out of range until forget##id_guid_security_player_detection_forgetsecs", Bot.Settings.SecuritySettings.PlayerRemoveAfterSeconds, 1, 120)
+--           _, Bot.Settings.SecurityPlayerChangeChannel = ImGui.Checkbox("Change Channel##id_guid_security_player_detection_changechannel", Bot.Settings.SecurityPlayerChangeChannel)
+           _, Bot.Settings.SecurityPlayerMakeSound = ImGui.Checkbox("Make Sound##id_guid_security_player_detection_makesound", Bot.Settings.SecurityPlayerMakeSound)
+           _, Bot.Settings.SecurityPlayerChangeHotSpot = ImGui.Checkbox("Change Hotspot##id_guid_security_player_detection_changehspot", Bot.Settings.SecurityPlayerChangeHotSpot)
+           _, Bot.Settings.SecurityPlayerGoVendor = ImGui.Checkbox("Go Vendor##id_guid_security_player_detection_govendor", Bot.Settings.SecurityPlayerGoVendor)
+           _, Bot.Settings.SecurityPlayerStopBot = ImGui.Checkbox("Stop Bot##id_guid_security_player_detection_stopbot", Bot.Settings.SecurityPlayerStopBot)
+           ImGui.Text("")
+           _, Bot.Settings.SecuritySettings.TeleportDetection = ImGui.Checkbox("Teleport Detection##id_guid_security_teleport_detection", Bot.Settings.SecuritySettings.TeleportDetection)
+           _, Bot.Settings.SecuritySettings.TeleportDistance = ImGui.SliderInt("Min Teleport Distance##id_guid_security_teleport_detection_distance", Bot.Settings.SecuritySettings.TeleportDistance, 100, 1000)
+           _, Bot.Settings.SecurityTeleportMakeSound = ImGui.Checkbox("Make Sound##id_guid_security_teleport_detection_makesound", Bot.Settings.SecurityTeleportMakeSound)
+           _, Bot.Settings.SecurityTeleportStopBot = ImGui.Checkbox("Stop Bot##id_guid_security_teleport_detection_stopbot", Bot.Settings.SecurityTeleportStopBot)
+           _, Bot.Settings.SecurityTeleportKillGame = ImGui.Checkbox("Kill Game##id_guid_security_teleport_detection_killgame", Bot.Settings.SecurityTeleportKillGame)
 
         end
         if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then
