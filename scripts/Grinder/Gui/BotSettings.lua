@@ -31,7 +31,7 @@ function BotSettings.DrawBotSettings()
 	local valueChanged = false
 
 	if BotSettings.Visible then
-	
+
 		_, BotSettings.Visible = ImGui.Begin("Settings", BotSettings.Visible, ImVec2(350, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
 		if ImGui.Button("Save settings", ImVec2(ImGui.GetContentRegionAvailWidth() / 2, 20)) then
 			Bot.SaveSettings()
@@ -44,13 +44,13 @@ function BotSettings.DrawBotSettings()
 		end
 
 		ImGui.Spacing()
-		
+
 		ImGui.Columns(1)
 		ImGui.Spacing()
-		
+
 		    if ImGui.CollapsingHeader("Combat", "id_gui_combats", true, false) then
             BotSettings.UpdateMonsters()
-			
+
             if not table.find(BotSettings.AvailablesCombats, Bot.Settings.CombatName) then
                 table.insert(BotSettings.AvailablesCombats, Bot.Settings.CombatName)
             end
@@ -77,7 +77,7 @@ function BotSettings.DrawBotSettings()
         end
            _, Bot.Settings.AttackPvpFlagged = ImGui.Checkbox("Attack Pvp Flagged Players##id_guid_combat_attack_pvp", Bot.Settings.AttackPvpFlagged)
 		   _, Bot.Settings.PullSettings.SkipPullPlayer = ImGui.Checkbox("Skip pull if player in range##id_guid_combat_skip_pullplayer", Bot.Settings.PullSettings.SkipPullPlayer)
-						
+
             valueChanged, BotSettings.DontPullComboSelectedIndex = ImGui.Combo("Don't Pull##id_guid_dont_pull_combo_select", BotSettings.DontPullComboSelectedIndex, BotSettings.MonsterNames)
             if valueChanged then
                 local monsterName = BotSettings.MonsterNames[BotSettings.DontPullComboSelectedIndex]
@@ -96,14 +96,14 @@ function BotSettings.DrawBotSettings()
             end
 
         end
-        
-		
+
+
 		if ImGui.CollapsingHeader("Looting", "id_gui_looting", true, false) then
 			BotSettings.UpdateInventoryList()
             _, Bot.Settings.LootSettings.TakeLoot = ImGui.Checkbox("Take loots##id_guid_looting_take_loot", Bot.Settings.LootSettings.TakeLoot)
 			_, Bot.Settings.LootSettings.SkipLootPlayer = ImGui.Checkbox("Skip loot if player in range##id_guid_looting_IgnorePlayers", Bot.Settings.LootSettings.SkipLootPlayer)
-        
-     
+
+
             ImGui.Text("Always Delete these Items")
             valueChanged, BotSettings.InventoryComboSelectedIndex = ImGui.Combo("##id_guid_inv_inventory_combo_select", BotSettings.InventoryComboSelectedIndex, BotSettings.InventoryName)
             if valueChanged then
@@ -123,8 +123,8 @@ function BotSettings.DrawBotSettings()
             end
 
         end
-		
-       
+
+
 		if ImGui.CollapsingHeader("NPCs options", "id_gui_npc_option", true, false) then
 				BotSettings.UpdateInventoryList()
 
@@ -159,7 +159,7 @@ function BotSettings.DrawBotSettings()
 							-- Bot.Settings.WarehouseSettings.DepositMethod = WarehouseState.SETTINGS_ON_DEPOSIT_AFTER_REPAIR
 						-- end
 						 _, Bot.Settings.WarehouseSettings.ExchangeGold = ImGui.Checkbox("Exchange Money for Gold##id_guid_warehouse_exchange_money", Bot.Settings.WarehouseSettings.ExchangeGold)
-						 
+
 						_, Bot.Settings.WarehouseSettings.DepositMoney = ImGui.Checkbox("##id_guid_warehouse_deposit_money", Bot.Settings.WarehouseSettings.DepositMoney)
 						ImGui.SameLine()
 						ImGui.Text("Deposit money")
@@ -201,8 +201,8 @@ function BotSettings.DrawBotSettings()
 
 				if Bot.Settings.VendorSettings.Enabled then
 					if ImGui.TreeNode("Vendor") then
-					
-					
+
+
 						ImGui.Separator()
 						_, Bot.Settings.VendorSettings.BuyEnabled = ImGui.Checkbox("Enable Buying", Bot.Settings.VendorSettings.BuyEnabled)
 						ImGui.Separator()
@@ -248,7 +248,7 @@ function BotSettings.DrawBotSettings()
 								if value ~= nil then
 									ImGui.Text(value.Name)
 									ImGui.NextColumn()
-									ImGui.PushItemWidth(90) 
+									ImGui.PushItemWidth(90)
 									valueChanged, Bot.VendorState.Settings.BuyItems[key].BuyAt = ImGui.InputFloat("Min##id_guid_vendor_buy_min_items" .. key, Bot.VendorState.Settings.BuyItems[key].BuyAt, 1,10,0,0)
 									if valueChanged then
 										if Bot.VendorState.Settings.BuyItems[key].BuyAt < 0 then
@@ -343,7 +343,7 @@ function BotSettings.DrawBotSettings()
 						ImGui.TreePop()
 					end
 				end
-				
+
 				if Bot.Settings.TurninSettings.Enabled then
 					if ImGui.TreeNode("Exchange") then
 					_, Bot.Settings.TurninSettings.TurninCount = ImGui.SliderInt("Amount needed##id_gui_turnin_count", Bot.Settings.TurninSettings.TurninCount, 30, 1500)
@@ -368,7 +368,7 @@ function BotSettings.DrawBotSettings()
 					end
 			end
 		end
-		
+
 		if ImGui.CollapsingHeader("Death action", "id_gui_death_action", true, false) then
 			if ImGui.RadioButton("Stop bot##id_guid_death_action_stop_bot", Bot.Settings.DeathSettings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED) then
 				Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED
@@ -380,6 +380,26 @@ function BotSettings.DrawBotSettings()
 				Bot.Settings.DeathSettings.ReviveMethod = DeathState.SETTINGS_ON_DEATH_REVIVE_VILLAGE
 			end
 		end
+
+		if ImGui.CollapsingHeader("Security BETA/Experimental", "id_gui_Security", true, false) then
+           _, Bot.Settings.SecuritySettings.PlayerDetection = ImGui.Checkbox("Player Detection##id_guid_security_player_detection", Bot.Settings.SecuritySettings.PlayerDetection)
+           _, Bot.Settings.SecuritySettings.PlayerRange = ImGui.SliderInt("Player Detection Radius##id_guid_security_player_detection_radius", Bot.Settings.SecuritySettings.PlayerRange, 500, 5000)
+           _, Bot.Settings.SecuritySettings.PlayerTimeAlarmSeconds = ImGui.SliderInt("Seconds in range until alarm##id_guid_security_player_detection_alarmsecs", Bot.Settings.SecuritySettings.PlayerTimeAlarmSeconds, 1, 30)
+           _, Bot.Settings.SecuritySettings.PlayerRemoveAfterSeconds = ImGui.SliderInt("Seconds out of range until forget##id_guid_security_player_detection_forgetsecs", Bot.Settings.SecuritySettings.PlayerRemoveAfterSeconds, 1, 120)
+--           _, Bot.Settings.SecurityPlayerChangeChannel = ImGui.Checkbox("Change Channel##id_guid_security_player_detection_changechannel", Bot.Settings.SecurityPlayerChangeChannel)
+           _, Bot.Settings.SecurityPlayerMakeSound = ImGui.Checkbox("Make Sound##id_guid_security_player_detection_makesound", Bot.Settings.SecurityPlayerMakeSound)
+           _, Bot.Settings.SecurityPlayerChangeHotSpot = ImGui.Checkbox("Change Hotspot##id_guid_security_player_detection_changehspot", Bot.Settings.SecurityPlayerChangeHotSpot)
+           _, Bot.Settings.SecurityPlayerGoVendor = ImGui.Checkbox("Go Vendor##id_guid_security_player_detection_govendor", Bot.Settings.SecurityPlayerGoVendor)
+           _, Bot.Settings.SecurityPlayerStopBot = ImGui.Checkbox("Stop Bot##id_guid_security_player_detection_stopbot", Bot.Settings.SecurityPlayerStopBot)
+           ImGui.Text("")
+           _, Bot.Settings.SecuritySettings.TeleportDetection = ImGui.Checkbox("Teleport Detection##id_guid_security_teleport_detection", Bot.Settings.SecuritySettings.TeleportDetection)
+           _, Bot.Settings.SecuritySettings.TeleportDistance = ImGui.SliderInt("Min Teleport Distance##id_guid_security_teleport_detection_distance", Bot.Settings.SecuritySettings.TeleportDistance, 100, 1000)
+           _, Bot.Settings.SecurityTeleportMakeSound = ImGui.Checkbox("Make Sound##id_guid_security_teleport_detection_makesound", Bot.Settings.SecurityTeleportMakeSound)
+           _, Bot.Settings.SecurityTeleportStopBot = ImGui.Checkbox("Stop Bot##id_guid_security_teleport_detection_stopbot", Bot.Settings.SecurityTeleportStopBot)
+           _, Bot.Settings.SecurityTeleportKillGame = ImGui.Checkbox("Kill Game##id_guid_security_teleport_detection_killgame", Bot.Settings.SecurityTeleportKillGame)
+
+    end
+
 
 		ImGui.End()
 	end
@@ -414,8 +434,8 @@ function BotSettings.UpdateMonsters()
 end
 
 
-	
-	
+
+
 function BotSettings.SaveCombatSettings()
     local json = JSON:new()
     local string = Bot.Settings.CombatScript

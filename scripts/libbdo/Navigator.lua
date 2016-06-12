@@ -16,7 +16,7 @@ Navigator.OnStuckCall = nil
 Navigator.PlayerRun = false
 Navigator.MeshConnects = { }
 Navigator.MeshConnectEnabled = false
-Navigator.PathingMode = 1 -- 1 = Pyx Meshing, 2 = Experimental BDO Pathing 
+Navigator.PathingMode = 1 -- 1 = Pyx Meshing, 2 = Experimental BDO Pathing
 Navigator.SentAutoPath = PyxTimer:New(1)
 Navigator.MaxTriangles = 50
 Navigator.MaxLines = 50
@@ -300,7 +300,7 @@ end
 function Navigator.OnPulse()
     local selfPlayer = GetSelfPlayer()
 
-    if selfPlayer ~= nil and(Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
+    if selfPlayer ~= nil and (Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
         Navigator.LastStuckTimer:Reset()
         Navigator.LastStuckTimer:Start()
         Navigator.LastStuckCheckPosition = selfPlayer.Position
