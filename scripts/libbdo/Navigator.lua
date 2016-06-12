@@ -319,7 +319,7 @@ function Navigator.OnPulse()
 
         if Navigator.LastStuckTimer:Expired() == true then
             if (Navigator.LastStuckCheckPosition.Distance2DFromMe < 35) then
-                print("I'm stuck")
+--                print("I'm stuck")
                 -- , jump forward !")
 --                print(selfPlayer.CurrentActionName)
                 if Navigator.StuckCount == 5 or Navigator.StuckCount == 19 then
