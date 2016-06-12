@@ -300,6 +300,10 @@ end
 function Navigator.OnPulse()
 
     local selfPlayer = GetSelfPlayer()
+	
+	if not selfPlayer then
+		return
+	end
 
     if selfPlayer ~= nil and (Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
         Navigator.LastStuckTimer:Reset()
