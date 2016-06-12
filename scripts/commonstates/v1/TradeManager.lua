@@ -45,7 +45,7 @@ function TradeManagerState:NeedToRun()
         self.Forced = false
         return false
     end
-
+    
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
     self.Forced = false
         return false
@@ -124,10 +124,6 @@ function TradeManagerState:Run()
         return
     end
 
-    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
-            self.SleepTimer = PyxTimer:New(2)
-            return
-    end
     local npcs = GetNpcs()
 
     if table.length(npcs) < 1 then
@@ -224,7 +220,7 @@ function TradeManagerState:Run()
 		end
 		return
 	end
-
+	
     if self.State == 5 then
 		if self.Settings.DoTradeGame then
 		BDOLua.Execute("FromClient_TradeGameResult(true)")

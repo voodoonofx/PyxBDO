@@ -44,7 +44,7 @@ function RepairState:NeedToRun()
         self.Forced = false
         return false
     end
-
+	
 	if not self.Settings.Enabled then
 		self.Forced = false
 			return false
@@ -150,10 +150,6 @@ function RepairState:Run()
     end
     Navigator.Stop()
 
-    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
-           self.SleepTimer = PyxTimer:New(2)
-           return
-    end
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
     end
@@ -189,7 +185,7 @@ function RepairState:Run()
 
     if self.State == 3 then
         self.State = 3.5
-
+        
         if self.Settings.RepairEquipped == true then
 		if self.Settings.UseWarehouseMoney then
 				print("Warehouse Money true")
@@ -205,7 +201,7 @@ function RepairState:Run()
         end
         return
     end
-
+    
     if self.State == 3.5 then
 		self.State = 3.9
 		BDOLua.Execute(confirm)
@@ -220,7 +216,7 @@ function RepairState:Run()
 		self.SleepTimer:Start()
 		return
 	end
-
+	
     if self.State == 4 then
         self.State = 4.5
         if self.Settings.RepairInventory == true then
@@ -228,7 +224,7 @@ function RepairState:Run()
 				print("Warehouse Money true")
 			end
 			print(tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")))
-            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then
+            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then 
 			print("invenwarehouse")
 				BDOLua.Execute(invenwarehouse)
 					else
@@ -239,7 +235,7 @@ function RepairState:Run()
         end
         return
     end
-
+    
     if self.State == 4.5 then
 		self.State = 4.9
 		BDOLua.Execute(confirm)
@@ -247,7 +243,7 @@ function RepairState:Run()
 		self.SleepTimer:Start()
 		return
 	end
-
+	
     if self.State == 4.9 then
 		self.State = 5
 		BDOLua.Execute(flushdialog)
@@ -301,3 +297,4 @@ function RepairState:GetItems()
 
     return items
 end
+
