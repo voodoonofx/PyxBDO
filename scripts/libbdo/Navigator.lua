@@ -2,7 +2,7 @@ Navigator = { }
 Navigator.Running = false
 Navigator.Destination = Vector3(0, 0, 0)
 Navigator.Waypoints = { }
-Navigator.ApproachDistance = 150
+Navigator.ApproachDistance = 190
 Navigator.LastObstacleCheckTick = 0
 Navigator.LastFindPathTick = 0
 Navigator.LastStuckCheckTickcount = 0
@@ -293,7 +293,7 @@ function Navigator.Stop(shortStop)
         selfPlayer:MoveTo(Vector3(0, 0, 0))
     end
     if shortStop ~= nil and shortStop == true then
-        GetSelfPlayer():DoAction("RUN_SHORTSTOP")
+--        GetSelfPlayer():DoAction("RUN_SHORTSTOP")
     end
 end
 
@@ -393,6 +393,7 @@ function Navigator.OnPulse()
                     end
                 end
             end
+            --[[
             if Navigator.LastWayPoint == false and Navigator.PlayerRun == true and selfPlayer.StaminaPercent >= 100 and selfPlayer.IsSwimming == false and table.length(Navigator.Waypoints) > 6 then
                 if selfPlayer.IsBattleMode == false then
                     selfPlayer:DoAction("RUN_SPRINT_FAST_ST")
@@ -400,6 +401,7 @@ function Navigator.OnPulse()
                     selfPlayer:DoAction("BT_RUN_SPRINT")
                 end
             end
+            --]]
         end
 
     end

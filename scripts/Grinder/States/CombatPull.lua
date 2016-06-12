@@ -45,7 +45,7 @@ function CombatPullState:NeedToRun()
             v.IsAlive == true and
            v.HealthPercent == 100 and
            v.IsAggro == false and
-            math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
+            --math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
             --v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
             v.CanAttack == true and
             self.MobIgnoreList:Contains(v.Key) == false and
@@ -80,7 +80,7 @@ function CombatPullState:Run()
         self._pullStarted = PyxTimer:New(Bot.Settings.Advanced.PullSecondsUntillIgnore)
         self._pullStarted:Start()
     end
-    
+
     local selfPlayer = GetSelfPlayer()
     if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
         print("Switch to battle mode !")

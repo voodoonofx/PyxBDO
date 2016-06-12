@@ -51,7 +51,7 @@ function WarehouseState:NeedToRun()
         self.Forced = false
         return false
     end
-	
+
 	if not self.Settings.Enabled then
 		self.Forced = false
 			return false
@@ -135,7 +135,10 @@ function WarehouseState:Run()
     end
 
     Navigator.Stop()
-
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+         self.SleepTimer = PyxTimer:New(2)
+         return
+    end
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
     end

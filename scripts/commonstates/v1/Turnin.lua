@@ -47,13 +47,13 @@ function TurninState:NeedToRun()
         self.Forced = false
         return false
     end
-    
-	
+
+
 	if not self.Settings.Enabled then
 		self.Forced = false
 			return false
 		end
-		
+
     if selfPlayer.WeightPercent >= 100 then
     	self.Forced = false
     	return false
@@ -66,7 +66,7 @@ function TurninState:NeedToRun()
         return true
     end
 
-	
+
 	    if self.LastUseTimer ~= nil and not self.LastUseTimer:Expired() then
         return false
     end
@@ -76,7 +76,7 @@ function TurninState:NeedToRun()
         self.Forced = true
         return true
     end
-	
+
 	if self.Settings.TurninOnWeight and
         selfPlayer.WeightPercent >= 95 and
         table.length(self:GetItems()) > 0 and
@@ -134,7 +134,9 @@ function TurninState:Run()
     end
 
     Navigator.Stop()
-
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+             return
+    end
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
     end
@@ -163,7 +165,7 @@ function TurninState:Run()
 
 
     if self.State == 2 then
-		if self.TurnedIn == false then 
+		if self.TurnedIn == false then
 			for i = 0, 2 do
 			    if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
 				return
@@ -177,7 +179,7 @@ function TurninState:Run()
 						local ButtonText = BDOLua.Execute(string.format("return ToClient_GetCurrentDialogData():getDialogButtonAt(%s):getText()",index))
 						local ItemId = BDOLua.Execute(string.format("return ToClient_GetCurrentDialogData():getDialogButtonAt(%s):getNeedItemKey()",index))
 						if string.match(ButtonText,"Continue") then
-							BDOLua.Execute("HandleClickedBackButton()")      
+							BDOLua.Execute("HandleClickedBackButton()")
 							self.SleepTimer = PyxTimer:New(1)
 							self.SleepTimer:Start()
 							return
@@ -186,7 +188,7 @@ function TurninState:Run()
 							-- print(string.format("MATCHING ITEMS %s and %s, index %s in iteration %s",ItemId, v.key,index,i))
 							local needItemCount = tonumber(BDOLua.Execute(string.format("return ToClient_GetCurrentDialogData():getDialogButtonAt(%i):getNeedItemCount()",index)))
 							local exChangeCount = math.floor(v.count/needItemCount)
-							if exChangeCount > 0 then 
+							if exChangeCount > 0 then
 							-- print(string.format("Exchange Count is %s because %s / %s", exChangeCount,v.count,needItemCount))
 								BDOLua.Execute(string.format("ToClient_GetCurrentDialogData():setExchangeCount(%s)",exChangeCount))
 								self.SleepTimer = PyxTimer:New(0.5)
@@ -197,9 +199,9 @@ function TurninState:Run()
 								self.SleepTimer:Start()
 								BDOLua.Execute("HandleClickedBackButton()")
 								index = 0
-							end		
+							end
 						end
-					end	
+					end
 				end
 				self.TurnedIn = true
 				-- print("done")
@@ -221,9 +223,9 @@ function TurninState:Run()
 
 	self:Exit()
         return
-    
 
-    
+
+
 
 end
 
