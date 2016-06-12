@@ -327,7 +327,7 @@ function Bot.PlayerAlarm()
     end
 
     if Bot.Settings.SecurityPlayerGoVendor == true then
-        print("Player Alarm: Force Vendors")
+        print("Player Alarm: Force Vendor, Repair, Warehouse")
         Bot.VendorState.Forced = true
         Bot.RepairState.Forced = true
         Bot.WarehouseState.Forced = true
@@ -367,18 +367,21 @@ function Bot.StateComplete(state)
 
     if state == Bot.VendorState then
         if Bot.Settings.WarehouseAfterVendor == true then
+        print("Settings say Forcing Warehouse after vendor")
             Bot.WarehouseState.Forced = true
         end
     end
 
     if state == Bot.TurninState then
         if Bot.Settings.VendorAfterTurnin == true then
+        print("Settings say Forcing Vendor after turnin")
             Bot.VendorState.Forced = true
         end
     end
 
     if state == Bot.WarehouseState then
         if Bot.Settings.RepairAfterWarehouse == true then
+        print("Settings say Forcing Repair after Warehouse")
             Bot.RepairState.Forced = true
         end
     end
