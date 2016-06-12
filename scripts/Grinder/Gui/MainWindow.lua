@@ -399,6 +399,8 @@ function MainWindow.DrawMainWindow()
             _, Bot.Settings.Advanced.PullSecondsUntillIgnore = ImGui.SliderInt("Pull Seconds untill ignore##id_gui_advanced_pull_seconds", Bot.Settings.Advanced.PullSecondsUntillIgnore, 5, 30)
             _, Bot.Settings.Advanced.CombatMaxDistanceFromMe = ImGui.SliderInt("Combat Max Distance##id_gui_advanced_combat_maxdistance", Bot.Settings.Advanced.CombatMaxDistanceFromMe, 1000, 5000)
             _, Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots = ImGui.Checkbox("Ignore in combat between hotspots##id_guid_advanced_ignore_in_combat", Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots)
+            _, Bot.Settings.Advanced.IgnoreCombatOnVendor = ImGui.Checkbox("Ignore in combat when Vendoring##id_guid_advanced_ignore_in_combat_vend", Bot.Settings.Advanced.IgnoreCombatOnVendor)
+            _, Bot.Settings.Advanced.IgnoreCombatOnRepair = ImGui.Checkbox("Ignore in combat when repairing##id_guid_advanced_ignore_in_combat_bep", Bot.Settings.Advanced.IgnoreCombatOnRepair)
             _, Bot.Settings.Advanced.IgnorePullBetweenHotSpots = ImGui.Checkbox("Skip Pull between hotspots##id_guid_advanced_pull_ignore_hotspots", Bot.Settings.Advanced.IgnorePullBetweenHotSpots)
 
 
