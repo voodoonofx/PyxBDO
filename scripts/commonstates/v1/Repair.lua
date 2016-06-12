@@ -144,10 +144,15 @@ function RepairState:Run()
         return
     end
     Navigator.Stop()
-
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
     end
+
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        self.SleepTimer = PyxTimer:New(2)
+        return
+    end
+
 
     local npcs = GetNpcs()
 

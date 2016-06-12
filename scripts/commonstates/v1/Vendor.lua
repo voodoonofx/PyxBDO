@@ -161,6 +161,11 @@ function VendorState:Run()
         return true
     end
 
+        if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        self.SleepTimer = PyxTimer:New(2)
+        return
+    end
+
 
     local npcs = GetNpcs()
 
