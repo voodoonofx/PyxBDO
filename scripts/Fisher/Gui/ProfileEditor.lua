@@ -141,7 +141,6 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.TradeManagerNpcPosition.X = TradeManagerNpc.Position.X
                     ProfileEditor.CurrentProfile.TradeManagerNpcPosition.Y = TradeManagerNpc.Position.Y
                     ProfileEditor.CurrentProfile.TradeManagerNpcPosition.Z = TradeManagerNpc.Position.Z
-					ProfileEditor.CurrentProfile.TradeManagerNpcSize = TradeManagerNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -150,7 +149,6 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.TradeManagerNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.TradeManagerNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.TradeManagerNpcPosition.Z = 0
-				ProfileEditor.CurrentProfile.TradeManagerNpcSize = 0
             end
         end
         if ImGui.CollapsingHeader("Vendor npc", "id_profile_editor_Vendor", true, false) then
@@ -167,7 +165,6 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.VendorNpcPosition.X = VendorNpc.Position.X
                     ProfileEditor.CurrentProfile.VendorNpcPosition.Y = VendorNpc.Position.Y
                     ProfileEditor.CurrentProfile.VendorNpcPosition.Z = VendorNpc.Position.Z
-					ProfileEditor.CurrentProfile.VendorNpcSize = VendorNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -176,7 +173,6 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.VendorNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.VendorNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.VendorNpcPosition.Z = 0
-				ProfileEditor.CurrentProfile.VendorNpcSize = 0
             end
         end
 
@@ -194,7 +190,6 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.X = WarehouseNpc.Position.X
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.Y = WarehouseNpc.Position.Y
                     ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = WarehouseNpc.Position.Z
-					ProfileEditor.CurrentProfile.WarehouseNpcSize = WarehouseNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -203,7 +198,6 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.WarehouseNpcPosition.Z = 0
-				ProfileEditor.CurrentProfile.WarehouseNpcSize = 0
             end
         end
         if ImGui.CollapsingHeader("Repair npc", "id_profile_editor_Repair", true, false) then
@@ -220,7 +214,6 @@ function ProfileEditor.DrawProfileEditor()
                     ProfileEditor.CurrentProfile.RepairNpcPosition.X = RepairNpc.Position.X
                     ProfileEditor.CurrentProfile.RepairNpcPosition.Y = RepairNpc.Position.Y
                     ProfileEditor.CurrentProfile.RepairNpcPosition.Z = RepairNpc.Position.Z
-					ProfileEditor.CurrentProfile.RepairNpcSize = RepairNpc.BodySize
                 end
             end
             ImGui.SameLine()
@@ -229,7 +222,6 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.RepairNpcPosition.X = 0
                 ProfileEditor.CurrentProfile.RepairNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.RepairNpcPosition.Z = 0
-				ProfileEditor.CurrentProfile.RepairNpcSize = 0
             end
         end
 
