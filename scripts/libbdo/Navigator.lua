@@ -329,15 +329,18 @@ function Navigator.OnPulse()
 --                print("I'm stuck")
                 -- , jump forward !")
 --                print(selfPlayer.CurrentActionName)
-                if Navigator.StuckCount == 5 or Navigator.StuckCount == 20 then
+                if Navigator.StuckCount == 5 or Navigator.StuckCount == 7 or Navigator.StuckCount == 20 or Navigator.StuckCount == 30 then
                     print("Set Move Forward")
                     selfPlayer:SetActionState(ACTION_FLAG_MOVE_FORWARD, 1000)
-                elseif Navigator.StuckCount == 1 or Navigator.StuckCount == 10 then
+                elseif Navigator.StuckCount == 6 or Navigator.StuckCount == 10 then
                     print("Jump Forward")
                     Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
                 elseif Navigator.StuckCount == 15  then
                     print("Move Right")
                     selfPlayer:SetActionState(ACTION_FLAG_MOVE_RIGHT, 1000)
+                elseif Navigator.StuckCount == 25  then
+                    print("Move Left")
+                    selfPlayer:SetActionState(ACTION_FLAG_MOVE_LEFT, 1000)
                 end
                 Navigator.StuckCount = Navigator.StuckCount + 1
                 if Navigator.StuckCount == 30 and Navigator.PathingMode == 1 then

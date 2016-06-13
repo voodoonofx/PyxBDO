@@ -44,14 +44,14 @@ function RepairState:NeedToRun()
         self.Forced = false
         return false
     end
-	
-	if not self.Settings.Enabled then
-		self.Forced = false
-			return false
-		end
+
+    if not self.Settings.Enabled then
+        self.Forced = false
+        return false
+    end
 
     if self.Forced == true and not Navigator.CanMoveTo(self:GetPosition()) then
-            print("Repair: Was forced but can not find path cancelling")
+        print("Repair: Was forced but can not find path cancelling")
 
         self.Forced = false
         return false
@@ -61,7 +61,7 @@ function RepairState:NeedToRun()
 
     if self.RepairCheck ~= nil then
         if self.RepairCheck() == true then
-        print("Repair: RepairCheck function returned true head to repair")
+            print("Repair: RepairCheck function returned true head to repair")
             self.Forced = true
             return true
         end
@@ -76,7 +76,7 @@ function RepairState:NeedToRun()
         if v.HasEndurance and v.EndurancePercent <= 20 then
             if Navigator.CanMoveTo(self:GetPosition()) then
                 self.Forced = true
-                        print("Repair: an Item is below 20%")
+                print("Repair: an Item is below 20% Name:" .. v.ItemEnchantStaticStatus.Name .. " " .. v.EndurancePercent .. "% has: " .. v.Endurance .. " of " .. v.MaxEndurance)
 
                 return true
             else
@@ -283,8 +283,9 @@ function RepairState:Run()
         print("Repair Done")
         BDOLua.Execute(flushdialog)
         BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
-        self.SleepTimer = PyxTimer:New(1)
+        self.SleepTimer = PyxTimer:New(1.5)
         self.SleepTimer:Start()
+        Dialog.ClickExit()
         return
     end
 
