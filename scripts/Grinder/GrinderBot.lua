@@ -182,19 +182,19 @@ function Bot.Start()
 
         Bot.WarehouseState.Settings.NpcName = currentProfile.WarehouseNpcName
         Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
-				Bot.WarehouseState.Settings.NpcSize = currentProfile.WarehouseNpcSize
+
         Bot.WarehouseState.CallWhenCompleted = Bot.StateComplete
         Bot.WarehouseState.CallWhileMoving = Bot.StateMoving
 
         Bot.TurninState.Settings.NpcName = currentProfile.TurninNpcName
         Bot.TurninState.Settings.NpcPosition = currentProfile.TurninNpcPosition
-				Bot.TurninState.Settings.NpcSize = currentProfile.TurninNpcSize
+
         Bot.TurninState.CallWhenCompleted = Bot.StateComplete
         Bot.TurninState.CallWhileMoving = Bot.StateMoving
 
         Bot.VendorState.Settings.NpcName = currentProfile.VendorNpcName
         Bot.VendorState.Settings.NpcPosition = currentProfile.VendorNpcPosition
-				Bot.VendorState.Settings.NpcSize = currentProfile.VendorNpcSize
+
         Bot.VendorState.CallWhenCompleted = Bot.StateComplete
         Bot.VendorState.CallWhileMoving = Bot.StateMoving
 
@@ -202,7 +202,7 @@ function Bot.Start()
 
         Bot.RepairState.Settings.NpcName = currentProfile.RepairNpcName
         Bot.RepairState.Settings.NpcPosition = currentProfile.RepairNpcPosition
-				Bot.RepairState.Settings.NpcSize = currentProfile.RepairNpcSize
+
         Bot.RepairState.CallWhileMoving = Bot.StateMoving
 
         Bot.LootState.CallWhileMoving = Bot.StateMoving

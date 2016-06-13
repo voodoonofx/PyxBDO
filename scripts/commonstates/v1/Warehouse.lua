@@ -13,7 +13,7 @@ setmetatable(WarehouseState, {
 function WarehouseState.new()
     local self = setmetatable( { }, WarehouseState)
 
-    self.Settings = {Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, NpcSize = 0, DepositItems = true, ExchangeGold = false, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
+    self.Settings = {Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, ExchangeGold = false, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300}
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
@@ -123,7 +123,7 @@ function WarehouseState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
 
-    if vendorPosition.Distance3DFromMe > 200 + self.Settings.NpcSize then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end

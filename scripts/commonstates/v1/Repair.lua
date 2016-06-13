@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { Enabled = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, NpcSize = 0, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
+    self.Settings = { Enabled = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -140,7 +140,7 @@ function RepairState:Run()
 	RepairAllInvenItemBtn_LUp()
 	]]
 
-    if vendorPosition.Distance3DFromMe > 200 + self.Settings.NpcSize then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end

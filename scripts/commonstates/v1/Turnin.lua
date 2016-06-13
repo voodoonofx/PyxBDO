@@ -13,7 +13,7 @@ setmetatable(TurninState, {
 function TurninState.new()
     local self = setmetatable( { }, TurninState)
 
-    self.Settings = {Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, NpcSize = 0, TurninItemsNamed = { }, TurninCount = 1000, SecondsBetweenTries = 5, VendorAfterTurnin = true, TurninOnWeight = true}
+    self.Settings = {Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 },TurninItemsNamed = { }, TurninCount = 1000, SecondsBetweenTries = 5, VendorAfterTurnin = true, TurninOnWeight = true}
 
     self.State = 0
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
@@ -119,7 +119,7 @@ function TurninState:Run()
     local vendorPosition = self:GetPosition()
 
 
-    if vendorPosition.Distance3DFromMe > 200 + self.Settings.NpcSize then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
