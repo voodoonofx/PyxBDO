@@ -544,7 +544,7 @@ end
 
 
 function Bot.OnStuck()
-    if Navigator.StuckCount > 15 then
+    if Navigator.StuckCount > 35 then
         print("We are too stuck try rescue")
         BDOLua.Execute("callRescue()")
         Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
