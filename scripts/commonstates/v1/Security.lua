@@ -11,13 +11,14 @@ setmetatable(SecurityState, {
 
 function SecurityState.new()
     local self = setmetatable( { }, SecurityState)
+
     self.Settings = { PlayerDetection = false, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = false, TeleportDistance = 500 }
     self.PlayerDetectedFunction = nil
     self.TeleportDetectedFunction = nil
     self.PlayerList = { }
     self.LastPosition = nil
     self.PausePlayerDetection = false
-    self.PauseTelerportDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     return self
 end
 
@@ -29,14 +30,13 @@ function SecurityState:NeedToRun()
         return false
     end
 
-    if  self.PauseTelerportDetectionTimer ~= nil and self.PauseTelerportDetectionTimer:Expired() == false then
+    if  self.PauseTeleportDetectionTimer ~= nil and self.PauseTeleportDetectionTimer:Expired() == false then
     self.LastPosition = selfPlayer.Position
     elseif self.Settings.TeleportDetection == true then
         local currentPosition = selfPlayer.Position
         if self.LastPosition ~= nil and self.LastPosition.Distance3DFromMe >= self.Settings.TeleportDistance then
             print("Security: Teleport Detected distance:" .. tostring(self.LastPosition.Distance3DFromMe))
             if self.TeleportDetectedFunction ~= nil then
-                
                 return self.TeleportDetectedFunction()
             end
         end
@@ -51,7 +51,7 @@ function SecurityState:NeedToRun()
             if v.IsPlayer and v.Position.Distance3DFromMe <= self.Settings.PlayerRange and selfPlayer.Key ~= v.Key then
                 self:UpdatePlayer(v)
                 if self:CheckPlayer(v) == true and self.PlayerDetectedFunction ~= nil then
-                    
+
                     return self.PlayerDetectedFunction()
                 end
 
@@ -103,6 +103,6 @@ end
 function SecurityState:Reset()
     self.PlayerList = { }
     self.PausePlayerDetectionTimer = nil
-    self.PauseTelerportDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     self.LastPosition = nil
 end

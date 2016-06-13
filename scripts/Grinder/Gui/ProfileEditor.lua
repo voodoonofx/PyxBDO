@@ -28,10 +28,18 @@ function ProfileEditor.DrawProfileEditor()
         ProfileEditor.LastPosition = selfPlayer.Position
         --    print("Connect Node: "..selfPlayer.Position)
     end
-
+	
+	if Bot.Running then
+		ProfileEditor.WindowName = "Profile"
+	elseif not Bot.Running then
+		ProfileEditor.WindowName = "Profile Editor"
+	end
+	
+	
     if ProfileEditor.Visible then
-        _, ProfileEditor.Visible = ImGui.Begin("Profile editor", ProfileEditor.Visible, ImVec2(300, 400), -1.0)
+        _, ProfileEditor.Visible = ImGui.Begin(ProfileEditor.WindowName, ProfileEditor.Visible, ImVec2(300, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
         
+		if not Bot.Running then
         _, ProfileEditor.CurrentProfileSaveName = ImGui.InputText("##profile_save_name", ProfileEditor.CurrentProfileSaveName)
         ImGui.SameLine()
         if ImGui.Button("Save") then
@@ -221,7 +229,7 @@ function ProfileEditor.DrawProfileEditor()
             end
         end
 		
-	if ImGui.CollapsingHeader("TurnIn npc", "id_profile_editor_Turnin", true, false) then
+		if ImGui.CollapsingHeader("TurnIn npc", "id_profile_editor_Turnin", true, false) then
             if string.len(ProfileEditor.CurrentProfile.TurninNpcName) > 0 then
                 ImGui.Text("Name : " .. ProfileEditor.CurrentProfile.TurninNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetTurninPosition().Distance3DFromMe / 100) .. "y)")
             else
@@ -244,11 +252,41 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Z = 0
             end
-        end
-        
+		end
+		
+		elseif Bot.Running then
+			ImGui.Text("Profile: " .. Bot.Settings.LastProfileName)
+			-- ImGui.Spacing()
+			-- ImGui.Separator()
+			-- if string.len(ProfileEditor.CurrentProfile.TradeManagerNpcName) > 0 then
+				-- ImGui.Text("Trader: " .. ProfileEditor.CurrentProfile.TradeManagerNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetTradeManagerPosition().Distance3DFromMe / 100) .. " y)")
+			-- else
+				-- ImGui.Text("Trader: Not set")
+			-- end
+			-- ImGui.Spacing()
+			-- if string.len(ProfileEditor.CurrentProfile.VendorNpcName) > 0 then
+				-- ImGui.Text("Vendor: " .. ProfileEditor.CurrentProfile.VendorNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetVendorPosition().Distance3DFromMe / 100) .. "y)")
+			-- else
+				-- ImGui.Text("Vendor: Not set")
+			-- end
+			-- ImGui.Spacing()
+			-- if string.len(ProfileEditor.CurrentProfile.RepairNpcName) > 0 then
+				-- ImGui.Text("Repair: " .. ProfileEditor.CurrentProfile.RepairNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetRepairPosition().Distance3DFromMe / 100) .. "y)")
+			-- else
+				-- ImGui.Text("Repair: Not set")
+			-- end
+			-- ImGui.Spacing()
+			-- if string.len(ProfileEditor.CurrentProfile.WarehouseNpcName) > 0 then
+				-- ImGui.Text("Warehouse: " .. ProfileEditor.CurrentProfile.WarehouseNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetWarehousePosition().Distance3DFromMe / 100) .. " y)")
+			-- else
+				-- ImGui.Text("Warehouse: Not set")
+			-- end
+		
+		end
         ImGui.End()
     end
-end
+	end
+
 
 function ProfileEditor.RefreshAvailableProfiles()
     ProfileEditor.AvailablesProfiles = { }

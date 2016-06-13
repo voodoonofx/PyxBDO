@@ -16,22 +16,22 @@ function RoamingState.new()
 end
 
 function RoamingState:NeedToRun()
-    
+
     local selfPlayer = GetSelfPlayer()
-    
+
     if not selfPlayer then
         return false
     end
-    
+
     if not selfPlayer.IsAlive then
         return false
     end
-    
+
     return true
 end
 
 function RoamingState:Run()
-    
+
     local hotspot = self.Hotspots[self.CurrentHotspotIndex]
     local selfPlayer = GetSelfPlayer()
 
@@ -50,6 +50,7 @@ function RoamingState:Run()
         Navigator.MoveTo(hotspot,false,false)
         end
     else
+
     self:ChangeHotSpot()
         print("Moving to hotspot #" .. tostring(self.CurrentHotspotIndex))
     end

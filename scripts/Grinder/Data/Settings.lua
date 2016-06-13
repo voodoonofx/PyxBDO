@@ -9,10 +9,10 @@ setmetatable(Settings, {
 
 function Settings.new()
   local self = setmetatable({}, Settings)
-    
+
     self.LastProfileName = ""
     self.CombatScript = ""
-    
+
     self.WarehouseSettings = {}
     self.TurninSettings = {}
     self.VendorSettings = {}
@@ -42,6 +42,3 @@ function Settings.new()
 
     return self
 end
-
-
-

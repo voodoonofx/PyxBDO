@@ -16,7 +16,7 @@ Navigator.OnStuckCall = nil
 Navigator.PlayerRun = false
 Navigator.MeshConnects = { }
 Navigator.MeshConnectEnabled = false
-Navigator.PathingMode = 1 -- 1 = Pyx Meshing, 2 = Experimental BDO Pathing 
+Navigator.PathingMode = 1 -- 1 = Pyx Meshing, 2 = Experimental BDO Pathing
 Navigator.SentAutoPath = PyxTimer:New(1)
 Navigator.MaxTriangles = 50
 Navigator.MaxLines = 50

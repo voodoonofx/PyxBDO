@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
+    self.Settings = { Enabled = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -44,6 +44,11 @@ function RepairState:NeedToRun()
         self.Forced = false
         return false
     end
+	
+	if not self.Settings.Enabled then
+		self.Forced = false
+			return false
+		end
 
     if self.Forced == true and not Navigator.CanMoveTo(self:GetPosition()) then
             print("Repair: Was forced but can not find path cancelling")
@@ -180,8 +185,9 @@ function RepairState:Run()
     if self.State == 2 then
         self.State = 3
         BDOLua.Execute(flushdialog)
-        BDOLua.Execute("Repair_OpenPanel( true)")
-        self.SleepTimer = PyxTimer:New(1)
+        -- BDOLua.Execute("Repair_OpenPanel( true)")
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Repair))")
+        self.SleepTimer = PyxTimer:New(2)
         self.SleepTimer:Start()
         return
     end
@@ -190,6 +196,10 @@ function RepairState:Run()
         self.State = 3.5
         
         if self.Settings.RepairEquipped == true then
+		if self.Settings.UseWarehouseMoney then
+				print("Warehouse Money true")
+			end
+			print(tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")))
             if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then
 				BDOLua.Execute(equippedwarehouse)
 					else
@@ -219,12 +229,17 @@ function RepairState:Run()
     if self.State == 4 then
         self.State = 4.5
         if self.Settings.RepairInventory == true then
+			if self.Settings.UseWarehouseMoney then
+				print("Warehouse Money true")
+			end
+			print(tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")))
             if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then 
+			print("invenwarehouse")
 				BDOLua.Execute(invenwarehouse)
 					else
 					selfPlayer:RepairAllInventoryItems(npc)
 			end
-            self.SleepTimer = PyxTimer:New(1)
+            self.SleepTimer = PyxTimer:New(2)
             self.SleepTimer:Start()
         end
         return
