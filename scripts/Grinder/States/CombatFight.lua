@@ -1,6 +1,6 @@
 CombatFightState = { }
 CombatFightState.__index = CombatFightState
-CombatFightState.Name = "Combat - Fight"
+CombatFightState.Name = "Combat"
 
 setmetatable(CombatFightState, {
     __call = function(cls, ...)
