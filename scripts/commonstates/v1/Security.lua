@@ -18,7 +18,7 @@ function SecurityState.new()
     self.PlayerList = { }
     self.LastPosition = nil
     self.PausePlayerDetection = false
-    self.PauseTelerportDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     return self
 end
 
@@ -30,7 +30,7 @@ function SecurityState:NeedToRun()
         return false
     end
 
-    if  self.PauseTelerportDetectionTimer ~= nil and self.PauseTelerportDetectionTimer:Expired() == false then
+    if  self.PauseTeleportDetectionTimer ~= nil and self.PauseTeleportDetectionTimer:Expired() == false then
     self.LastPosition = selfPlayer.Position
     elseif self.Settings.TeleportDetection == true then
         local currentPosition = selfPlayer.Position
@@ -103,6 +103,6 @@ end
 function SecurityState:Reset()
     self.PlayerList = { }
     self.PausePlayerDetectionTimer = nil
-    self.PauseTelerportDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     self.LastPosition = nil
 end
