@@ -79,6 +79,8 @@ function VendorState:NeedToRun()
 
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = false
+            print("Vendor: Was forced but can not find path cancelling")
+
         return false
     elseif self.Forced == true then
         return true
@@ -93,6 +95,7 @@ function VendorState:NeedToRun()
         selfPlayer.Inventory.FreeSlots <= 2 and
         table.length(self:GetSellItems()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
+        print("Vendor: Need to Vendor Inventory is Full")
         self.Forced = true
         return true
     end
@@ -101,6 +104,7 @@ function VendorState:NeedToRun()
         selfPlayer.WeightPercent >= 95 and
         table.length(self:GetSellItems()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
+        print("Vendor: Need to Vendor I am too heavy")
         self.Forced = true
         return true
     end
@@ -108,6 +112,7 @@ function VendorState:NeedToRun()
     if self.Settings.BuyItems and
         table.length(self:GetBuyItems(false)) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
+        print("Vendor: Need to Vendor I need to buy Items")
         self.Forced = true
         return true
     end

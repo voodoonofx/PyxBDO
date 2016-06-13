@@ -51,7 +51,8 @@ function RepairState:NeedToRun()
 		end
 
     if self.Forced == true and not Navigator.CanMoveTo(self:GetPosition()) then
-        print("Was told to go to Repair but Navigator.CanMoveTo returns false")
+            print("Repair: Was forced but can not find path cancelling")
+
         self.Forced = false
         return false
     elseif self.Forced == true then
@@ -60,6 +61,7 @@ function RepairState:NeedToRun()
 
     if self.RepairCheck ~= nil then
         if self.RepairCheck() == true then
+        print("Repair: RepairCheck function returned true head to repair")
             self.Forced = true
             return true
         end
@@ -74,6 +76,8 @@ function RepairState:NeedToRun()
         if v.HasEndurance and v.EndurancePercent <= 20 then
             if Navigator.CanMoveTo(self:GetPosition()) then
                 self.Forced = true
+                        print("Repair: an Item is below 20%")
+
                 return true
             else
                 print("Need to Repair! Can not find path to NPC: " .. self.Settings.NpcName)
