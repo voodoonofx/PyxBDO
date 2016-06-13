@@ -182,7 +182,7 @@ function MainWindow.DrawMainWindow()
 
 		ImGui.Columns(2)
 		ImGui.Separator()
-		ImGui.Text("Bot State:")
+		ImGui.Text("BotState:")
 		ImGui.SameLine()
 		if not Bot.EnableDebug and not Bot.EnableDebugMainWindow then
 			if Bot.Running then
@@ -244,7 +244,8 @@ function MainWindow.DrawMainWindow()
 
 		ImGui.Columns(2)
 	--	ImGui.Text("Name: " .. ( function(player) if selfPlayer then return --selfPlayer.Name else return 'Disconnected' end end)(player))
-    ImGui.Text("FSM State: ")
+    ImGui.Text("FSMState: ")
+    ImGui.SameLine()
     ImGui.Text(( function() if Bot.Running and Bot.Fsm.CurrentState then return Bot.Fsm.CurrentState.Name else return 'N/A' end end)(player))
 		ImGui.NextColumn()
 		ImGui.Text("Health: " .. ( function(player) if selfPlayer then return selfPlayer.Health .. " / " .. selfPlayer.MaxHealth else return 'N / A' end end)(player))
