@@ -113,7 +113,7 @@ function TurninState:Run()
     local vendorPosition = self:GetPosition()
 
 
-    if vendorPosition.Distance3DFromMe > 300 then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
@@ -128,6 +128,9 @@ function TurninState:Run()
     end
 
     Navigator.Stop()
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        return
+    end
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
@@ -213,11 +216,11 @@ function TurninState:Run()
             return
         end
 
-
+	self:Exit()
         return
     
 
-    self:Exit()
+    
 
 end
 

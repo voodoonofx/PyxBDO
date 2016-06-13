@@ -11,7 +11,7 @@ setmetatable(RepairState, {
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
     self.State = 0
-    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true }
+    self.Settings = { NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
 
     self.Forced = false
     self.LastUseTimer = nil
@@ -46,7 +46,8 @@ function RepairState:NeedToRun()
     end
 
     if self.Forced == true and not Navigator.CanMoveTo(self:GetPosition()) then
-        print("Was told to go to Repair but Navigator.CanMoveTo returns false")
+            print("Repair: Was forced but can not find path cancelling")
+
         self.Forced = false
         return false
     elseif self.Forced == true then
@@ -55,6 +56,7 @@ function RepairState:NeedToRun()
 
     if self.RepairCheck ~= nil then
         if self.RepairCheck() == true then
+        print("Repair: RepairCheck function returned true head to repair")
             self.Forced = true
             return true
         end
@@ -69,6 +71,8 @@ function RepairState:NeedToRun()
         if v.HasEndurance and v.EndurancePercent <= 20 then
             if Navigator.CanMoveTo(self:GetPosition()) then
                 self.Forced = true
+                        print("Repair: an Item is below 20%")
+
                 return true
             else
                 print("Need to Repair! Can not find path to NPC: " .. self.Settings.NpcName)
@@ -114,6 +118,22 @@ end
 function RepairState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
+	local flushdialog = [[
+	MessageBox.keyProcessEscape()
+	]]
+	local confirm = [[
+	MessageBox.keyProcessEnter()
+	]]
+	local equippedwarehouse = [[
+	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
+	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
+	RepairAllEquippedItemBtn_LUp()
+	]]
+	local invenwarehouse = [[
+	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
+	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
+	RepairAllInvenItemBtn_LUp()
+	]]
 
     if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
@@ -128,10 +148,15 @@ function RepairState:Run()
         return
     end
     Navigator.Stop()
-
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return
     end
+
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        self.SleepTimer = PyxTimer:New(2)
+        return
+    end
+
 
     local npcs = GetNpcs()
 
@@ -154,6 +179,7 @@ function RepairState:Run()
 
     if self.State == 2 then
         self.State = 3
+        BDOLua.Execute(flushdialog)
         BDOLua.Execute("Repair_OpenPanel( true)")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
@@ -161,27 +187,69 @@ function RepairState:Run()
     end
 
     if self.State == 3 then
-        self.State = 4
+        self.State = 3.5
+        
         if self.Settings.RepairEquipped == true then
-            selfPlayer:RepairAllEquippedItems(npc)
+            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then
+				BDOLua.Execute(equippedwarehouse)
+					else
+ 					selfPlayer:RepairAllEquippedItems(npc)
+ 				end
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
         end
         return
     end
+    
+    if self.State == 3.5 then
+		self.State = 3.9
+		BDOLua.Execute(confirm)
+		self.SleepTimer = PyxTimer:New(1)
+		self.SleepTimer:Start()
+		return
+	end
+	if self.State == 3.9 then
+		self.State = 4
+		BDOLua.Execute(flushdialog)
+		self.SleepTimer = PyxTimer:New(1)
+		self.SleepTimer:Start()
+		return
+	end
+	
     if self.State == 4 then
-        self.State = 5
+        self.State = 4.5
         if self.Settings.RepairInventory == true then
-            selfPlayer:RepairAllInventoryItems(npc)
+            if self.Settings.UseWarehouseMoney and tonumber(BDOLua.Execute("return Int64toInt32(warehouse_moneyFromNpcShop_s64())")) > 100 then 
+				BDOLua.Execute(invenwarehouse)
+					else
+					selfPlayer:RepairAllInventoryItems(npc)
+			end
             self.SleepTimer = PyxTimer:New(1)
             self.SleepTimer:Start()
         end
         return
+    end
+    
+    if self.State == 4.5 then
+		self.State = 4.9
+		BDOLua.Execute(confirm)
+		self.SleepTimer = PyxTimer:New(1)
+		self.SleepTimer:Start()
+		return
+	end
+	
+    if self.State == 4.9 then
+		self.State = 5
+		BDOLua.Execute(flushdialog)
+		self.SleepTimer = PyxTimer:New(1)
+		self.SleepTimer:Start()
+		return
     end
 
     if self.State == 5 then
         self.State = 6
         print("Repair Done")
+        BDOLua.Execute(flushdialog)
         BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()

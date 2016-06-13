@@ -2,7 +2,7 @@ Navigator = { }
 Navigator.Running = false
 Navigator.Destination = Vector3(0, 0, 0)
 Navigator.Waypoints = { }
-Navigator.ApproachDistance = 150
+Navigator.ApproachDistance = 190
 Navigator.LastObstacleCheckTick = 0
 Navigator.LastFindPathTick = 0
 Navigator.LastStuckCheckTickcount = 0
@@ -18,6 +18,8 @@ Navigator.MeshConnects = { }
 Navigator.MeshConnectEnabled = false
 Navigator.PathingMode = 1 -- 1 = Pyx Meshing, 2 = Experimental BDO Pathing 
 Navigator.SentAutoPath = PyxTimer:New(1)
+Navigator.MaxTriangles = 50
+Navigator.MaxLines = 50
 
 
 function Navigator.MeshConnectToVector3(meshConnect)
@@ -177,10 +179,11 @@ function Navigator.CanMoveTo(destination)
 end
 
 function Navigator.MoveToStraight(destination)
-    local selfPlayer = GetSelfPlayer()
-    selfPlayer:MoveTo(destination)
+--    local selfPlayer = GetSelfPlayer()
+    Navigator.Waypoints = { }
+    table.insert(Navigator.Waypoints, destination)
     Navigator.Destination = destination
-    Navigator.PathingMode = 2
+    Navigator.PathingMode = 1
     Navigator.Running = true
     return true
 end
@@ -277,27 +280,35 @@ function Navigator.MoveTo(destination, forceRecalculate, playerRun, pathMode)
 end
 
 function Navigator.Stop(shortStop)
+    local selfPlayer = GetSelfPlayer()
     Navigator.Running = false
     Navigator.Waypoints = { }
     Navigator.Destination = Vector3(0, 0, 0)
     Navigator.LastWayPoint = false
     Navigator.StuckCount = 0
+                Navigator.LastStuckTimer:Reset()
+            Navigator.LastStuckTimer:Start()
+            Navigator.LastStuckCheckPosition = selfPlayer.Position
 
-    local selfPlayer = GetSelfPlayer()
-    selfPlayer:ClearActionState()
+--    selfPlayer:ClearActionState()
 
     if selfPlayer then
         selfPlayer:MoveTo(Vector3(0, 0, 0))
     end
     if shortStop ~= nil and shortStop == true then
-        GetSelfPlayer():DoAction("RUN_SHORTSTOP")
+--        GetSelfPlayer():DoAction("RUN_SHORTSTOP")
     end
 end
 
 function Navigator.OnPulse()
-    local selfPlayer = GetSelfPlayer()
 
-    if selfPlayer ~= nil and(Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
+    local selfPlayer = GetSelfPlayer()
+	
+	if not selfPlayer then
+		return
+	end
+
+    if selfPlayer ~= nil and (Navigator.Running == false and selfPlayer.IsSwimming == false) or(string.find(selfPlayer.CurrentActionName, "STANCE_CHANGE", 1) ~= nil) then
         Navigator.LastStuckTimer:Reset()
         Navigator.LastStuckTimer:Start()
         Navigator.LastStuckCheckPosition = selfPlayer.Position
@@ -315,7 +326,7 @@ function Navigator.OnPulse()
 
         if Navigator.LastStuckTimer:Expired() == true then
             if (Navigator.LastStuckCheckPosition.Distance2DFromMe < 35) then
-                print("I'm stuck")
+--                print("I'm stuck")
                 -- , jump forward !")
 --                print(selfPlayer.CurrentActionName)
                 if Navigator.StuckCount == 5 or Navigator.StuckCount == 19 then
@@ -390,6 +401,7 @@ function Navigator.OnPulse()
                     end
                 end
             end
+            --[[
             if Navigator.LastWayPoint == false and Navigator.PlayerRun == true and selfPlayer.StaminaPercent >= 100 and selfPlayer.IsSwimming == false and table.length(Navigator.Waypoints) > 6 then
                 if selfPlayer.IsBattleMode == false then
                     selfPlayer:DoAction("RUN_SPRINT_FAST_ST")
@@ -397,6 +409,7 @@ function Navigator.OnPulse()
                     selfPlayer:DoAction("BT_RUN_SPRINT")
                 end
             end
+            --]]
         end
 
     end
@@ -408,20 +421,28 @@ function Navigator.OnRender3D()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         local linesList = { }
+        local count = 0
         if Navigator.Waypoints ~= nil then
             for k, v in pairs(Navigator.Waypoints) do
-                Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 20, v.Z, 10, 20, 0xFFFFFFFF, 0xFFFFFFFF))
+                if count <= Navigator.MaxTriangles then
+                    Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 20, v.Z, 10, 20, 0xFFFFFFFF, 0xFFFFFFFF))
+                    count = count + 1
+                end
             end
             local firstPoint = Navigator.Waypoints[1]
             if firstPoint then
                 table.insert(linesList, { selfPlayer.Position.X, selfPlayer.Position.Y + 20, selfPlayer.Position.Z, 0xFFFFFFFF })
                 table.insert(linesList, { firstPoint.X, firstPoint.Y + 20, firstPoint.Z, 0xFFFFFFFF })
             end
+            count = 0
             for k, v in ipairs(Navigator.Waypoints) do
+                if count <= Navigator.MaxLines then
                 local nextPoint = Navigator.Waypoints[k + 1]
-                if nextPoint then
-                    table.insert(linesList, { v.X, v.Y + 20, v.Z, 0xFFFFFFFF })
-                    table.insert(linesList, { nextPoint.X, nextPoint.Y + 20, nextPoint.Z, 0xFFFFFFFF })
+                    if nextPoint then
+                        table.insert(linesList, { v.X, v.Y + 20, v.Z, 0xFFFFFFFF })
+                        table.insert(linesList, { nextPoint.X, nextPoint.Y + 20, nextPoint.Z, 0xFFFFFFFF })
+                        count = count + 1
+                    end
                 end
             end
             if table.length(linesList) > 0 then

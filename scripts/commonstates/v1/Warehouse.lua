@@ -54,6 +54,7 @@ function WarehouseState:NeedToRun()
 
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
     self.Forced = false
+    print("Warehouse: Was forced but can not find path cancelling")
         return false
     elseif self.Forced == true then
         return true
@@ -67,12 +68,14 @@ function WarehouseState:NeedToRun()
         table.length(self:GetItems()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = true
+        print("WareHouse: My inventory is almost full")
         return true
     end
 
     if selfPlayer.WeightPercent >= 95 and
         table.length(self:GetItems()) > 0 and
         Navigator.CanMoveTo(self:GetPosition()) then
+        print("WareHouse: My I am too heavy")
         self.Forced = true
         return true
     end
@@ -135,6 +138,10 @@ function WarehouseState:Run()
         return
     end
 
+        if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        self.SleepTimer = PyxTimer:New(2)
+        return
+    end
 
     local npcs = GetNpcs()
 
