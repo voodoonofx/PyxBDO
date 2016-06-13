@@ -11,7 +11,8 @@ setmetatable(SecurityState, {
 
 function SecurityState.new()
     local self = setmetatable( { }, SecurityState)
-    self.Settings = { PlayerDetection = true, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = true, TeleportDistance = 500 }
+
+    self.Settings = { PlayerDetection = false, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = false, TeleportDistance = 500 }
     self.PlayerDetectedFunction = nil
     self.TeleportDetectedFunction = nil
     self.PlayerList = { }
@@ -36,7 +37,6 @@ function SecurityState:NeedToRun()
         if self.LastPosition ~= nil and self.LastPosition.Distance3DFromMe >= self.Settings.TeleportDistance then
             print("Security: Teleport Detected distance:" .. tostring(self.LastPosition.Distance3DFromMe))
             if self.TeleportDetectedFunction ~= nil then
-
                 return self.TeleportDetectedFunction()
             end
         end

@@ -134,6 +134,9 @@ function TurninState:Run()
     end
 
     Navigator.Stop()
+    if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        return
+    end
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return

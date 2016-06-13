@@ -36,6 +36,8 @@ Bot.RepairState = RepairState()
 Bot.LootState = LootActorState()
 Bot.BuildNavigationState = BuildNavigationState()
 Bot.InventoryDeleteState = InventoryDeleteState()
+Bot.SecurityState = SecurityState()
+Bot.RoamingState = RoamingState()
 Bot.DoReset = false
 Bot.SleepTimer = nil
 Bot.LastPauseTick = nil
@@ -46,6 +48,9 @@ Bot.Minutes = nil
 Bot.Seconds = nil
 
 Bot.Counter = 0
+Bot.PlayerAudioPause = PyxTimer:New(1.5)
+Bot.PlayerChangeHotSpotPause = PyxTimer:New(60)
+
 
 -- Not Converted yet
 Bot.CombatFightState = CombatFightState()
@@ -140,7 +145,7 @@ function Bot.Start()
     if not Bot.Running then
         Bot.RepairState.Forced = false
         Bot.WarehouseState.Forced = false
-				Bot.TurninState.Forced = false
+        Bot.TurninState.Forced = false
         Bot.VendorState.Forced = false
         Bot.SaveSettings()
 				Bot.Stats.SessionStart = Pyx.Win32.GetTickCount()
@@ -168,11 +173,12 @@ function Bot.Start()
         Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
 
         Bot.WarehouseState:Reset()
-				Bot.TurninState:Reset()
+        Bot.TurninState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
         Bot.DeathState:Reset()
-				Bot.SecurityState:Reset()
+        Bot.SecurityState:Reset()
+
 
         Bot.WarehouseState.Settings.NpcName = currentProfile.WarehouseNpcName
         Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
@@ -201,8 +207,8 @@ function Bot.Start()
 
         Bot.LootState.CallWhileMoving = Bot.StateMoving
 
-				Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
-				Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
+        Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
+        Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
 
         if Bot.MeshDisabled ~= true then
             ProfileEditor.Visible = false
@@ -214,7 +220,7 @@ function Bot.Start()
 
         if Bot.MeshDisabled ~= true then
             Bot.Fsm:AddState(Bot.BuildNavigationState)
-						Bot.Fsm:AddState(Bot.SecurityState)
+            Bot.Fsm:AddState(Bot.SecurityState)
             Bot.Fsm:AddState(Bot.DeathState)
             Bot.Fsm:AddState(LibConsumables.ConsumablesState)
             Bot.Fsm:AddState(Bot.CombatFightState)
@@ -225,7 +231,7 @@ function Bot.Start()
             Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.InventoryDeleteState)
             Bot.Fsm:AddState(Bot.CombatPullState)
-            Bot.Fsm:AddState(Bot.RoamingState())
+            Bot.Fsm:AddState(Bot.RoamingState)
             Bot.Fsm:AddState(IdleState())
         else
             Bot.Fsm:AddState(Bot.DeathState)
@@ -243,15 +249,16 @@ function Bot.Start()
 end
 
 function Bot.Death(state)
-Bot.DoReset = true
+    Bot.DoReset = true
     if Bot.DeathState.Settings.ReviveMethod == DeathState.SETTINGS_ON_DEATH_ONLY_CALL_WHEN_COMPLETED then
         Bot.Stop()
-        else
-				Bot.TurninState:Reset()
+    else
+        Bot.TurninState:Reset()
         Bot.WarehouseState:Reset()
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
-
+        Bot.SecurityState:Reset()
+        Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
     end
 end
 
@@ -466,14 +473,12 @@ function Bot.OnPulse()
 		Bot.Counter = Bot.Counter - 1
 	end
 
-    if Bot.Running or Bot.WasRunning then
+	if Bot.Running then
 			if Bot.DoReset == true then
-				Bot.Fsm.Reset = true
-				Navigator.Reset()
-				Bot.DoReset = false
+					Bot.Fsm.Reset = true
+					Navigator.Reset()
+					Bot.DoReset = false
 			end
-
-        if Bot.Running then
 
 		Bot.Fsm:Pulse()
 		Stats.GetKills()
@@ -482,14 +487,12 @@ function Bot.OnPulse()
 		Bot.Minutes = math.floor(Bot.Time / 60) % 60
 		Bot.Hours = math.floor(Bot.Time / (60 * 60))
 
-
         if Bot.VendorState.Forced == true or Bot.RepairState.Forced == true or Bot.WarehouseState.Forced == true or Bot.TurninState.Forced then
             Bot.CombatPullState.Enabled = false
         else
             Bot.CombatPullState.Enabled = true
         end
     end
-		end
 	end
 
 function Bot.CallCombatAttack(monsterActor, isPull)
@@ -527,7 +530,7 @@ function Bot.LoadSettings()
     Bot.Settings.InventoryDeleteSettings = Bot.InventoryDeleteState.Settings
     Bot.Settings.LibConsumablesSettings = LibConsumables.Settings
     Bot.Settings.PullSettings = Bot.CombatPullState.Settings
-		Bot.Settings.SecuritySettings = Bot.SecurityState.Settings
+    Bot.Settings.SecuritySettings = Bot.SecurityState.Settings
 
     table.merge(Bot.Settings, json:decode(Pyx.FileSystem.ReadFile("Settings.json")))
     if string.len(Bot.Settings.LastProfileName) > 0 then
@@ -543,8 +546,8 @@ end
 function Bot.OnStuck()
     if Navigator.StuckCount > 15 then
         print("We are too stuck try rescue")
-         BDOLua.Execute("callRescue()")
-				 Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
+        BDOLua.Execute("callRescue()")
+        Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
     end
 end
 
@@ -559,6 +562,7 @@ function Bot.PlayerAlarm()
     if Bot.Settings.SecurityPlayerChangeChannel == true then
 
     end
+
 
     if (Bot.PlayerChangeHotSpotPause:Expired() or Bot.PlayerChangeHotSpotPause:IsRunning() == false) and Bot.Settings.SecurityPlayerChangeHotSpot == true then
         print("Player Alarm: Change Hotspot")
@@ -611,7 +615,7 @@ function Bot.StateComplete(state)
             Bot.WarehouseState.Forced = true
         end
     end
-	
+
     if state == Bot.TurninState then
         if Bot.Settings.VendorAfterTurnin == true then
             Bot.VendorState.Forced = true
@@ -619,9 +623,9 @@ function Bot.StateComplete(state)
     end
 
     if state == Bot.WarehouseState then
-    	if Bot.Settings.RepairAfterWarehouse == true then
-    		Bot.RepairState.Forced = true
-    	end
+        if Bot.Settings.RepairAfterWarehouse == true then
+            Bot.RepairState.Forced = true
+        end
     end
 
 end

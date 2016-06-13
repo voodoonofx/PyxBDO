@@ -124,6 +124,11 @@ function TradeManagerState:Run()
         return
     end
 
+        if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
+        self.SleepTimer = PyxTimer:New(2)
+        return
+    end
+
     local npcs = GetNpcs()
 
     if table.length(npcs) < 1 then

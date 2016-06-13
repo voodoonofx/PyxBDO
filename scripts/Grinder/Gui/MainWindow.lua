@@ -38,7 +38,7 @@ function MainWindow.DrawMainWindow()
 						Bot.Stop()
 					end
 				end
-				
+
 				-- DISABLED FOR NOW
 				-- if ImGui.MenuItem("Pause", "ALT+P") then
 					-- if Bot.Running then
@@ -73,7 +73,7 @@ function MainWindow.DrawMainWindow()
 						AdvancedSettings.Visible = false
 					end
 				end
-				
+
 				if ImGui.MenuItem("Use Mesh", "", not Bot.MeshDisabled) then
 					if not Bot.MeshDisabled then
 						Bot.MeshDisabled = true
@@ -99,11 +99,11 @@ function MainWindow.DrawMainWindow()
 						LibConsumableWindow.Visible = false
 					end
 				end
-				
+
 				if ImGui.MenuItem("Reset Stats", "") then
 					Bot.ResetStats()
 				end
-				
+
 				-- DISABLED FOR NOW
 				-- if ImGui.MenuItem("Stats", "ALT+L",Stats.Visible) then
 					-- if not Stats.Visible then
@@ -238,7 +238,7 @@ function MainWindow.DrawMainWindow()
 		ImGui.Text("Kills: ")
 		ImGui.SameLine()
 		ImGui.TextColored(ImVec4(1,0.2,0.2,1),string.format("%i", Bot.Stats.KillCount))
-	
+
 		ImGui.Columns(1)
 		ImGui.Separator()
 
@@ -258,4 +258,3 @@ end
 function MainWindow.OnDrawGuiCallback()
     MainWindow.DrawMainWindow()
 end
-
