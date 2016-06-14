@@ -43,7 +43,7 @@ function LootActorState:NeedToRun()
     if selfPlayer.Inventory.FreeSlots == 0 then
         return false
     end
-	
+    
 
     
 --    local nearestAttacker = self:GetNeareastAttacker()
@@ -59,14 +59,14 @@ function LootActorState:NeedToRun()
             Navigator.CanMoveTo(v.Position)
         then 
         
-			if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position,1000) == true then
-				print("Skipped loot because of Player")
-				self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
---				return false
-				else
-				self.CurrentLootActor = v
-				return true
-			end
+            if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position,1000) == true then
+                print("Skipped loot because of Player")
+                self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
+--              return false
+                else
+                self.CurrentLootActor = v
+                return true
+            end
             
         end
     end
@@ -80,22 +80,26 @@ function LootActorState:Run()
     local actorPosition = self.CurrentLootActor.Position
 
     if Looting.IsLooting then
+        local f = io.open(Pyx.Scripting.CurrentScript.Directory.."loot.txt", "a")
         local numLoots = Looting.ItemCount
         for i=0,numLoots-1 do 
             local lootItem = Looting.GetItemByIndex(i)
             if lootItem then
                 print("Loot item : " .. lootItem.ItemEnchantStaticStatus.Name)
                 Looting.Take(i)
+                if lootItem.ItemEnchantStaticStatus.Grade >= 1 then
+                    local name = BDOLua.Execute(string.format("return getActor(%i):get():getStaticStatusName()", self.CurrentLootActor.Key))
+                    f:write(string.format("%s - %s - %s\n", os.date(), name, lootItem.ItemEnchantStaticStatus.Name))
+                end
             end
         end
-        Looting.Close();
+        Looting.Close()
         if self.CallWhenCompleted then
             self.CallWhenCompleted(self)
         end
+        f:close()
         return true
-    end
-    
-    
+    end    
 
     if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
         if self.CallWhileMoving then
