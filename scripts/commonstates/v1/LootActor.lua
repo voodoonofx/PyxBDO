@@ -58,14 +58,16 @@ function LootActorState:NeedToRun()
 --            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
         then 
-			if self.Settings.SkipLootPlayer and Bot.DetectPlayer() then
+        
+			if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position,1000) == true then
 				print("Skipped loot because of Player")
 				self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
-				return false
+--				return false
 				else
 				self.CurrentLootActor = v
 				return true
 			end
+            
         end
     end
 

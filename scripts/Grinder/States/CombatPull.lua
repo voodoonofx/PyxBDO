@@ -55,20 +55,16 @@ function CombatPullState:NeedToRun()
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
             ProfileEditor.CurrentProfile:CanAttackMonster(v) == true and
             ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight == true) and
-            Navigator.CanMoveTo(v.Position) == true then
+            Navigator.CanMoveTo(v.Position) == true
+            and (self.Settings.SkipPullPlayer == false or self.Settings.SkipPullPlayer == true and Bot.DetectPlayerAt(v.Position,2000) == false)
+             then
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true
             else
                 self._newTarget = false
             end
-			if self.Settings.SkipPullPlayer and Bot.DetectPlayer() then
-				self.MobIgnoreList:Add(v.Key, 10)
-				print("Pull Added :" .. v.Key .. " to Ignore list because of Player")
-				return false
-				else
 				self.CurrentCombatActor = v
 				return true
-			end
         end
     end
 
