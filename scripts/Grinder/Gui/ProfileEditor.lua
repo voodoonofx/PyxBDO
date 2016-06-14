@@ -39,7 +39,6 @@ function ProfileEditor.DrawProfileEditor()
     if ProfileEditor.Visible then
         _, ProfileEditor.Visible = ImGui.Begin(ProfileEditor.WindowName, ProfileEditor.Visible, ImVec2(300, 400), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
         
-		if not Bot.Running then
         _, ProfileEditor.CurrentProfileSaveName = ImGui.InputText("##profile_save_name", ProfileEditor.CurrentProfileSaveName)
         ImGui.SameLine()
         if ImGui.Button("Save") then
@@ -93,8 +92,8 @@ function ProfileEditor.DrawProfileEditor()
                     end
                     ImGui.NextColumn()
                 else
-                if ImGui.SmallButton("Delete") then
-                table.remove(ProfileEditor.CurrentProfile.MeshConnects,key)
+                if ImGui.SmallButton("Delete##-delete-connect-"..key) then
+                    table.remove(ProfileEditor.CurrentProfile.MeshConnects,key)
                 else
                     ImGui.NextColumn()
                     local dispDistance = Vector3(value[1].X,value[1].Y,value[1].Z)
@@ -252,36 +251,6 @@ function ProfileEditor.DrawProfileEditor()
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Y = 0
                 ProfileEditor.CurrentProfile.TurninNpcPosition.Z = 0
             end
-		end
-		
-		elseif Bot.Running then
-			ImGui.Text("Profile: " .. Bot.Settings.LastProfileName)
-			-- ImGui.Spacing()
-			-- ImGui.Separator()
-			-- if string.len(ProfileEditor.CurrentProfile.TradeManagerNpcName) > 0 then
-				-- ImGui.Text("Trader: " .. ProfileEditor.CurrentProfile.TradeManagerNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetTradeManagerPosition().Distance3DFromMe / 100) .. " y)")
-			-- else
-				-- ImGui.Text("Trader: Not set")
-			-- end
-			-- ImGui.Spacing()
-			-- if string.len(ProfileEditor.CurrentProfile.VendorNpcName) > 0 then
-				-- ImGui.Text("Vendor: " .. ProfileEditor.CurrentProfile.VendorNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetVendorPosition().Distance3DFromMe / 100) .. "y)")
-			-- else
-				-- ImGui.Text("Vendor: Not set")
-			-- end
-			-- ImGui.Spacing()
-			-- if string.len(ProfileEditor.CurrentProfile.RepairNpcName) > 0 then
-				-- ImGui.Text("Repair: " .. ProfileEditor.CurrentProfile.RepairNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetRepairPosition().Distance3DFromMe / 100) .. "y)")
-			-- else
-				-- ImGui.Text("Repair: Not set")
-			-- end
-			-- ImGui.Spacing()
-			-- if string.len(ProfileEditor.CurrentProfile.WarehouseNpcName) > 0 then
-				-- ImGui.Text("Warehouse: " .. ProfileEditor.CurrentProfile.WarehouseNpcName .. " (" .. math.floor(ProfileEditor.CurrentProfile:GetWarehousePosition().Distance3DFromMe / 100) .. " y)")
-			-- else
-				-- ImGui.Text("Warehouse: Not set")
-			-- end
-		
 		end
         ImGui.End()
     end
