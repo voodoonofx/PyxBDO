@@ -12,7 +12,8 @@ setmetatable(VendorState, {
 function VendorState.new()
     local self = setmetatable( { }, VendorState)
     self.Settings = {
-    PlayerRun = true,
+        Enabled = true,
+        PlayerRun = true,
         NpcName = "",
         NpcPosition = { X = 0, Y = 0, Z = 0 },
         VendorOnInventoryFull = true,
@@ -66,13 +67,18 @@ function VendorState:NeedToRun()
         return false
     end
 
+    if not self.Settings.Enabled then
+        self.Forced = false
+        return false
+    end
+
     if self.Settings.SellEnabled == false and self.Settings.BuyEnabled == false then
         return false
     end
 
     if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = false
-            print("Vendor: Was forced but can not find path cancelling")
+        print("Vendor: Was forced but can not find path cancelling")
 
         return false
     elseif self.Forced == true then
@@ -214,7 +220,8 @@ function VendorState:Run()
             self:Exit()
             return false
         end
-        BDOLua.Execute("npcShop_requestList()")
+        -- BDOLua.Execute("npcShop_requestList()")
+		BDOLua.Execute("HandleClickedFuncButton(getDialogButtonIndexByType(CppEnums.ContentsType.Contents_Shop))")
         self.SleepTimer = PyxTimer:New(1)
         self.SleepTimer:Start()
         if self.Settings.SellEnabled then
@@ -287,9 +294,14 @@ function VendorState:Run()
     end
 
     if self.State == 5 then
+        Dialog.ClickExit()
         if self.CallWhenCompleted then
             self.CallWhenCompleted(self)
         end
+        self.SleepTimer = PyxTimer:New(1.5)
+        self.SleepTimer:Start()
+        self.State = 6
+        return
     end
 
     self:Exit()

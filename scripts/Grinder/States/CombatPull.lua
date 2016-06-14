@@ -1,6 +1,6 @@
 CombatPullState = { }
 CombatPullState.__index = CombatPullState
-CombatPullState.Name = "Combat - Pull"
+CombatPullState.Name = "Pull"
 
 setmetatable(CombatPullState, {
     __call = function(cls, ...)
@@ -15,7 +15,7 @@ function CombatPullState.new()
     self._newTarget = false
     self.MobIgnoreList = PyxTimedList:New()
     self.Enabled = true
-    self.Settings = {DontPull = {}}
+    self.Settings = {DontPull = {}, SkipPullPlayer = true}
     return self
 end
 
@@ -61,8 +61,14 @@ function CombatPullState:NeedToRun()
             else
                 self._newTarget = false
             end
-            self.CurrentCombatActor = v
-            return true
+			if self.Settings.SkipPullPlayer and Bot.DetectPlayer() then
+				self.MobIgnoreList:Add(v.Key, 10)
+				print("Pull Added :" .. v.Key .. " to Ignore list because of Player")
+				return false
+				else
+				self.CurrentCombatActor = v
+				return true
+			end
         end
     end
 
@@ -77,7 +83,7 @@ function CombatPullState:Run()
     
     local selfPlayer = GetSelfPlayer()
     if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-        print("Switch to battle mode !")
+        print("Combat Pull: Switch to battle mode !")
         selfPlayer:SwitchBattleMode()
     end
 

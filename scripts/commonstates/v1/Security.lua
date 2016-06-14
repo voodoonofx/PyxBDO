@@ -11,13 +11,15 @@ setmetatable(SecurityState, {
 
 function SecurityState.new()
     local self = setmetatable( { }, SecurityState)
+
     self.Settings = { PlayerDetection = false, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = false, TeleportDistance = 500 }
     self.PlayerDetectedFunction = nil
     self.TeleportDetectedFunction = nil
     self.PlayerList = { }
     self.LastPosition = nil
     self.PausePlayerDetection = false
-    self.PauseTelerportDetectionTimer = nil
+    self.PausePlayerDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     return self
 end
 
@@ -29,21 +31,22 @@ function SecurityState:NeedToRun()
         return false
     end
 
-    if  self.PauseTelerportDetectionTimer ~= nil and self.PauseTelerportDetectionTimer:Expired() == false then
-    self.LastPosition = selfPlayer.Position
+    if self.PauseTeleportDetectionTimer ~= nil and self.PauseTeleportDetectionTimer:Expired() == false then
+        self.LastPosition = selfPlayer.Position
     elseif self.Settings.TeleportDetection == true then
         local currentPosition = selfPlayer.Position
         if self.LastPosition ~= nil and self.LastPosition.Distance3DFromMe >= self.Settings.TeleportDistance then
             print("Security: Teleport Detected distance:" .. tostring(self.LastPosition.Distance3DFromMe))
             if self.TeleportDetectedFunction ~= nil then
-                
                 return self.TeleportDetectedFunction()
             end
         end
         self.LastPosition = currentPosition
     end
 
-    if self.Settings.PlayerDetection == true and self.PausePlayerDetection == false  and Helpers.IsSafeZone() == false then
+    if self.Settings.PlayerDetection == true and self.PausePlayerDetection == false and Helpers.IsSafeZone() == false
+        and(self.PausePlayerDetectionTimer == nil or self.PausePlayerDetectionTimer:Expired() == true)
+    then
         self:CleanPlayerList()
         local characters = GetActors();
         for k, v in pairs(characters) do
@@ -51,7 +54,7 @@ function SecurityState:NeedToRun()
             if v.IsPlayer and v.Position.Distance3DFromMe <= self.Settings.PlayerRange and selfPlayer.Key ~= v.Key then
                 self:UpdatePlayer(v)
                 if self:CheckPlayer(v) == true and self.PlayerDetectedFunction ~= nil then
-                    
+
                     return self.PlayerDetectedFunction()
                 end
 
@@ -70,8 +73,8 @@ function SecurityState:UpdatePlayer(player)
         end
     end
 
-            print("Security: Added Player " .. tostring(player.Name))
-    table.insert(self.PlayerList, {Name = player.Name, Key = player.Key, FirstSeen = os.clock(), LastSeen = os.clock() })
+    print("Security: Added Player " .. tostring(player.Name))
+    table.insert(self.PlayerList, { Name = player.Name, Key = player.Key, FirstSeen = os.clock(), LastSeen = os.clock() })
 end
 
 function SecurityState:CleanPlayerList()
@@ -103,6 +106,6 @@ end
 function SecurityState:Reset()
     self.PlayerList = { }
     self.PausePlayerDetectionTimer = nil
-    self.PauseTelerportDetectionTimer = nil
+    self.PauseTeleportDetectionTimer = nil
     self.LastPosition = nil
 end
