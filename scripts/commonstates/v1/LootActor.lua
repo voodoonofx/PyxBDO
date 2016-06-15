@@ -12,7 +12,7 @@ function LootActorState.new()
     local self = setmetatable( { }, LootActorState)
     self.CurrentLootActor = { }
     self.BlacklistActors = { }
-    self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false }
+    self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, IgnoreBodyName = {}}
     self.State = 0
 
     self.ItemCheckFunction = nil
@@ -48,12 +48,17 @@ function LootActorState:NeedToRun()
     
 --    local nearestAttacker = self:GetNeareastAttacker()
 
-    local actors = GetActors()
+    local actors = {}
+    for i,v in ipairs(GetActors()) do
+        if v.IsLootable and self.Settings.IgnoreBodyName[self:GetBodyName(v)] == nil then
+            table.insert(actors, v)
+        end
+    end
+
     table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(actors) do
-        if v.IsLootable and
-            v.Position.Distance3DFromMe < self.Settings.LootRadius and
-            (not self.BlacklistActors[v.Guid] or Pyx.Win32.GetTickCount() - self.BlacklistActors[v.Guid] < 2000) and
+        if v.Position.Distance3DFromMe < self.Settings.LootRadius and
+            (not self.BlacklistActors[v.Guid] or Pyx.Win32.GetTickCount() - self.BlacklistActors[v.Guid] > 0) and
 --            (not nearestAttacker or v.Position.Distance3DFromMe < nearestAttacker.Position.Distance3DFromMe / 2) and
 --            ((self.CurrentLootActor ~= nil and self.CurrentLootActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)
@@ -61,7 +66,7 @@ function LootActorState:NeedToRun()
         
             if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position,1000) == true then
                 print("Skipped loot because of Player")
-                self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000
+                self.BlacklistActors[v.Guid] = Pyx.Win32.GetTickCount() + 30 * 1000
 --              return false
                 else
                 self.CurrentLootActor = v
@@ -80,7 +85,7 @@ function LootActorState:Run()
     local actorPosition = self.CurrentLootActor.Position
 
     if Looting.IsLooting then
-        local f = io.open(Pyx.Scripting.CurrentScript.Directory.."loot.txt", "a")
+        local looted = {}
         local numLoots = Looting.ItemCount
         for i=0,numLoots-1 do 
             local lootItem = Looting.GetItemByIndex(i)
@@ -88,16 +93,24 @@ function LootActorState:Run()
                 print("Loot item : " .. lootItem.ItemEnchantStaticStatus.Name)
                 Looting.Take(i)
                 if lootItem.ItemEnchantStaticStatus.Grade >= 1 then
-                    local name = BDOLua.Execute(string.format("return getActor(%i):get():getStaticStatusName()", self.CurrentLootActor.Key))
-                    f:write(string.format("%s - %s - %s\n", os.date(), name, lootItem.ItemEnchantStaticStatus.Name))
+                    table.insert(looted, lootItem.ItemEnchantStaticStatus.Name)
                 end
             end
         end
         Looting.Close()
+
+        if self.Settings.LogLoot and #looted > 0 then
+            local f = io.open(Pyx.Scripting.CurrentScript.Directory.."loot.txt", "a")
+            local bodyName = self:GetBodyName(self.CurrentLootActor.Key)
+            local msg = string.format("%s %s - %s\n", os.date(), bodyName, table.concat(looted, ","))
+            f:write(msg)
+            f:close()
+        end
+
         if self.CallWhenCompleted then
             self.CallWhenCompleted(self)
         end
-        f:close()
+        
         return true
     end    
 
@@ -108,16 +121,17 @@ function LootActorState:Run()
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
-        self.CurrentLootActor:RequestDropItems()
+        selfPlayer:Interact(self.CurrentLootActor)
+        --self.CurrentLootActor:RequestDropItems()
         
         if not self.CurrentLootActor.IsLootInteraction then
             print("Not lootable yet, black list !"  )
-            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() - 30 * 1000 -- Not lootable for now
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 30 * 1000 -- Not lootable for now
             return false
         end
         
         if not self.BlacklistActors[self.CurrentLootActor.Guid] then
-            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount()
+            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 3000
             return false
         end
         
@@ -134,4 +148,8 @@ function LootActorState:GetNeareastAttacker()
         end
     end
     return nil
+end
+
+function LootActorState:GetBodyName(actor)
+    return BDOLua.Execute(string.format("return getActor(%i):get():getStaticStatusName()", actor.Key)) or ""
 end
