@@ -103,9 +103,9 @@ end
 function TradeManagerState:Run()
 
     local selfPlayer = GetSelfPlayer()
-    local TradeManagerPosition = self:GetPosition()
+    local vendorPosition = self:GetPosition()
 
-    if TradeManagerPosition.Distance3DFromMe > 200 then
+    if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
             self.CallWhileMoving(self)
         end
@@ -124,7 +124,7 @@ function TradeManagerState:Run()
             end
         end
 
-        Navigator.MoveTo(TradeManagerPosition,false,self.Settings.PlayerRun)
+        Navigator.MoveTo(vendorPosition,false,self.Settings.PlayerRun)
         if self.State > 1 then
             self:Exit()
             return
@@ -153,7 +153,7 @@ function TradeManagerState:Run()
         return
     end
 
-    table.sort(npcs, function(a, b) return a.Position:GetDistance3D(TradeManagerPosition) < b.Position:GetDistance3D(TradeManagerPosition) end)
+    table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
     local npc = npcs[1]
     if self.State == 1 then
         self.SleepTimer = PyxTimer:New(3)
