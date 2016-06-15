@@ -19,7 +19,18 @@ function LootActorState.new()
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
 
+    self.LastCanceledLootTime = 0
+    self.WaitForLootTime = 0
+
     return self
+end
+
+function LootActorState:Exit()
+    -- if looting was interrupted, delay looting to prevent flipflop from combat to looting
+    -- NOTE this does not prevent looting from flipflopping between 2 items
+    if self.CurrentLootActor and self.CurrentLootActor.IsLootInteraction then
+        self.LastCanceledLootTime = os.clock()
+    end
 end
 
 function LootActorState:NeedToRun()
@@ -44,10 +55,15 @@ function LootActorState:NeedToRun()
         return false
     end
     
-    if self.WaitForLoot and os.clock() < self.WaitForLoot then
+    if os.clock() - self.LastCanceledLootTime < 1 then
+        --print("preventing looting flip flop")
+        return false
+    end
+
+    if os.clock() < self.WaitForLootTime then
         return true
     end
-    
+
 --    local nearestAttacker = self:GetNeareastAttacker()
 
     local actors = {}
@@ -114,13 +130,13 @@ function LootActorState:Run()
             self.CallWhenCompleted(self)
         end
         
-        self.WaitForLoot = 0
+        self.WaitForLootTime = 0
         return true
     end
 
     local action = selfPlayer.CurrentActionName
 
-    if self.WaitForLoot and os.clock() < self.WaitForLoot then
+    if os.clock() < self.WaitForLootTime then
 
         if action ~= "WAIT" and action ~= "BT_WAIT" then
             return true
@@ -129,7 +145,7 @@ function LootActorState:Run()
             -- but sometimes it will just stutter step all over the body, not sure why so we fall back on the animation bypassing loot
             if not self.CurrentLootActor.IsLootInteraction then
                 print("body disappeared")
-                self.WaitForLoot = 0
+                self.WaitForLootTime = 0
                 self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 30 * 1000
                 return true
             end
@@ -156,7 +172,7 @@ function LootActorState:Run()
         end
         
         -- wait up to 2 seconds for the loot window to pop
-        self.WaitForLoot = os.clock() + 2.0
+        self.WaitForLootTime = os.clock() + 2.0
         self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 5 * 1000
         return true
     end
