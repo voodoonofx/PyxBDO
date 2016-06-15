@@ -44,7 +44,9 @@ function LootActorState:NeedToRun()
         return false
     end
     
-
+    if self.WaitForLoot and os.clock() < self.WaitForLoot then
+        return true
+    end
     
 --    local nearestAttacker = self:GetNeareastAttacker()
 
@@ -99,9 +101,10 @@ function LootActorState:Run()
         end
         Looting.Close()
 
-        if self.Settings.LogLoot and #looted > 0 then
+        if self.Settings.LogLoot and #looted > 0 and self.LastLoggedBody ~= self.CurrentLootActor.Guid then
+            self.LastLoggedBody = self.CurrentLootActor.Guid
             local f = io.open(Pyx.Scripting.CurrentScript.Directory.."loot.txt", "a")
-            local bodyName = self:GetBodyName(self.CurrentLootActor.Key)
+            local bodyName = self:GetBodyName(self.CurrentLootActor)
             local msg = string.format("%s %s - %s\n", os.date(), bodyName, table.concat(looted, ","))
             f:write(msg)
             f:close()
@@ -111,10 +114,28 @@ function LootActorState:Run()
             self.CallWhenCompleted(self)
         end
         
+        self.WaitForLoot = 0
         return true
+    end
+
+    local action = selfPlayer.CurrentActionName
+
+    if self.WaitForLoot and os.clock() < self.WaitForLoot then
+
+        if action ~= "WAIT" and action ~= "BT_WAIT" then
+            return true
+        else
+            -- sometimes looting will be interrupted by combat 
+            -- but sometimes it will just stutter step all over the body, not sure why so we fall back on the animation bypassing loot
+
+            print("looting didn't start, retrying")
+            Navigator.Stop()
+            self.CurrentLootActor:RequestDropItems()
+            return true
+        end
     end    
 
-    if actorPosition.Distance3DFromMe > self.CurrentLootActor.BodySize + 150 then
+    if actorPosition.Distance3DFromMe > 500 or (actorPosition.Distance2DFromMe - self.CurrentLootActor.BodySize - selfPlayer.BodySize > 80) then
         if self.CallWhileMoving then
             self:CallWhileMoving()
         end
@@ -122,7 +143,6 @@ function LootActorState:Run()
     else
         Navigator.Stop()
         selfPlayer:Interact(self.CurrentLootActor)
-        --self.CurrentLootActor:RequestDropItems()
         
         if not self.CurrentLootActor.IsLootInteraction then
             print("Not lootable yet, black list !"  )
@@ -130,15 +150,11 @@ function LootActorState:Run()
             return false
         end
         
-        if not self.BlacklistActors[self.CurrentLootActor.Guid] then
-            self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 3000
-            return false
-        end
-        
+        -- wait up to 2 seconds for the loot window to pop
+        self.WaitForLoot = os.clock() + 2.0
+        self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 5 * 1000
+        return true
     end
-    
-    return true
-
 end
 
 function LootActorState:GetNeareastAttacker()
