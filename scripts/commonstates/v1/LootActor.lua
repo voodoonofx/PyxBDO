@@ -127,8 +127,13 @@ function LootActorState:Run()
         else
             -- sometimes looting will be interrupted by combat 
             -- but sometimes it will just stutter step all over the body, not sure why so we fall back on the animation bypassing loot
-
-            print("looting didn't start, retrying")
+            if not self.CurrentLootActor.IsLootInteraction then
+                print("body disappeared")
+                self.WaitForLoot = 0
+                self.BlacklistActors[self.CurrentLootActor.Guid] = Pyx.Win32.GetTickCount() + 30 * 1000
+                return true
+            end
+            print("looting didn't start, trying no-animation loot")
             Navigator.Stop()
             self.CurrentLootActor:RequestDropItems()
             return true
