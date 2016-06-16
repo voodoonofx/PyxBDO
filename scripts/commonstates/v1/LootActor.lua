@@ -96,6 +96,7 @@ function LootActorState:NeedToRun()
                         local bodyName = self:GetBodyName(self.CurrentLootActor)
                         print(string.format("Loot flipflop on %s. Blacklisting temporarily", bodyName))
                         self.BlacklistActors[self.CurrentLootActor.Guid] = os.clock() + 1
+                        self.CurrentLootActor = {}
                     end
                     self.CurrentLootActor = v
                     self.LootStartTime[v.Guid] = os.clock()
@@ -106,6 +107,7 @@ function LootActorState:NeedToRun()
                         local bodyName = self:GetBodyName(v)
                         print(string.format("Loot taking too long. Blacklisting %s (%i)", bodyName, v.Guid))
                         self.BlacklistActors[v.Guid] = os.clock() + 60 * 2
+                        self.CurrentLootActor = {}
                     end
                 end
                 return true
@@ -168,6 +170,7 @@ function LootActorState:Run()
                 print("body disappeared")
                 self.WaitForLootTime = 0
                 self.BlacklistActors[self.CurrentLootActor.Guid] = os.clock() + 30 
+                self.CurrentLootActor = {}
                 return true
             end
             print("looting didn't start, trying no-animation loot")
@@ -189,6 +192,7 @@ function LootActorState:Run()
         if not self.CurrentLootActor.IsLootInteraction then
             print("Not lootable yet, black list !"  )
             self.BlacklistActors[self.CurrentLootActor.Guid] = os.clock() + 30 -- Not lootable for now
+            self.CurrentLootActor = {}
             return false
         end
         
