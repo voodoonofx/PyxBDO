@@ -1,0 +1,11 @@
+[script]
+name=BDO Navigation Library
+type=lib
+
+[files]
+file=Pather.lua
+file=PathRecorder.lua
+
+[dependencies]
+file=../libtable/script.def
+file=../libtimers/script.def
