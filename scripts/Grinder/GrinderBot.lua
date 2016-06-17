@@ -124,130 +124,138 @@ function Bot.LoadCombat()
     combatScriptFunc, combatScriptError = load(code)
     if combatScriptFunc == nil then
         print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
-        return
+        return false
     end
     Bot.Combat = combatScriptFunc()
 
     if not Bot.Combat then
         print("Unable to load combat script !")
-        return
+        return false
     end
 
     if not Bot.Combat.Attack then
         print("Combat script doesn't have .Attack function !")
-        return
+        return false
     end
 
     if Bot.Combat.Gui then
         BotSettings.LoadCombatSettings()
     end
+
+    return true
 end
 
 function Bot.Start()
-    if not Bot.Running then
-        Bot.RepairState.Forced = false
-        Bot.WarehouseState.Forced = false
-        Bot.TurninState.Forced = false
-        Bot.VendorState.Forced = false
-        Bot.SaveSettings()
-        Bot.Stats.SessionStart = Pyx.Win32.GetTickCount()
-        local currentProfile = ProfileEditor.CurrentProfile
-
-        if not currentProfile then
-            print("No profile loaded !")
-            return
-        end
-
-        if Bot.MeshDisabled ~= true and table.length(currentProfile:GetHotspots()) < 2 then
-            print("Profile requires at least 2 hotspots !")
-            return
-        end
-        if Bot.MeshDisabled == true then
-            Navigator.RealMoveTo = Navigator.MoveTo
-            Navigator.MoveTo = function(p)
-                GetSelfPlayer():MoveTo(p)
-            end
-            Navigator.RealCanMoveTo = Navigator.CanMoveTo
-            Navigator.CanMoveTo = function(p) return true end
-        end
-
-        ProfileEditor.MeshConnectEnabled = false
-        Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
-
-        Bot.WarehouseState:Reset()
-        Bot.TurninState:Reset()
-        Bot.VendorState:Reset()
-        Bot.RepairState:Reset()
-        Bot.DeathState:Reset()
-        Bot.SecurityState:Reset()
-
-
-        Bot.WarehouseState.Settings.NpcName = currentProfile.WarehouseNpcName
-        Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
-
-        Bot.WarehouseState.CallWhenCompleted = Bot.StateComplete
-        Bot.WarehouseState.CallWhileMoving = Bot.StateMoving
-
-        Bot.TurninState.Settings.NpcName = currentProfile.TurninNpcName
-        Bot.TurninState.Settings.NpcPosition = currentProfile.TurninNpcPosition
-
-        Bot.TurninState.CallWhenCompleted = Bot.StateComplete
-        Bot.TurninState.CallWhileMoving = Bot.StateMoving
-
-        Bot.VendorState.Settings.NpcName = currentProfile.VendorNpcName
-        Bot.VendorState.Settings.NpcPosition = currentProfile.VendorNpcPosition
-
-        Bot.VendorState.CallWhenCompleted = Bot.StateComplete
-        Bot.VendorState.CallWhileMoving = Bot.StateMoving
-
-        Bot.DeathState.CallWhenCompleted = Bot.Death
-
-        Bot.RepairState.Settings.NpcName = currentProfile.RepairNpcName
-        Bot.RepairState.Settings.NpcPosition = currentProfile.RepairNpcPosition
-
-        Bot.RepairState.CallWhileMoving = Bot.StateMoving
-
-        Bot.LootState.CallWhileMoving = Bot.StateMoving
-
-        Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
-        Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
-
-        if Bot.MeshDisabled ~= true then
-            ProfileEditor.Visible = false
-            Navigation.MesherEnabled = false
-        end
-        Navigator.OnStuckCall = Bot.OnStuck
-        Bot.Fsm = FSM()
-        Bot.Fsm.ShowOutput = true
-
-        if Bot.MeshDisabled ~= true then
-            Bot.Fsm:AddState(Bot.BuildNavigationState)
-            Bot.Fsm:AddState(Bot.SecurityState)
-            Bot.Fsm:AddState(Bot.DeathState)
-            Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-            Bot.Fsm:AddState(Bot.CombatFightState)
-            Bot.Fsm:AddState(Bot.TurninState)
-            Bot.Fsm:AddState(Bot.VendorState)
-            Bot.Fsm:AddState(Bot.WarehouseState)
-            Bot.Fsm:AddState(Bot.RepairState)
-            Bot.Fsm:AddState(Bot.LootState)
-            Bot.Fsm:AddState(Bot.InventoryDeleteState)
-            Bot.Fsm:AddState(Bot.CombatPullState)
-            Bot.Fsm:AddState(Bot.RoamingState)
-            Bot.Fsm:AddState(IdleState())
-        else
-            Bot.Fsm:AddState(Bot.DeathState)
-            Bot.Fsm:AddState(PlayerPressState())
-            Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-            Bot.Fsm:AddState(Bot.LootState)
-            Bot.Fsm:AddState(Bot.CombatFightState)
-            Bot.Fsm:AddState(Bot.InventoryDeleteState)
-            Bot.Fsm:AddState(Bot.CombatPullState)
-            Bot.Fsm:AddState(IdleState())
-        end
-
-        Bot.Running = true
+    if Bot.Running then
+        return
     end
+
+    if Bot.LoadCombat() == false then
+        return
+    end
+
+    Bot.RepairState.Forced = false
+    Bot.WarehouseState.Forced = false
+    Bot.TurninState.Forced = false
+    Bot.VendorState.Forced = false
+    Bot.SaveSettings()
+    Bot.Stats.SessionStart = Pyx.Win32.GetTickCount()
+    local currentProfile = ProfileEditor.CurrentProfile
+
+    if not currentProfile then
+        print("No profile loaded !")
+        return
+    end
+
+    if Bot.MeshDisabled ~= true and table.length(currentProfile:GetHotspots()) < 2 then
+        print("Profile requires at least 2 hotspots !")
+        return
+    end
+    if Bot.MeshDisabled == true then
+        Navigator.RealMoveTo = Navigator.MoveTo
+        Navigator.MoveTo = function(p)
+            GetSelfPlayer():MoveTo(p)
+        end
+        Navigator.RealCanMoveTo = Navigator.CanMoveTo
+        Navigator.CanMoveTo = function(p) return true end
+    end
+
+    ProfileEditor.MeshConnectEnabled = false
+    Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
+
+    Bot.WarehouseState:Reset()
+    Bot.TurninState:Reset()
+    Bot.VendorState:Reset()
+    Bot.RepairState:Reset()
+    Bot.DeathState:Reset()
+    Bot.SecurityState:Reset()
+
+
+    Bot.WarehouseState.Settings.NpcName = currentProfile.WarehouseNpcName
+    Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
+
+    Bot.WarehouseState.CallWhenCompleted = Bot.StateComplete
+    Bot.WarehouseState.CallWhileMoving = Bot.StateMoving
+
+    Bot.TurninState.Settings.NpcName = currentProfile.TurninNpcName
+    Bot.TurninState.Settings.NpcPosition = currentProfile.TurninNpcPosition
+
+    Bot.TurninState.CallWhenCompleted = Bot.StateComplete
+    Bot.TurninState.CallWhileMoving = Bot.StateMoving
+
+    Bot.VendorState.Settings.NpcName = currentProfile.VendorNpcName
+    Bot.VendorState.Settings.NpcPosition = currentProfile.VendorNpcPosition
+
+    Bot.VendorState.CallWhenCompleted = Bot.StateComplete
+    Bot.VendorState.CallWhileMoving = Bot.StateMoving
+
+    Bot.DeathState.CallWhenCompleted = Bot.Death
+
+    Bot.RepairState.Settings.NpcName = currentProfile.RepairNpcName
+    Bot.RepairState.Settings.NpcPosition = currentProfile.RepairNpcPosition
+
+    Bot.RepairState.CallWhileMoving = Bot.StateMoving
+
+    Bot.LootState.CallWhileMoving = Bot.StateMoving
+
+    Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
+    Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
+
+    if Bot.MeshDisabled ~= true then
+        ProfileEditor.Visible = false
+        Navigation.MesherEnabled = false
+    end
+    Navigator.OnStuckCall = Bot.OnStuck
+    Bot.Fsm = FSM()
+    Bot.Fsm.ShowOutput = true
+
+    if Bot.MeshDisabled ~= true then
+        Bot.Fsm:AddState(Bot.BuildNavigationState)
+        Bot.Fsm:AddState(Bot.SecurityState)
+        Bot.Fsm:AddState(Bot.DeathState)
+        Bot.Fsm:AddState(LibConsumables.ConsumablesState)
+        Bot.Fsm:AddState(Bot.CombatFightState)
+        Bot.Fsm:AddState(Bot.TurninState)
+        Bot.Fsm:AddState(Bot.VendorState)
+        Bot.Fsm:AddState(Bot.WarehouseState)
+        Bot.Fsm:AddState(Bot.RepairState)
+        Bot.Fsm:AddState(Bot.LootState)
+        Bot.Fsm:AddState(Bot.InventoryDeleteState)
+        Bot.Fsm:AddState(Bot.CombatPullState)
+        Bot.Fsm:AddState(Bot.RoamingState)
+        Bot.Fsm:AddState(IdleState())
+    else
+        Bot.Fsm:AddState(Bot.DeathState)
+        Bot.Fsm:AddState(PlayerPressState())
+        Bot.Fsm:AddState(LibConsumables.ConsumablesState)
+        Bot.Fsm:AddState(Bot.CombatFightState)
+        Bot.Fsm:AddState(Bot.LootState)
+        Bot.Fsm:AddState(Bot.InventoryDeleteState)
+        Bot.Fsm:AddState(Bot.CombatPullState)
+        Bot.Fsm:AddState(IdleState())
+    end
+
+    Bot.Running = true
 end
 
 function Bot.Death(state)
