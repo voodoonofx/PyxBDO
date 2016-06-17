@@ -244,3 +244,4 @@ inject.exe
 BDOscripts.sln
 BDOscripts.luaproj
 BDOscripts.config
+*.db

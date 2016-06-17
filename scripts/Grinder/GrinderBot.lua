@@ -212,6 +212,8 @@ function Bot.Start()
         Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
         Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
 
+        Bot.RoamingState.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+
         if Bot.MeshDisabled ~= true then
             ProfileEditor.Visible = false
             Navigation.MesherEnabled = false
