@@ -19,7 +19,19 @@ function CombatPullState.new()
     return self
 end
 
+function CombatPullState:Enter()
+    if Bot.Combat.PullEnter then
+        Bot.Combat:PullEnter(self)
+        return
+    end
+end
+
 function CombatPullState:Exit()
+    if Bot.Combat.PullExit then
+        Bot.Combat:PullExit(self)
+        return
+    end
+
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         selfPlayer:ClearActionState()
@@ -27,6 +39,10 @@ function CombatPullState:Exit()
 end
 
 function CombatPullState:NeedToRun()
+    if Bot.Combat.PullNeedToRun then
+        return Bot.Combat:PullNeedToRun(self)
+    end
+
     local selfPlayer = GetSelfPlayer()
 
     if not selfPlayer or self.Enabled == false then
@@ -57,14 +73,16 @@ function CombatPullState:NeedToRun()
             ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight == true) and
             Navigator.CanMoveTo(v.Position) == true
             and (self.Settings.SkipPullPlayer == false or self.Settings.SkipPullPlayer == true and Bot.DetectPlayerAt(v.Position,2000) == false)
-             then
+            then
+            
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true
             else
                 self._newTarget = false
             end
-				self.CurrentCombatActor = v
-				return true
+			
+            self.CurrentCombatActor = v
+			return true
         end
     end
 
@@ -72,6 +90,11 @@ function CombatPullState:NeedToRun()
 end
 
 function CombatPullState:Run()
+    if Bot.Combat.PullRun then
+        Bot.Combat:PullRun(self)
+        return
+    end
+
     if self._pullStarted == nil or self._newTarget == true then
         self._pullStarted = PyxTimer:New(Bot.Settings.Advanced.PullSecondsUntillIgnore)
         self._pullStarted:Start()
