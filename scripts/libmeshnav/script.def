@@ -1,0 +1,11 @@
+[script]
+name=BDO Old Mesher Library
+type=lib
+
+[files]
+file=Navigator.lua
+
+[dependencies]
+file=../libtable/script.def
+file=../libtimers/script.def
+file=../libbdo/script.def

@@ -212,6 +212,8 @@ function Bot.Start()
         Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
         Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
 
+        Bot.RoamingState.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+
         if Bot.MeshDisabled ~= true then
             ProfileEditor.Visible = false
             Navigation.MesherEnabled = false
@@ -260,7 +262,7 @@ function Bot.Death(state)
         Bot.VendorState:Reset()
         Bot.RepairState:Reset()
         Bot.SecurityState:Reset()
-        Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
+        Bot.SecurityState.PauseTeleportDetectionTimer = PyxTimer:New(60)
     end
 end
 
@@ -271,7 +273,7 @@ function Bot.Stop()
     Bot.VendorState:Reset()
     Bot.DeathState:Reset()
     Bot.SecurityState:Reset()
-    Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
+    Bot.SecurityState.PauseTeleportDetectionTimer = PyxTimer:New(60)
 
     Bot.Running = false
     Bot.LoopCounter = 0
@@ -564,11 +566,12 @@ function Bot.OnStuck()
     if Navigator.StuckCount > 35 then
         print("We are too stuck try rescue")
         BDOLua.Execute("callRescue()")
-        Bot.SecurityState.PauseTelerportDetectionTimer = PyxTimer:New(60)
+        Bot.SecurityState.PauseTeleportDetectionTimer = PyxTimer:New(60)
     end
 end
 
 function Bot.PlayerAlarm()
+    local toRet = false
     if (Bot.PlayerAudioPause:Expired() == true or Bot.PlayerAudioPause:IsRunning() == false) and Bot.Settings.SecurityPlayerMakeSound == true then
         print("Player Alarm: Play Noise")
         BDOLua.Execute("audioPostEvent_SystemUi(0,8)")
@@ -598,31 +601,36 @@ function Bot.PlayerAlarm()
 
     if Bot.Settings.SecurityPlayerStopBot == true then
         print("Player Alarm: Stop Bot")
+        toRet = true
         Bot.Stop()
     end
 
-    return false
+    return toRet
 end
 
 
 function Bot.TeleportAlarm()
+    local toRet = false;
 
     if Bot.Settings.SecurityTeleportMakeSound == true then
         print("Teleport Alarm: Play Audio")
         BDOLua.Execute("audioPostEvent_SystemUi(0,8)")
+        toRet = false
     end
 
     if Bot.Settings.SecurityTeleportStopBot == true then
         print("Teleport Alarm: Stop Bot")
         Bot.Stop()
+        toRet = true
     end
 
     if Bot.Settings.SecurityTeleportKillGame == true then
         print("Teleport Alarm: Kill Process")
         Pyx.Win32.TerminateProcess()
+        toRet = true
     end
 
-    return false
+    return toRet
 end
 
 function Bot.StateComplete(state)
@@ -660,11 +668,28 @@ end
 
 
 function Bot.DetectPlayer()
-    local selfPlayer = GetSelfPlayer()
     local characters = GetActors()
     table.sort(characters, function(a, b) return a.Position.Distance3DFromMe < b.Position.Distance3DFromMe end)
     for k, v in pairs(characters) do
         if v.IsPlayer and not v.IsSelfPlayer then
+            return true
+        end
+    end
+    return false
+end
+
+function Bot.DetectPlayerAt(position, range)
+    local characters = Bot.GetPlayers(false)
+
+
+    if position == nil or position.GetDistance3D == nil or range == nil then
+        print("DetectPlayerAt got a nil being safe returning true")
+        return true
+    end
+
+    for k, v in pairs(characters) do
+        if v.IsPlayer == true and v.IsAlive == true and v.IsSelfPlayer == false and
+            position:GetDistance3D(v.Position) <= range then
             return true
         end
     end

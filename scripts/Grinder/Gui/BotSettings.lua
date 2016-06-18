@@ -22,6 +22,8 @@ BotSettings.TurninSelectedIndex = 0
 BotSettings.TurninName = { }
 BotSettings.TurninName = { }
 
+BotSettings.IgnoreBodyComboSelectedIndex = 0
+BotSettings.DeleteIgnoreBodyIndex = 0
 
 -----------------------------------------------------------------------------
 -- BotSettings Functions
@@ -102,6 +104,7 @@ function BotSettings.DrawBotSettings()
 			BotSettings.UpdateInventoryList()
             _, Bot.Settings.LootSettings.TakeLoot = ImGui.Checkbox("Take loots##id_guid_looting_take_loot", Bot.Settings.LootSettings.TakeLoot)
 			_, Bot.Settings.LootSettings.SkipLootPlayer = ImGui.Checkbox("Skip loot if player in range##id_guid_looting_IgnorePlayers", Bot.Settings.LootSettings.SkipLootPlayer)
+			_, Bot.Settings.LootSettings.LogLoot = ImGui.Checkbox("Log loot##id_guid_looting_log_loot", Bot.Settings.LootSettings.LogLoot)
 
 
             ImGui.Text("Always Delete these Items")
@@ -122,6 +125,29 @@ function BotSettings.DrawBotSettings()
                 end
             end
 
+            ImGui.Text("Do not loot these bodies")
+            BotSettings.UpdateMonsters()
+            valueChanged, BotSettings.IgnoreBodyComboSelectedIndex = ImGui.Combo("##id_guid_ignore_body_combo_select", BotSettings.IgnoreBodyComboSelectedIndex, BotSettings.MonsterNames)
+            if valueChanged and BotSettings.IgnoreBodyComboSelectedIndex > 0 then
+                local monsterName = BotSettings.MonsterNames[BotSettings.IgnoreBodyComboSelectedIndex]
+                Bot.Settings.LootSettings.IgnoreBodyName[monsterName] = true
+                BotSettings.IgnoreBodyComboSelectedIndex = 0
+            end
+
+            local ignoreBodyList = {}
+            for k,v in pairs(Bot.Settings.LootSettings.IgnoreBodyName) do
+            	table.insert(ignoreBodyList, k)
+        	end
+        	table.sort(ignoreBodyList)
+
+            _, BotSettings.DeleteIgnoreBodyIndex = ImGui.ListBox("##id_guid_delete_ignore_body", BotSettings.DeleteIgnoreBodyIndex, ignoreBodyList, 5)
+            if ImGui.Button("Remove Body##id_guid_remove_ignore_body", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
+                if BotSettings.DeleteIgnoreBodyIndex > 0 then
+                	local name = ignoreBodyList[BotSettings.DeleteIgnoreBodyIndex]
+                	Bot.Settings.LootSettings.IgnoreBodyName[name] = nil
+                	BotSettings.DeleteIgnoreBodyIndex = 0
+            	end
+            end
         end
 
 
@@ -427,14 +453,10 @@ function BotSettings.UpdateMonsters()
                 table.insert(BotSettings.MonsterNames, v.Name)
             end
         end
-            table.sort(BotSettings.MonsterNames)
-
+        table.sort(BotSettings.MonsterNames)
     end
 
 end
-
-
-
 
 function BotSettings.SaveCombatSettings()
     local json = JSON:new()
