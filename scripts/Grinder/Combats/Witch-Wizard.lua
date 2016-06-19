@@ -81,7 +81,7 @@ function Magician:FixFire()
     local selfPlayer = GetSelfPlayer()
     if selfPlayer:CheckCurrentAction("BT_Skill_Fireball_Ing") then
         print("Fireball stuck...firing")
-        selfPlayer:DoActionAtPosition("BT_Skill_Fireball_Shot", self.player.Position, 500)
+        EdanCombo.SetActionState(Magician.LMB, 500 )
         return
     end
 
@@ -139,6 +139,7 @@ function Magician:Combos()
     if self.player.IsActionPending then
         return
     end
+
     self:FixFire()
     Navigator.Stop()
 
@@ -151,36 +152,36 @@ function Magician:Combos()
 
     -- Use Healing Lighthouse
     if Magician.Gui.HealingLighthouse and (self.player.HealthPercent <= Magician.Gui.HealingLighthouseHealthPercent or self.player.ManaPercent <= Magician.Gui.HealingLighthouseManaPercent) and EdanSkills.SkillUsableCooldown(WITCH_HEALING_LIGHTHOUSE) then
-        print("Casting Healing Lighthouse")
+        print( "Casting Healing Lighthouse" )
         EdanCombo.PressAndWait( Magician.Shift | Magician.E )
         return
     end
 
     -- Use Magical Absoption
     if Magician.Gui.MagicAbsorb and ((EdanScout.MonstersInMeleeRange == 0 and self.player.ManaPercent < Magician.Gui.MagicAbsorbManaPercent) or self.player.ManaPercent < 10) and EdanSkills.SkillUsableCooldown(WITCH_MANA_ABSORPTION) then
-        print("Casting Magical Absorption")
-        EdanCombo.PressAndWait( Magician.Shift|Magician.LMB, self.monster.Position )
+        print( "Casting Magical Absorption" )
+        EdanCombo.PressAndWait( Magician.Shift | Magician.LMB, self.monster.Position )
         EdanCombo.Wait(1000)
         return
     end
 
     -- Use Spellbound Heart (Mana Orb)
     if Magician.Gui.SpellboundHeart and self.player.ManaPercent <= Magician.Gui.SpellboundHeartManaPercent and EdanSkills.SkillUsableCooldown(WITCH_SPELLBOUND_HEART) then
-        print("Casting Mana Orb")
+        print( "Casting Mana Orb" )
         EdanCombo.UseSkillAtPosition( WITCH_SPELLBOUND_HEART, self.player.Position, 500 )
         return
     end
 
     -- Use Magic Shield
     if Magician.Gui.MagicShield and ((self.player.HealthPercent <= 70 and EdanScout.MonstersInMeleeRange >= 2) or self.player.HealthPercent <= Magician.Gui.MagicShieldHealthPercent) and self.player.ManaPercent >= 30 and EdanSkills.SkillUsableCooldown(WITCH_MAGICAL_SHIELD) and not self.player:HasBuffById(617) then
-        print("Casting Magical Shield")
+        print( "Casting Magical Shield" )
         EdanCombo.PressAndWait( Magician.Q, self.player.Position )
         return
     end
 
     -- Use Magic Lighthouse
     if EdanScout.MonstersInMeleeRange > 2 and self.player.HealthPercent <= Magician.Gui.MagicLighthouseHealthPercent and EdanSkills.SkillUsableCooldown(WITCH_MAGIC_LIGHTHOUSE) then
-        print("Casting Taunt Orb")
+        print( "Casting Taunt Orb" )
         EdanCombo.UseSkillAtPosition( WITCH_MAGIC_LIGHTHOUSE, self.monster.Position, 500 )
         return
     end
