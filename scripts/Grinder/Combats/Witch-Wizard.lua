@@ -139,7 +139,7 @@ function Magician:Combos()
     if self.player.IsActionPending then
         return
     end
-
+    self:FixFire()
     Navigator.Stop()
 
     -- Use Healing Aura
@@ -251,7 +251,7 @@ function Magician:Combos()
     if Magician.Gui.LightningChain and self.player.ManaPercent > 30 and EdanSkills.SkillUsable(WITCH_LIGHTNING_CHAIN) then
         if Magician.Gui.LightningStorm and self.player:HasBuffById(1002) and EdanSkills.SkillUsable(WITCH_LIGHTNING_STORM) then
             print("Casting Lightning Chain with Storm to follow")
-            EdanCombo.SetActionStateAtPosition( Magician.Shift | Magician.RMB, self.monster.Position, 1500 )
+            EdanCombo.SetActionStateAtPosition( Magician.LMB | Magician.RMB, self.monster.Position, 1500 )
         else
             print("Casting Lightning")
             EdanCombo.HoldUntilDone( Magician.Shift | Magician.RMB, self.monster.Position )
