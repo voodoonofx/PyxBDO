@@ -19,6 +19,18 @@ function PathRecorder:New(myGraph)
   return o
 end
 
+function PathRecorder:Reset()
+    self.Enabled = false
+    self.ConnectDistance = 300
+    self.NodeDistance = 200
+    self.SnapToNode = true
+    self.SnapDistance = 400
+    self._lastAddVector3 = Vector3(0, 0, 0)
+    self._lastAddNode = nil
+    self.OneWay = false
+
+end
+
 function PathRecorder:Pulse()
     if self.Enabled == false then
         return

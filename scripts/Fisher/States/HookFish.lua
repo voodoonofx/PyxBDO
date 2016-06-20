@@ -38,6 +38,7 @@ end
 function HookFishState:Run()
     local selfPlayer = GetSelfPlayer()
     print("Got a fish !")
-    selfPlayer:DoAction("FISHING_HOOK_START")
+    Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
+--    selfPlayer:DoAction("FISHING_HOOK_START")
     self.LastHookFishTickCount = Pyx.Win32.GetTickCount()
 end

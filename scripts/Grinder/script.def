@@ -39,3 +39,4 @@ file=../libconsumables/script.def
 file=../libscout/script.def
 file=../libedan/script.def
 file=../libcombat/script.def
+file=../libmeshnav/script.def

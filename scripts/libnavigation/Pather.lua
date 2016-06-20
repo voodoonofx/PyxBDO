@@ -33,7 +33,7 @@ function Pather:New(myGraph)
 end
 
 function Pather:SendBDOMove(destination, playerRun)
-    print("Send BDO")
+    print("Send BDO Move")
     local selfPlayer = GetSelfPlayer()
     --    selfPlayer:ClearActionState()
     local myDistance = destination.Distance3DFromMe
@@ -108,18 +108,19 @@ function Pather:Pulse()
                                                                                                                                                                                                                         local selfPlayer = getSelfPlayer():get()
                                                                                                                                                                                                                         selfPlayer:setNavigationMovePath(key)
                                                                                                                                                                                                                         selfPlayer:checkNaviPathUI(key)
-                                                                                                                                                                                                                    ]], Navigator.Destination.X, Navigator.Destination.Y, Navigator.Destination.Z)
+                                                                                                                                                                                                                    ]], self.Destination.X, self.Destination.Y, self.Destination.Z)
                         BDOLua.Execute(code)
 
                     end
                 end
                 return
             end
-            if myDistance > self.ApproachDistance then
+--            if myDistance > self.ApproachDistance then
                 selfPlayer:MoveTo(self.Destination)
-            else
-                selfPlayer:ClearActionState()
-            end
+--            else
+--                selfPlayer:ClearActionState()
+--                self:Stop()
+--            end
 
             return
         end
@@ -127,7 +128,7 @@ function Pather:Pulse()
         if self._pathMode == 1 then
             local nextWaypoint = Vector3(self.CurrentPath[self._currenPathIndex].X, self.CurrentPath[self._currenPathIndex].Y, self.CurrentPath[self._currenPathIndex].Z)
             if nextWaypoint then
-                if nextWaypoint.Distance2DFromMe > self.ApproachDistance then
+                if nextWaypoint.Distance2DFromMe > self.ApproachDistance or self._currenPathIndex == table.length(self.CurrentPath) then
                     selfPlayer:MoveTo(nextWaypoint)
                 else
                     if self._currenPathIndex >= table.length(self.CurrentPath) then
@@ -166,7 +167,7 @@ function Pather:MoveTo(to)
     end
 
     if self.Destination.X == to.X and self.Destination.Y == to.Y and self.Destination.Z == to.Z and table.length(self.CurrentPath) > 0 then
-        print("Same Dest have a path")
+--        print("Same Dest have a path")
         self.Running = true
         return true
     end
@@ -178,7 +179,6 @@ function Pather:MoveTo(to)
         path = self:GeneratePath(selfPlayer.Position, to)
     end
 
-    print(table.length(path))
     if table.length(path) > 0 then
         if self._pathMode == 3 then
             self:Stop()

@@ -14,6 +14,8 @@ function HookFishHandleGameState.new()
     self.LastGameTick = 0
     self.RandomWaitTime = 0
     self.Settings = {InstantFish = false, AlwaysPerfect = false}
+    self.GamePause = nil
+    
     return self
 end
 
@@ -46,8 +48,29 @@ FISHING_HOOK_ING_SUCCESS - qte complete
 ]]--
 
 function HookFishHandleGameState:Run()
+if self.GamePause == nil then
+self.GamePause = PyxTimer:New(2)
+self.GamePause:Start()
+return true
+end
+
+if self.GamePause:Expired() == false then
+return true
+end
+print("Doing Mini-Game")
+--BDOLua.Execute("getSelfPlayer():get():SetMiniGameResult(0)")
+--BDOLua.Execute("ActionMiniGame_Stop()")
+--            Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
+--BDOLua.Execute("Panel_Minigame_EventKeyPress(32)")
+    local selfPlayer = GetSelfPlayer()
+selfPlayer:DoAction("FISHING_HOOK_SUCCESS")
+self.GamePause = PyxTimer:New(2)
+return true
+--[[
     local selfPlayer = GetSelfPlayer()
     local fishResult = "FISHING_HOOK_SUCCESS"
+
+
     if self.Settings.AlwaysPerfect == false then
     if math.random(3) > 1 then
         fishResult = "FISHING_HOOK_GOOD"
@@ -55,10 +78,12 @@ function HookFishHandleGameState:Run()
     end
     if selfPlayer.CurrentActionName == "FISHING_HOOK_START" then
         if self.Settings.InstantFish then
+        Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
             selfPlayer:DoAction(fishResult)
         else
             self.LastGameTick = Pyx.Win32.GetTickCount()
             self.RandomWaitTime = math.random(2500, 4500)
+            Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
             selfPlayer:DoAction(fishResult)
         end
     elseif selfPlayer.CurrentActionName == "FISHING_HOOK_ING_HARDER" then
@@ -66,4 +91,7 @@ function HookFishHandleGameState:Run()
             selfPlayer:DoAction("FISHING_HOOK_ING_SUCCESS")
         end
     end
+    --]]
 end
+
+
