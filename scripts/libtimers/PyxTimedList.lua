@@ -41,6 +41,23 @@ PyxTimedList.Contains = function(self, object)
 
 end
 
+PyxTimedList.Find = function(self, object)
+  for k,v in ipairs(self._table) do
+    if self._compareFunction ~= nil and self._compareFunction(v.Object, object) == true
+      or self._compareFunction == nil and v.Object == object then
+      if v.ExpiresAt <= os.clock () then
+        self:Remove(object)
+        return nil
+      end
+      return v
+    end
+  end
+
+  return nil
+
+end
+
+
 PyxTimedList.Remove = function(self, object)
 
   for i=1, #self._table, 1 do
