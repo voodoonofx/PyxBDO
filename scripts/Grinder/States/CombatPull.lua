@@ -101,11 +101,12 @@ function CombatPullState:Run()
     end
     
     local selfPlayer = GetSelfPlayer()
+    --[[
     if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
         print("Combat Pull: Switch to battle mode !")
         selfPlayer:SwitchBattleMode()
     end
-
+    --]]
     if self._pullStarted:Expired() == true then
         self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 600)
         print("Pull Added :" .. self.CurrentCombatActor.Key .. " to Ignore list")

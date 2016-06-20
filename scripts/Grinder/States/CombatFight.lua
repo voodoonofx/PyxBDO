@@ -127,11 +127,12 @@ function CombatFightState:Run()
     end
 
     local selfPlayer = GetSelfPlayer()
+    --[[
     if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
         print("Combat Fight: Switch to battle mode !")
         selfPlayer:SwitchBattleMode()
     end
-
+    --]]
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then
             self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 60)
