@@ -281,8 +281,7 @@ function RepairState:Run()
     if self.State == 5 then
         self.State = 6
         print("Repair Done")
-        BDOLua.Execute(flushdialog)
-        BDOLua.Execute("Repair_OpenPanel( false)\r\nFixEquip_Close()")
+      	BDOLua.Execute("HandleClickedBackButton()")
         self.SleepTimer = PyxTimer:New(1.5)
         self.SleepTimer:Start()
         Dialog.ClickExit()
