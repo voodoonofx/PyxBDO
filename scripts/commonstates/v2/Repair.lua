@@ -21,6 +21,7 @@ function RepairState.new()
     self.CallWhileMoving = nil
     self.RepairCheck = nil
     self.ItemCheckFunction = nil
+    self.Stuck = false
     self.Items = { }
 
     return self
@@ -50,7 +51,7 @@ function RepairState:NeedToRun()
         return false
     end
 
-    if self.Forced == true and not Bot.Pather:CanMoveTo(self:GetPosition()) then
+    if self.Forced == true and not Bot.Pather:CanPathTo(self:GetPosition()) then
         print("Repair: Was forced but can not find path cancelling")
 
         self.Forced = false
@@ -74,7 +75,7 @@ function RepairState:NeedToRun()
 
     for k, v in pairs(selfPlayer.EquippedItems) do
         if v.HasEndurance and v.EndurancePercent <= 20 then
-            if Bot.Pather:CanMoveTo(self:GetPosition()) then
+            if Bot.Pather:CanPathTo(self:GetPosition()) then
                 self.Forced = true
                 print("Repair: an Item is below 20% Name:" .. v.ItemEnchantStaticStatus.Name .. " " .. v.EndurancePercent .. "% has: " .. v.Endurance .. " of " .. v.MaxEndurance)
 
@@ -154,12 +155,15 @@ function RepairState:Run()
             end
             table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
             local npc = npcs[1]
+--            print (tostring(vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize))
+
             if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
                 goto close_enough
             end
         end
 
-        Bot.Pather:MoveTo(vendorPosition)
+
+        Bot.Pather:PathTo(vendorPosition)
         if self.State > 1 then
             self:Exit()
             return
