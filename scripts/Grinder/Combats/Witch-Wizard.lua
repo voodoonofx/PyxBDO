@@ -250,12 +250,12 @@ function Magician:Combos()
 
     -- Use Lightning Chain + Storm
     if Magician.Gui.LightningChain and self.player.ManaPercent > 30 and EdanSkills.SkillUsable(WITCH_LIGHTNING_CHAIN) then
+    	Navigator.Stop()
+    	print( "Casting Lightning Chain" )
+        EdanCombo.HoldUntilDone( Magician.Shift | Magician.RMB, self.monster.Position )
         if Magician.Gui.LightningStorm and self.player:HasBuffById(1002) and EdanSkills.SkillUsable(WITCH_LIGHTNING_STORM) then
             print( "Casting Lightning Chain with Storm to follow" )
             EdanCombo.SetActionStateAtPosition( Magician.LMB | Magician.RMB, self.monster.Position, 1500 )
-        else
-            print( "Casting Lightning" )
-            EdanCombo.HoldUntilDone( Magician.Shift | Magician.RMB, self.monster.Position )
         end
         return
     end
