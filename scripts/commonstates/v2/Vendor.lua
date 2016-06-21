@@ -29,7 +29,6 @@ function VendorState.new()
         -- Buy Items Format {Name, BuyAt, BuyMax} BuyAt level we should buyat or below, BuyMax Max to have in Inventory so if is 100 and we have 20 bot will buy 80
         BuyItems = { },
         SecondsBetweenTries = 300
-
     }
 
     self.State = 0
@@ -41,7 +40,6 @@ function VendorState.new()
     self.CurrentSellList = { }
     self.CurrentBuyList = { }
     self.Forced = false
-        self.Stuck = false
 
     -- Overideable functions
     self.ItemCheckFunction = nil
@@ -78,7 +76,7 @@ function VendorState:NeedToRun()
         return false
     end
 
-    if self.Forced and not Bot.Pather:CanPathTo(self:GetPosition()) then
+    if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
         self.Forced = false
         print("Vendor: Was forced but can not find path cancelling")
 
@@ -95,7 +93,7 @@ function VendorState:NeedToRun()
     if self.Settings.SellEnabled and self.Settings.VendorOnInventoryFull and
         selfPlayer.Inventory.FreeSlots <= 2 and
         table.length(self:GetSellItems()) > 0 and
-        Bot.Pather:CanPathTo(self:GetPosition()) then
+        Navigator.CanMoveTo(self:GetPosition()) then
         print("Vendor: Need to Vendor Inventory is Full")
         self.Forced = true
         return true
@@ -104,7 +102,7 @@ function VendorState:NeedToRun()
     if self.Settings.SellEnabled and self.Settings.VendorOnWeight and
         selfPlayer.WeightPercent >= 95 and
         table.length(self:GetSellItems()) > 0 and
-        Bot.Pather:CanPathTo(self:GetPosition()) then
+        Navigator.CanMoveTo(self:GetPosition()) then
         print("Vendor: Need to Vendor I am too heavy")
         self.Forced = true
         return true
@@ -112,7 +110,7 @@ function VendorState:NeedToRun()
 
     if self.Settings.BuyItems and
         table.length(self:GetBuyItems(false)) > 0 and
-        Bot.Pather:CanPathTo(self:GetPosition()) then
+        Navigator.CanMoveTo(self:GetPosition()) then
         print("Vendor: Need to Vendor I need to buy Items")
         self.Forced = true
         return true
@@ -174,7 +172,7 @@ function VendorState:Run()
             end
         end        
 
-        Bot.Pather:PathTo(vendorPosition,nil,self.Settings.PlayerRun)
+        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
         if self.State > 1 then
             self:Exit()
             return true
@@ -184,7 +182,7 @@ function VendorState:Run()
     end
 
     ::close_enough::
-    Bot.Pather:Stop(true)
+    Navigator.Stop(true)
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return true

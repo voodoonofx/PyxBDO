@@ -187,7 +187,6 @@ function LootActorState:Run()
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
-
         selfPlayer:Interact(self.CurrentLootActor)
         
         if not self.CurrentLootActor.IsLootInteraction then
