@@ -5,12 +5,11 @@ function Pather:New(myGraph)
 
     local o = {
         Graph = myGraph,
-        Fallback = true,
+        Fallback = false,
 
         CurrentPath = { },
         CurrentPosition = 0,
-        CustomStuckFunction = nil,
-        ReportStuckFunction = nil,
+        OnStuckCall = nil,
         ToFarDistance = 1000,
         _lastPosition = nil,
         _lastMoveTo = nil,
@@ -43,13 +42,13 @@ function Pather:SendBDOMove(destination, playerRun)
     else
 
         local code = string.format([[
-                                                                                                                ToClient_DeleteNaviGuideByGroup(0)
-                                                                                                                local target = float3(%f, %f, %f)
-                                                                                                                local repairNaviKey = ToClient_WorldMapNaviStart( target, NavigationGuideParam(), true, true )
-                                                                                                                local selfPlayer = getSelfPlayer():get()
-                                                                                                                selfPlayer:setNavigationMovePath(key)
-                                                                                                                selfPlayer:checkNaviPathUI(key)
-                                                                                                            ]], destination.X, destination.Y, destination.Z)
+                                                                                                                        ToClient_DeleteNaviGuideByGroup(0)
+                                                                                                                        local target = float3(%f, %f, %f)
+                                                                                                                        local repairNaviKey = ToClient_WorldMapNaviStart( target, NavigationGuideParam(), true, true )
+                                                                                                                        local selfPlayer = getSelfPlayer():get()
+                                                                                                                        selfPlayer:setNavigationMovePath(key)
+                                                                                                                        selfPlayer:checkNaviPathUI(key)
+                                                                                                                    ]], destination.X, destination.Y, destination.Z)
         BDOLua.Execute(code)
     end
     self.SentAutoPath:Reset()
@@ -97,30 +96,30 @@ function Pather:Pulse()
                 if string.find(selfPlayer.CurrentActionName, "AUTO_RUN", 1) == nil
                     and string.find(selfPlayer.CurrentActionName, "RUN_SPRINT_FAST", 1) == nil
                     and(self.SentAutoPath:IsRunning() == false or self.SentAutoPath:Expired() == true) then
-                    if self.Destination.IsLineOfSight then
+                    if self.Destination.IsLineOfSight or self.Destination.Distance3DFromMe < 500 then
                         selfPlayer:MoveTo(self.Destination)
                     else
                         --                        print(self.Destination.IsLineOfSight)
                         local code = string.format([[
-                                                                                                                                                                                                                        ToClient_DeleteNaviGuideByGroup(0)
-                                                                                                                                                                                                                        local target = float3(%f, %f, %f)
-                                                                                                                                                                                                                        local repairNaviKey = ToClient_WorldMapNaviStart( target, NavigationGuideParam(), true, true )
-                                                                                                                                                                                                                        local selfPlayer = getSelfPlayer():get()
-                                                                                                                                                                                                                        selfPlayer:setNavigationMovePath(key)
-                                                                                                                                                                                                                        selfPlayer:checkNaviPathUI(key)
-                                                                                                                                                                                                                    ]], self.Destination.X, self.Destination.Y, self.Destination.Z)
+                                                                                                                                                                                                                                                ToClient_DeleteNaviGuideByGroup(0)
+                                                                                                                                                                                                                                                local target = float3(%f, %f, %f)
+                                                                                                                                                                                                                                                local repairNaviKey = ToClient_WorldMapNaviStart( target, NavigationGuideParam(), true, true )
+                                                                                                                                                                                                                                                local selfPlayer = getSelfPlayer():get()
+                                                                                                                                                                                                                                                selfPlayer:setNavigationMovePath(key)
+                                                                                                                                                                                                                                                selfPlayer:checkNaviPathUI(key)
+                                                                                                                                                                                                                                            ]], self.Destination.X, self.Destination.Y, self.Destination.Z)
                         BDOLua.Execute(code)
 
                     end
                 end
                 return
             end
---            if myDistance > self.ApproachDistance then
-                selfPlayer:MoveTo(self.Destination)
---            else
---                selfPlayer:ClearActionState()
---                self:Stop()
---            end
+            --            if myDistance > self.ApproachDistance then
+            selfPlayer:MoveTo(self.Destination)
+            --            else
+            --                selfPlayer:ClearActionState()
+            --                self:Stop()
+            --            end
 
             return
         end
@@ -128,9 +127,11 @@ function Pather:Pulse()
         if self._pathMode == 1 then
             local nextWaypoint = Vector3(self.CurrentPath[self._currenPathIndex].X, self.CurrentPath[self._currenPathIndex].Y, self.CurrentPath[self._currenPathIndex].Z)
             if nextWaypoint then
-                if nextWaypoint.Distance2DFromMe > self.ApproachDistance or self._currenPathIndex == table.length(self.CurrentPath) then
+                if nextWaypoint.Distance3DFromMe > self.ApproachDistance or self._currenPathIndex == table.length(self.CurrentPath) then
                     selfPlayer:MoveTo(nextWaypoint)
+                    --                    print("Pather: "..tostring(self.ApproachDistance).." "..tostring(self._currenPathIndex).." "..tostring(nextWaypoint.Distance3DFromMe))
                 else
+
                     if self._currenPathIndex >= table.length(self.CurrentPath) then
                         self._currenPathIndex = table.length(self.CurrentPath)
                     else
@@ -145,21 +146,21 @@ function Pather:Pulse()
 end
 
 function Pather:MoveDirectTo(to)
-       local  path = { MyNode(to.X, to.Y, to.Z) }
-        if self._pathMode == 3 then
-            self:Stop()
+    local path = { MyNode(to.X, to.Y, to.Z) }
+    if self._pathMode == 3 then
+        self:Stop()
 
-        end
-        self.Destination = to
-        self.CurrentPath = path
-        self._pathMode = 1
-        self._currenPathIndex = 1
-        self.Running = true
-        print("Going Direct have los")
+    end
+    self.Destination = to
+    self.CurrentPath = path
+    self._pathMode = 1
+    self._currenPathIndex = 1
+    self.Running = true
+    print("Going Direct have los")
 
 end
 
-function Pather:MoveTo(to)
+function Pather:PathTo(to)
     local selfPlayer = GetSelfPlayer()
 
     if selfPlayer == nil then
@@ -167,12 +168,12 @@ function Pather:MoveTo(to)
     end
 
     if self.Destination.X == to.X and self.Destination.Y == to.Y and self.Destination.Z == to.Z and table.length(self.CurrentPath) > 0 then
---        print("Same Dest have a path")
+        --        print("Same Dest have a path")
         self.Running = true
         return true
     end
     local path = { }
-    if selfPlayer.Position:GetDistance3D(to) < self.DirectLosDistance and to.IsLineOfSight then
+    if selfPlayer.Position:GetDistance3D(to) < self.DirectLosDistance and to.IsLineOfSight or selfPlayer.Position:GetDistance3D(to) < 500 then
         self:MoveDirectTo(to)
         return true
     else
@@ -184,6 +185,7 @@ function Pather:MoveTo(to)
             self:Stop()
 
         end
+        table.insert(path, MyNode(to.X, to.Y, to.Z))
         self.Destination = to
         self.CurrentPath = path
         self._pathMode = 1
@@ -217,8 +219,11 @@ function Pather:GeneratePath(from, to)
     end
 
 
-    local startNode = self.Graph:FindClosestNode(from.X, from.Y, from.Z, 1000, true)
+    local startNode = self:FindClosestNodeLos(from.X, from.Y, from.Z, 3000, true)
     local endNode = self.Graph:FindClosestNode(to.X, to.Y, to.Z, 1000, true)
+
+    print("pather startNode:" .. tostring(startNode))
+    print("pather endNode:" .. tostring(endNode))
 
     if (startNode == nil or endNode == nil) then
         return path
@@ -228,11 +233,31 @@ function Pather:GeneratePath(from, to)
     local astar = MyAStar(self.Graph)
     local path = astar:SearchForPath(startNode, endNode, true, true)
 
+    print("pather tl: "..tostring(table.length(path)))
     return path
 end
 
 
-function Pather:CanMoveTo(to)
+function Pather:FindClosestNodeLos(X, Y, Z, MaxDistance, mustConnect)
+    local nodes = self.Graph:GetNodes()
+    local toRet = nil
+
+    local position = MyNode(X, Y, Z)
+    local newDistance = 0
+    local lastDistance = 0
+    for key, value in pairs(nodes) do
+        newDistance = value:GetDistance3D(position)
+        if newDistance <= MaxDistance and(toRet == nil or newDistance < lastDistance) and Vector3(value.X, value.Y, value.Z).IsLineOfSight == true and
+        (mustConnect ~= true or table.length(self.Graph:GetConnectionsList(value)) > 0) then
+            lastDistance = newDistance
+            toRet = value
+        end
+    end
+    return toRet
+end
+
+
+function Pather:CanPathTo(to)
     local selfPlayer = GetSelfPlayer()
     if selfPlayer == nil then
         return false
@@ -242,42 +267,42 @@ function Pather:CanMoveTo(to)
         return true
     end
 
-    if to.Distance3DFromMe < self.DirectLosDistance and  to.IsLineOfSight then
-    return true
+    if to.Distance3DFromMe < self.DirectLosDistance and to.IsLineOfSight then
+        return true
     end
 
-    return table.length(self:GeneratePath(from, to)) > 0
+    return table.length(self:GeneratePath(selfPlayer.Position, to)) > 0
 
 end
 
 function Pather:StuckHandler()
-    --[[
+local selfPlayer = GetSelfPlayer()
 --                print("I'm stuck")
                 -- , jump forward !")
 --                print(selfPlayer.CurrentActionName)
-                if Navigator.StuckCount == 2 or Navigator.StuckCount == 7 or Navigator.StuckCount == 20 or Navigator.StuckCount == 30 then
+                if self.StuckCount == 8 or self.StuckCount == 14 then
+                    
                     print("Set Move Forward")
+                    selfPlayer:ClearActionState()
                     selfPlayer:SetActionState(ACTION_FLAG_MOVE_FORWARD, 1000)
-                elseif Navigator.StuckCount == 4 or Navigator.StuckCount == 10 then
+                elseif self.StuckCount == 2 then 
                     print("Jump Forward")
                     Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
-                elseif Navigator.StuckCount == 15  then
+                elseif self.StuckCount == 6  then
                     print("Move Right")
+                    selfPlayer:ClearActionState()
                     selfPlayer:SetActionState(ACTION_FLAG_MOVE_RIGHT, 1000)
-                elseif Navigator.StuckCount == 25  then
+                elseif self.StuckCount == 11  then
                     print("Move Left")
+                    selfPlayer:ClearActionState()
                     selfPlayer:SetActionState(ACTION_FLAG_MOVE_LEFT, 1000)
                 end
-                Navigator.StuckCount = Navigator.StuckCount + 1
-                if Navigator.StuckCount == 30 and Navigator.PathingMode == 1 then
-                    print("Still stuck. lets try to re-generate path")
-                    Navigator.MoveTo(Navigator.Destination, true)
-                end
-                if Navigator.OnStuckCall ~= nil then
-                    Navigator.OnStuckCall()
+                self.StuckCount = self.StuckCount + 1
+                if self.OnStuckCall ~= nil then
+                    self.OnStuckCall()
                 end
 
---]]
+
 end
 
 function Pather:Stop()
