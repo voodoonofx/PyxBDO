@@ -15,7 +15,7 @@ function TurninState.new()
 
     self.Settings = { Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, TurninItemsNamed = { }, TurninCount = 1000, SecondsBetweenTries = 5, VendorAfterTurnin = true, TurninOnWeight = true }
 
-    self.State = 0
+    self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
 
     self.LastUseTimer = nil
@@ -89,7 +89,7 @@ function TurninState:NeedToRun()
 end
 
 function TurninState:Reset()
-    self.State = 0
+    self.State = 1
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -103,7 +103,7 @@ function TurninState:Exit()
         if Dialog.IsTalking then
             Dialog.ClickExit()
         end
-        self.State = 0
+        self.State = 1
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
         self.SleepTimer = nil

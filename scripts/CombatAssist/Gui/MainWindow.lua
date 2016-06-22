@@ -20,7 +20,7 @@ MainWindow.Combat = nil
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Combat Assist", true, ImVec2(400, 110), -1.0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize)
+    local _, shouldDisplay = ImGui.Begin("Combat Assist", true, ImVec2(400, 110), -1.0)
     if shouldDisplay then
 
         local player = GetSelfPlayer()

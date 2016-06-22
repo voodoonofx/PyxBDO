@@ -32,7 +32,7 @@ function VendorState.new()
 
     }
 
-    self.State = 0
+    self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
     self.DepositList = nil
 
@@ -110,7 +110,7 @@ function VendorState:NeedToRun()
         return true
     end
 
-    if self.Settings.BuyItems and
+    if self.Settings.BuyItems and self.Settings.BuyEnabled == true and
         table.length(self:GetBuyItems(false)) > 0 and
         Bot.Pather:CanPathTo(self:GetPosition()) then
         print("Vendor: Need to Vendor I need to buy Items")
@@ -130,7 +130,7 @@ function VendorState:GetPosition()
 end
 
 function VendorState:Reset()
-    self.State = 0
+    self.State = 1
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -142,7 +142,7 @@ function VendorState:Exit()
         if Dialog.IsTalking then
             Dialog.ClickExit()
         end
-        self.State = 0
+        self.State = 1
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
         self.SleepTimer = nil
