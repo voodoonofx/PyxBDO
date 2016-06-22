@@ -12,7 +12,7 @@ function LootActorState.new()
     local self = setmetatable( { }, LootActorState)
     self._myTarget = nil
     self.BlacklistActors = PyxTimedList:New()
-    self.LootStartTime = { }
+    
     self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, IgnoreBodyName = { } }
     self.State = 0
     self.Stuck = false
@@ -28,15 +28,9 @@ function LootActorState.new()
 end
 
 function LootActorState:Enter()
-    self.LootStartTime = { }
-end
+    end
 
 function LootActorState:Exit()
-    -- if looting was interrupted, delay looting to prevent flipflop from combat to looting
-    -- NOTE this does not prevent looting from flipflopping between 2 items
-    if self._myTarget ~= nil and self._myTarget.IsLootInteraction then
-        self.LastCanceledLootTime = os.clock()
-    end
 end
 
 function LootActorState:KillNear(position, radius)
@@ -164,10 +158,24 @@ function LootActorState:Run()
                     table.insert(looted, lootItem.ItemEnchantStaticStatus.Name)
                 end
             end
+            if Looting.IsLooting == false then
+            return false
+            end
         end
-        self.BlacklistActors:Add(self._myTarget.Guid, 600)
         Looting.Close()
+        self.State = 4
+        self._sleepTimer = PyxTimer:New(0.5)
+        self._sleepTimer:Start()
+        return true
 
+    end
+
+    if self._state >= 2 and self._sleepTimer ~= nil and self._sleepTimer:IsRunning() and not self._sleepTimer:Expired() then
+        return true
+    end
+
+    if self._state == 4 then
+        self.BlacklistActors:Add(self._myTarget.Guid, 600)
         if self.CallWhenCompleted then
             self.CallWhenCompleted(self)
         end
@@ -177,13 +185,8 @@ function LootActorState:Run()
         return true
     end
 
-    if self._state >= 2 and self._sleepTimer ~= nil and self._sleepTimer:IsRunning() and not self._sleepTimer:Expired() then
-        return true
-    end
-
-
     if self._state == 2 and actorPosition.Distance3DFromMe <= 150 then
-        self._sleepTimer = PyxTimer:New(.5)
+        self._sleepTimer = PyxTimer:New(1)
         self._sleepTimer:Start()
         self._myTarget:Interact(7)
 
@@ -199,7 +202,7 @@ function LootActorState:Run()
     local action = selfPlayer.CurrentActionName
 
 
-    if actorPosition.Distance3DFromMe > 200 then
+    if actorPosition.Distance3DFromMe > 150 then
         if self.CallWhileMoving then
             self:CallWhileMoving()
         end
@@ -213,6 +216,7 @@ function LootActorState:Run()
             print("Loot Wait")
             return true
         end
+                                selfPlayer:ClearActionState()
         --        selfPlayer:FacePosition(self._myTarget.Position)
         self._sleepTimer = PyxTimer:New(2)
         self._sleepTimer:Start()
