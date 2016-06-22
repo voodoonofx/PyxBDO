@@ -182,7 +182,7 @@ function LootActorState:Run()
     end
 
 
-    if self._state == 2 and actorPosition.Distance3DFromMe <= 200 then
+    if self._state == 2 and actorPosition.Distance3DFromMe <= 150 then
         self._sleepTimer = PyxTimer:New(.5)
         self._sleepTimer:Start()
         self._myTarget:Interact(7)
@@ -209,7 +209,7 @@ function LootActorState:Run()
     elseif self._state == 1 then
         print("loot stop")
         Bot.Pather:Stop()
-        if selfPlayer.CurrentActionName ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
+        if string.find(selfPlayer.CurrentActionName,"WAIT") == nil then -- ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
             print("Loot Wait")
             return true
         end
