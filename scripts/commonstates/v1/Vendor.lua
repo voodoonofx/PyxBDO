@@ -153,33 +153,35 @@ function VendorState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
 
-    if vendorPosition.Distance3DFromMe > 200 then
-        if self.CallWhileMoving then
-            self.CallWhileMoving(self)
-        end
+	if self.State == 0 then
+		if vendorPosition.Distance3DFromMe > 200 then
+			if self.CallWhileMoving then
+				self.CallWhileMoving(self)
+			end
 
-        if vendorPosition.Distance3DFromMe < 1000 then
-            local npcs = GetNpcs()
-            if table.length(npcs) < 1 then
-                print("Warehouse could not find any NPC's")
-                self:Exit()
-                return
-            end
-            table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
-            local npc = npcs[1]
-            if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
-                goto close_enough
-            end
-        end        
+			if vendorPosition.Distance3DFromMe < 1000 then
+				local npcs = GetNpcs()
+				if table.length(npcs) < 1 then
+					print("Could not find any NPC's")
+					self:Exit()
+					return
+				end
+				table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
+				local npc = npcs[1]
+				if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
+					goto close_enough
+				end
+			end        
 
-        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
-        if self.State > 1 then
-            self:Exit()
-            return true
-        end
-        self.State = 1
-        return true
-    end
+			Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
+			if self.State > 1 then
+				self:Exit()
+				return true
+			end
+		else
+			self.State = 1
+		end
+	end
 
     ::close_enough::
     Navigator.Stop(true)
