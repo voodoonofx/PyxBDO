@@ -12,7 +12,7 @@ function TradeManagerState.new()
     local self = setmetatable( { }, TradeManagerState)
     self.Settings = {DoTradeGame = false, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SellAll = true, TradeManagerOnInventoryFull = true, IgnoreItemsNamed = { }, SecondsBetweenTries = 300, PlayerRun = true }
 
-    self.State = 0
+    self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
     self.Forced = false
 
@@ -72,7 +72,7 @@ function TradeManagerState:NeedToRun()
 end
 
 function TradeManagerState:Reset()
-    self.State = 0
+    self.State = 1
     self.LastTradeUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -87,7 +87,7 @@ function TradeManagerState:Exit()
         if Dialog.IsTalking then
             Dialog.ClickExit()
         end
-        self.State = 0
+        self.State = 1
         self.LastTradeUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastTradeUseTimer:Start()
         self.SleepTimer = nil

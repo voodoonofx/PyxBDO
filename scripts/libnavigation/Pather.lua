@@ -179,6 +179,7 @@ function Pather:PathTo(to)
     else
         path = self:GeneratePath(selfPlayer.Position, to)
     end
+        print("path: "..tostring(table.length(path)).." "..tostring(self.Fallback))
 
     if table.length(path) > 0 then
         if self._pathMode == 3 then

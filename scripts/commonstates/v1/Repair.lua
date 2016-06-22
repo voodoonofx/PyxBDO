@@ -10,7 +10,7 @@ setmetatable(RepairState, {
 
 function RepairState.new()
     local self = setmetatable( { }, RepairState)
-    self.State = 0
+    self.State = 1
     self.Settings = { Enabled = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, SecondsBetweenTries = 300, RepairInventory = true, RepairEquipped = true, PlayerRun = true, UseWarehouseMoney = false }
 
     self.Forced = false
@@ -98,7 +98,7 @@ function RepairState:GetPosition()
 end
 
 function RepairState:Reset()
-    self.State = 0
+    self.State = 1
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -110,7 +110,7 @@ function RepairState:Exit()
         Dialog.ClickExit()
     end
     if self.State > 0 then
-        self.State = 0
+        self.State = 1
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
         self.SleepTimer = nil

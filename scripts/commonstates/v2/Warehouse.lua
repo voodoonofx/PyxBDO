@@ -15,7 +15,7 @@ function WarehouseState.new()
 
     self.Settings = { Enabled = true, PlayerRun = true, NpcName = "", NpcPosition = { X = 0, Y = 0, Z = 0 }, DepositItems = true, ExchangeGold = false, DepositMoney = true, MoneyToKeep = 10000, IgnoreItemsNamed = { }, SecondsBetweenTries = 300 }
 
-    self.State = 0
+    self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
     self.DepositList = nil
 
