@@ -171,13 +171,15 @@ function VendorState:Run()
 				if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
 					goto close_enough
 				end
-			end        
+			end      
 
 			Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
 			if self.State > 1 then
 				self:Exit()
 				return true
 			end
+			
+			return false
 		else
 			self.State = 1
 		end
