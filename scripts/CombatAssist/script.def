@@ -13,6 +13,7 @@ file=../libtable/script.def
 file=../libjson/script.def
 file=../libfsm/script.def
 file=../libbdo/script.def
+file=../libmeshnav/script.def
 file=../libedan/script.def
 file=../libscout/script.def
 file=../libcombat/script.def

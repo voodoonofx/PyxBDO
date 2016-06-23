@@ -14,7 +14,7 @@ function LootActorState.new()
     self.BlacklistActors = { }
     self.LootStartTime = { }
     self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, IgnoreBodyName = {}}
-    self.State = 0
+    self.State = 1
 
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
@@ -187,6 +187,7 @@ function LootActorState:Run()
         Navigator.MoveTo(actorPosition)
     else
         Navigator.Stop()
+
         selfPlayer:Interact(self.CurrentLootActor)
         
         if not self.CurrentLootActor.IsLootInteraction then

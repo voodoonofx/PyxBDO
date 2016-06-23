@@ -15,7 +15,7 @@ function TradeManagerState.new()
     self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
     self.Forced = false
-
+        self.Stuck = false
     self.LastTradeUseTimer = nil
     self.SleepTimer = nil
     self.CurrentSellList = { }
@@ -46,7 +46,7 @@ function TradeManagerState:NeedToRun()
         return false
     end
     
-    if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
+    if self.Forced and not Bot.Pather:CanPathTo(self:GetPosition()) then
     self.Forced = false
         return false
     elseif self.Forced == true then
@@ -63,7 +63,7 @@ function TradeManagerState:NeedToRun()
     if self.Settings.TradeManagerOnInventoryFull and
         selfPlayer.Inventory.FreeSlots <= 2 and
         table.length(self:GetItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = true
         return true
     end
@@ -124,7 +124,7 @@ function TradeManagerState:Run()
             end
         end
 
-        Navigator.MoveTo(vendorPosition,false,self.Settings.PlayerRun)
+        Bot.Pather:PathTo(vendorPosition)
         if self.State > 1 then
             self:Exit()
             return
@@ -134,7 +134,7 @@ function TradeManagerState:Run()
     end
 
     ::close_enough::
-    Navigator.Stop()
+    Bot.Pather:Stop()
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and self.SleepTimer:Expired() == false then
         return

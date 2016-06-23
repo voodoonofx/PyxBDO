@@ -36,3 +36,5 @@ file=../libfsm/script.def
 file=../libbdo/script.def
 file=../libtimers/script.def
 file=../libconsumables/script.def
+file=../libmeshnav/script.def
+

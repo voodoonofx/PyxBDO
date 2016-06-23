@@ -27,7 +27,7 @@ function TurninState.new()
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
-
+        self.Stuck = false
     return self
 end
 
@@ -59,7 +59,7 @@ function TurninState:NeedToRun()
         return false
     end
 
-    if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
+    if self.Forced and not Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = false
         return false
     elseif self.Forced == true then
@@ -72,7 +72,7 @@ function TurninState:NeedToRun()
     end
 
     if table.length(self:ItemCheck()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = true
         return true
     end
@@ -80,7 +80,7 @@ function TurninState:NeedToRun()
     if self.Settings.TurninOnWeight and
         selfPlayer.WeightPercent >= 95 and
         table.length(self:GetItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = true
         return true
     end
@@ -138,7 +138,7 @@ function TurninState:Run()
             end
         end
 
-        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
+        Bot.Pather:PathTo(vendorPosition)
         if self.State > 1 then
             self:Exit()
             return
@@ -148,7 +148,7 @@ function TurninState:Run()
     end
 
     ::close_enough::
-    Navigator.Stop()
+    Bot.Pather:Stop()
     if string.find(selfPlayer.CurrentActionName, "WAIT", 1) == nil then
         return
     end

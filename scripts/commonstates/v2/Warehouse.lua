@@ -31,7 +31,7 @@ function WarehouseState.new()
     self.ItemCheckFunction = nil
     self.CallWhenCompleted = nil
     self.CallWhileMoving = nil
-
+        self.Stuck = false
     return self
 end
 
@@ -57,7 +57,7 @@ function WarehouseState:NeedToRun()
         return false
     end
 
-    if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
+    if self.Forced and not Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = false
         print("Warehouse: Was forced but can not find path cancelling")
         return false
@@ -71,7 +71,7 @@ function WarehouseState:NeedToRun()
 
     if self.Settings.DepositItems and selfPlayer.Inventory.FreeSlots <= 2 and
         table.length(self:GetItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = true
         print("WareHouse: My inventory is almost full")
         return true
@@ -79,7 +79,7 @@ function WarehouseState:NeedToRun()
 
     if selfPlayer.WeightPercent >= 95 and
         table.length(self:GetItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         print("WareHouse: My I am too heavy")
         self.Forced = true
         return true
@@ -89,7 +89,7 @@ function WarehouseState:NeedToRun()
 end
 
 function WarehouseState:Reset()
-    self.State = 1
+    self.State = 0
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -106,7 +106,7 @@ function WarehouseState:Exit()
         if Dialog.IsTalking then
             Dialog.ClickExit()
         end
-        self.State = 1
+        self.State = 0
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
         self.SleepTimer = nil
@@ -142,7 +142,7 @@ function WarehouseState:Run()
             end
         end
 
-        Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
+        Bot.Pather:PathTo(vendorPosition)
         if self.State > 1 then
             self:Exit()
             return
@@ -153,7 +153,7 @@ function WarehouseState:Run()
 
     ::close_enough::
 
-    Navigator.Stop()
+    Bot.Pather:Stop()
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return

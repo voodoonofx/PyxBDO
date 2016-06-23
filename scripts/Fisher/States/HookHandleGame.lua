@@ -14,6 +14,8 @@ function HookFishHandleGameState.new()
     self.LastGameTick = 0
     self.RandomWaitTime = 0
     self.Settings = {InstantFish = false, AlwaysPerfect = false}
+    self.GamePause = nil
+    
     return self
 end
 
@@ -29,41 +31,30 @@ function HookFishHandleGameState:NeedToRun()
         return false
     end
 
-    return selfPlayer.CurrentActionName == "FISHING_HOOK_START" or selfPlayer.CurrentActionName == "FISHING_HOOK_ING_HARDER"
+    return selfPlayer.MiniGameType == 1
 end
-
---[[
-FISHING_HOOK_READY - notification
-FISHING_HOOK_ING - notification waiting
-FISHING_HOOK_DELAY - short pause
-FISHING_HOOK_START - start of bar game
-
-success here if perfect
-
-FISHING_HOOK_GOOD - cmpleted bar game
-FISHING_HOOK_ING_HARDER - qte game
-FISHING_HOOK_ING_SUCCESS - qte complete
-]]--
 
 function HookFishHandleGameState:Run()
+
     local selfPlayer = GetSelfPlayer()
-    local fishResult = "FISHING_HOOK_SUCCESS"
-    if self.Settings.AlwaysPerfect == false then
-    if math.random(3) > 1 then
-        fishResult = "FISHING_HOOK_GOOD"
+
+    if selfPlayer and selfPlayer.MiniGameType == 1 and selfPlayer.MiniGameResult ~= 3 then
+        selfPlayer.MiniGameResult = 3
+		local lua = 
+		[[
+			audioPostEvent_SystemUi(11,00)
+			audioPostEvent_SystemUi(11,13)
+			local _sinGauge_Result_Perfect = UI.getChildControl ( Panel_SinGauge, "Static_Result_Perfect" )
+			_sinGauge_Result_Perfect:ResetVertexAni()
+			_sinGauge_Result_Perfect:SetVertexAniRun("Perfect_Ani", true)
+			_sinGauge_Result_Perfect:SetVertexAniRun("Perfect_ScaleAni", true)
+			_sinGauge_Result_Perfect:SetVertexAniRun("Perfect_AniEnd", true)
+			_sinGauge_Result_Perfect:SetShow(true)
+		]]
+		BDOLua.Execute(lua)
+        print("Doing gauge mini game !")
     end
-    end
-    if selfPlayer.CurrentActionName == "FISHING_HOOK_START" then
-        if self.Settings.InstantFish then
-            selfPlayer:DoAction(fishResult)
-        else
-            self.LastGameTick = Pyx.Win32.GetTickCount()
-            self.RandomWaitTime = math.random(2500, 4500)
-            selfPlayer:DoAction(fishResult)
-        end
-    elseif selfPlayer.CurrentActionName == "FISHING_HOOK_ING_HARDER" then
-        if Pyx.Win32.GetTickCount() - self.LastGameTick > self.RandomWaitTime then
-            selfPlayer:DoAction("FISHING_HOOK_ING_SUCCESS")
-        end
-    end
+    
 end
+
+

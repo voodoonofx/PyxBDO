@@ -29,9 +29,10 @@ function VendorState.new()
         -- Buy Items Format {Name, BuyAt, BuyMax} BuyAt level we should buyat or below, BuyMax Max to have in Inventory so if is 100 and we have 20 bot will buy 80
         BuyItems = { },
         SecondsBetweenTries = 300
+
     }
 
-    self.State = 0
+    self.State = 1
     -- 0 = Nothing, 1 = Moving, 2 = Arrived
     self.DepositList = nil
 
@@ -40,6 +41,7 @@ function VendorState.new()
     self.CurrentSellList = { }
     self.CurrentBuyList = { }
     self.Forced = false
+        self.Stuck = false
 
     -- Overideable functions
     self.ItemCheckFunction = nil
@@ -76,7 +78,7 @@ function VendorState:NeedToRun()
         return false
     end
 
-    if self.Forced and not Navigator.CanMoveTo(self:GetPosition()) then
+    if self.Forced and not Bot.Pather:CanPathTo(self:GetPosition()) then
         self.Forced = false
         print("Vendor: Was forced but can not find path cancelling")
 
@@ -93,7 +95,7 @@ function VendorState:NeedToRun()
     if self.Settings.SellEnabled and self.Settings.VendorOnInventoryFull and
         selfPlayer.Inventory.FreeSlots <= 2 and
         table.length(self:GetSellItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         print("Vendor: Need to Vendor Inventory is Full")
         self.Forced = true
         return true
@@ -102,15 +104,15 @@ function VendorState:NeedToRun()
     if self.Settings.SellEnabled and self.Settings.VendorOnWeight and
         selfPlayer.WeightPercent >= 95 and
         table.length(self:GetSellItems()) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         print("Vendor: Need to Vendor I am too heavy")
         self.Forced = true
         return true
     end
 
-    if self.Settings.BuyItems and
+    if self.Settings.BuyItems and self.Settings.BuyEnabled == true and
         table.length(self:GetBuyItems(false)) > 0 and
-        Navigator.CanMoveTo(self:GetPosition()) then
+        Bot.Pather:CanPathTo(self:GetPosition()) then
         print("Vendor: Need to Vendor I need to buy Items")
         self.Forced = true
         return true
@@ -128,7 +130,7 @@ function VendorState:GetPosition()
 end
 
 function VendorState:Reset()
-    self.State = 0
+    self.State = 1
     self.LastUseTimer = nil
     self.SleepTimer = nil
     self.Forced = false
@@ -140,7 +142,7 @@ function VendorState:Exit()
         if Dialog.IsTalking then
             Dialog.ClickExit()
         end
-        self.State = 0
+        self.State = 1
         self.LastUseTimer = PyxTimer:New(self.Settings.SecondsBetweenTries)
         self.LastUseTimer:Start()
         self.SleepTimer = nil
@@ -153,40 +155,36 @@ function VendorState:Run()
     local selfPlayer = GetSelfPlayer()
     local vendorPosition = self:GetPosition()
 
-	if self.State == 0 then
-		if vendorPosition.Distance3DFromMe > 200 then
-			if self.CallWhileMoving then
-				self.CallWhileMoving(self)
-			end
+    if vendorPosition.Distance3DFromMe > 200 then
+        if self.CallWhileMoving then
+            self.CallWhileMoving(self)
+        end
 
-			if vendorPosition.Distance3DFromMe < 1000 then
-				local npcs = GetNpcs()
-				if table.length(npcs) < 1 then
-					print("Could not find any NPC's")
-					self:Exit()
-					return
-				end
-				table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
-				local npc = npcs[1]
-				if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
-					goto close_enough
-				end
-			end      
+        if vendorPosition.Distance3DFromMe < 1000 then
+            local npcs = GetNpcs()
+            if table.length(npcs) < 1 then
+                print("Warehouse could not find any NPC's")
+                self:Exit()
+                return
+            end
+            table.sort(npcs, function(a, b) return a.Position:GetDistance3D(vendorPosition) < b.Position:GetDistance3D(vendorPosition) end)
+            local npc = npcs[1]
+            if vendorPosition.Distance3DFromMe - npc.BodySize - selfPlayer.BodySize < 50 then
+                goto close_enough
+            end
+        end        
 
-			Navigator.MoveTo(vendorPosition,nil,self.Settings.PlayerRun)
-			if self.State > 1 then
-				self:Exit()
-				return true
-			end
-			
-			return false
-		else
-			self.State = 1
-		end
-	end
+        Bot.Pather:PathTo(vendorPosition,nil,self.Settings.PlayerRun)
+        if self.State > 1 then
+            self:Exit()
+            return true
+        end
+        self.State = 1
+        return true
+    end
 
     ::close_enough::
-    Navigator.Stop(true)
+    Bot.Pather:Stop(true)
 
     if self.SleepTimer ~= nil and self.SleepTimer:IsRunning() and not self.SleepTimer:Expired() then
         return true

@@ -58,6 +58,8 @@ function StartFishingState:Run()
         self.LastActionTime = Pyx.Win32.GetTickCount()
     elseif self.State == 1 and Pyx.Win32.GetTickCount() - self.LastActionTime > 1000 then        
         print("Start fishing ...")    
+        Keybindings.HoldByActionId(KEYBINDING_ACTION_JUMP, 500)
+        --[[
         selfPlayer:DoAction("FISHING_START")
         selfPlayer:DoAction("FISHING_ING_START")
         if self.Settings.MaxEnergyCheat == true then
@@ -65,8 +67,10 @@ function StartFishingState:Run()
         else
         selfPlayer:DoAction("FISHING_START_END_Lv0")
         end
+        --]]
         self.State = 0
         self.LastStartFishTickcount = Pyx.Win32.GetTickCount()
+        
     end
     
 end
