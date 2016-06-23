@@ -3,6 +3,7 @@ Maehwa.__index = Maehwa
 Maehwa.Version = "1"
 Maehwa.Author = "Vitalic for orignal 1.1, Triplany for update"
 Maehwa.GrinderVersion = 2
+Maehwa.BodyDistance = 200
 
 -------------------------- Spell ID's ------------------------------------
 
@@ -181,7 +182,7 @@ function Maehwa:Attack(monsterActor)
 		local monsters = GetMonsters()
     	local monsterCount = 0 
 
-		if actorPosition.Distance3DFromMe > monsterActor.BodySize + 150 then
+		if actorPosition.Distance3DFromMe > monsterActor.BodySize + self.BodyDistance then
 			Bot.Pather:MoveDirectTo(actorPosition)
 		else
 			Bot.Pather:Stop()
@@ -208,7 +209,7 @@ function Maehwa:Attack(monsterActor)
 	-------------------------------- Up in their faces? ----------------------------------
 
 				if RISING_STORM ~= 0 and monsterCount >= 3 and not selfPlayer:IsSkillOnCooldown(RISING_STORM) and selfPlayer.Mana >= 80
-				and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 150 then
+				and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
 					print("Rising Storm!")
 					selfPlayer:SetActionState(ACTION_FLAG_EVASION | ACTION_FLAG_SPECIAL_ACTION_1, 3000)
 					return
@@ -222,7 +223,7 @@ function Maehwa:Attack(monsterActor)
 					return
 				end
 
-				if GALE ~= 0 and not selfPlayer:IsSkillOnCooldown(GALE) and selfPlayer.Mana >= 50 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 150 then
+				if GALE ~= 0 and not selfPlayer:IsSkillOnCooldown(GALE) and selfPlayer.Mana >= 50 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
 					print("Casting Gale!")
 					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK | ACTION_FLAG_SECONDARY_ATTACK, actorPosition, 3000)
 					return
@@ -234,7 +235,7 @@ function Maehwa:Attack(monsterActor)
 					return
 				end
 
-				if SLICE ~= 0 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 150 then
+				if SLICE ~= 0 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
 					print("Slice!")
 					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK, actorPosition, 1000)
 
@@ -254,7 +255,7 @@ function Maehwa:Attack(monsterActor)
 					return	
 				end
 				
-				if DIVIDER ~= 0 and selfPlayer.Mana >= 20 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 150 then
+				if DIVIDER ~= 0 and selfPlayer.Mana >= 20 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
 					print("Casting Divider!")
 					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_SPECIAL_ACTION_2, actorPosition, 1000)
 
