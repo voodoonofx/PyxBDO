@@ -12,7 +12,7 @@ function LootActorState.new()
     local self = setmetatable( { }, LootActorState)
     self._myTarget = nil
     self.BlacklistActors = PyxTimedList:New()
-    
+
     self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, IgnoreBodyName = { } }
     self.State = 0
     self.Stuck = false
@@ -28,7 +28,7 @@ function LootActorState.new()
 end
 
 function LootActorState:Enter()
-    end
+end
 
 function LootActorState:Exit()
 end
@@ -39,8 +39,8 @@ function LootActorState:KillNear(position, radius)
         return true
     end
     for k, v in pairs(self.LootAreaList._table) do
-        print(v.Object)
-        print(v.Object.Position)
+--        print(v.Object)
+--        print(v.Object.Position)
         if position:GetDistance3D(v.Object.Position) < radius then
             return true
         end
@@ -148,7 +148,6 @@ function LootActorState:Run()
         local numLoots = Looting.ItemCount
         print("Loot in it")
 
-
         for i = 0, numLoots - 1 do
             local lootItem = Looting.GetItemByIndex(i)
             if lootItem then
@@ -159,7 +158,7 @@ function LootActorState:Run()
                 end
             end
             if Looting.IsLooting == false then
-            return false
+                return false
             end
         end
         Looting.Close()
@@ -207,16 +206,17 @@ function LootActorState:Run()
             self:CallWhileMoving()
         end
         Bot.Pather:MoveDirectTo(actorPosition)
-        print("loot move")
+--        print("loot move")
         self._state = 1
     elseif self._state == 1 then
-        print("loot stop")
+--        print("loot stop")
         Bot.Pather:Stop()
-        if string.find(selfPlayer.CurrentActionName,"WAIT") == nil then -- ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
-            print("Loot Wait")
+        if string.find(selfPlayer.CurrentActionName, "WAIT") == nil then
+            -- ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
+--            print("Loot Wait")
             return true
         end
-                                selfPlayer:ClearActionState()
+        selfPlayer:ClearActionState()
         --        selfPlayer:FacePosition(self._myTarget.Position)
         self._sleepTimer = PyxTimer:New(2)
         self._sleepTimer:Start()

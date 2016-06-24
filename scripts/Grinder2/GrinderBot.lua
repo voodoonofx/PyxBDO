@@ -328,6 +328,7 @@ function Bot.Stop()
 end
 
 function Bot.OnPulse()
+
     if Pyx.Input.IsGameForeground() then
         -- pause to start or stop bot
         if Pyx.Input.IsKeyDown(0x12) and Pyx.Input.IsKeyDown(string.byte('S')) then

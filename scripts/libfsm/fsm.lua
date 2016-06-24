@@ -44,6 +44,7 @@ end
 self.Reset = false
 end
     for _,state in pairs(self.States) do
+--    print("FSM Check :"..tostring(state.Name))
         if state:NeedToRun() then
             
             if self.CurrentState ~= nil and self.CurrentState ~= state then
@@ -61,8 +62,10 @@ end
                 end
             end
             
+--    print("FSM Run :"..tostring(state.Name))
             state:Run()
-            return
+--                print("FSM Done :"..tostring(state.Name))
+        return
         end
     end
 end

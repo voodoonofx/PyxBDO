@@ -3,7 +3,7 @@ Maehwa.__index = Maehwa
 Maehwa.Version = "1"
 Maehwa.Author = "Vitalic for orignal 1.1, Triplany for update"
 Maehwa.GrinderVersion = 2
-Maehwa.BodyDistance = 200
+Maehwa.BodyDistance = 190
 
 -------------------------- Spell ID's ------------------------------------
 
