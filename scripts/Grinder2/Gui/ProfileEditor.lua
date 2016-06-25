@@ -309,19 +309,17 @@ function ProfileEditor.OnRender3D()
             end
         end
 
+
+
         if table.length(linesList) > 0 then
             Renderer.Draw3DLinesList(linesList)
         end
 
-
-        --[[
-        for key, value in pairs(ProfileEditor.CurrentProfile.MeshConnects) do
-            for k, v in pairs(value) do
-                Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 25, v.Z, 25, 38, 0xAAFF0000, 0xAAFF00FF))
-            end
-        end
-        --]]
     end
+             for k, v in pairs(Bot.Pather._pathRecorder.Graph:GetNodes()) do
+                Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 25, v.Z, 25, 38, 0xAA0000FF, 0xAA0000FF))
+        end
+
 
 end
 
