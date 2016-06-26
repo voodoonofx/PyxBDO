@@ -101,10 +101,21 @@ function CombatPullState:Run()
     end
     
     local selfPlayer = GetSelfPlayer()
+    
+            if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+    return
+    end
+
+        if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
+Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 300)
+--        selfPlayer:SwitchBattleMode()
+    end
+
     --[[
     if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
         print("Combat Pull: Switch to battle mode !")
-        selfPlayer:SwitchBattleMode()
+Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 300)
+--        selfPlayer:SwitchBattleMode()
     end
     --]]
     if self._pullStarted:Expired() == true then

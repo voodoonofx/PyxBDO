@@ -184,6 +184,14 @@ function Maehwa:Attack(monsterActor)
 
 		if actorPosition.Distance3DFromMe > monsterActor.BodySize + self.BodyDistance then
 			Bot.Pather:MoveDirectTo(actorPosition)
+	----------------------------- Close the Gap! -------------------------------------
+
+				if  not selfPlayer.IsActionPending and DRAGON_BITE ~= 0 and SkillsHelper.IsSkillUsable(DRAGON_BITE) and not selfPlayer:IsSkillOnCooldown(DRAGON_BITE)
+				and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 600 then
+					print("Closing the Gap with Dragon's Bite!")
+					selfPlayer:SetActionState(ACTION_FLAG_MOVE_BACKWARD | ACTION_FLAG_MAIN_ATTACK)
+					return
+				end
 		else
 			Bot.Pather:Stop()
 
@@ -195,21 +203,13 @@ function Maehwa:Attack(monsterActor)
 
 			if not selfPlayer.IsActionPending then
 
-	----------------------------- Close the Gap! -------------------------------------
-
-				if DRAGON_BITE ~= 0 and selfPlayer.Mana >= 160 and not selfPlayer:IsSkillOnCooldown(DRAGON_BITE)
-				and actorPosition.Distance3DFromMe <= monsterActor.BodySize + 300 then
-					print("Closing the Gap with Dragon's Bite!")
-					selfPlayer:SetActionState(ACTION_FLAG_MOVE_BACKWARD | ACTION_FLAG_MAIN_ATTACK)
-					return
-				end
 
 	----------------------------------------------------------------------------------
 
 	-------------------------------- Up in their faces? ----------------------------------
 
-				if RISING_STORM ~= 0 and monsterCount >= 3 and not selfPlayer:IsSkillOnCooldown(RISING_STORM) and selfPlayer.Mana >= 80
-				and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
+				if RISING_STORM ~= 0 and monsterCount >= 3 and not selfPlayer:IsSkillOnCooldown(RISING_STORM) and SkillsHelper.IsSkillUsable(RISING_STORM)
+				 then
 					print("Rising Storm!")
 					selfPlayer:SetActionState(ACTION_FLAG_EVASION | ACTION_FLAG_SPECIAL_ACTION_1, 3000)
 					return
@@ -223,7 +223,7 @@ function Maehwa:Attack(monsterActor)
 					return
 				end
 
-				if GALE ~= 0 and not selfPlayer:IsSkillOnCooldown(GALE) and selfPlayer.Mana >= 50 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
+				if GALE ~= 0 and not selfPlayer:IsSkillOnCooldown(GALE) and SkillsHelper.IsSkillUsable(GALE) then
 					print("Casting Gale!")
 					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK | ACTION_FLAG_SECONDARY_ATTACK, actorPosition, 3000)
 					return
@@ -235,27 +235,7 @@ function Maehwa:Attack(monsterActor)
 					return
 				end
 
-				if SLICE ~= 0 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
-					print("Slice!")
-					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK, actorPosition, 1000)
-
-					if BLIND_THRUST ~= 0 and selfPlayer.Stamina >= 210 and not selfPlayer:IsSkillOnCooldown(BLIND_THRUST)
-					and string.match(selfPlayer.CurrentActionName, "ATTACK") then
-						print("Blind Thrust!")
-						selfPlayer:SetActionStateAtPosition(ACTION_FLAG_JUMP, actorPosition, 800)
-
-						if NEMESIS_SLASH ~= 0 and selfPlayer.Mana >= 20 and not selfPlayer:IsSkillOnCooldown(NEMESIS_SLASH)
-						and string.match(selfPlayer.CurrentActionName, "Back_Lunge") then
-							print("Nemesis Slash!")
-							selfPlayer:SetActionStateAtPosition(ACTION_FLAG_JUMP, actorPosition, 1500)
-							return
-						end
-						return
-					end
-					return	
-				end
-				
-				if DIVIDER ~= 0 and selfPlayer.Mana >= 20 and actorPosition.Distance3DFromMe <= monsterActor.BodySize + self.BodyDistance then
+				if DIVIDER ~= 0 and SkillsHelper.IsSkillUsable(DIVIDER) and not selfPlayer:IsSkillOnCooldown(DIVIDER)  then
 					print("Casting Divider!")
 					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_SPECIAL_ACTION_2, actorPosition, 1000)
 
@@ -266,6 +246,27 @@ function Maehwa:Attack(monsterActor)
 					end
 					return
 				end
+
+				if SLICE ~= 0  then
+					print("Slice!")
+					selfPlayer:SetActionStateAtPosition(ACTION_FLAG_MAIN_ATTACK, actorPosition, 1000)
+
+					if BLIND_THRUST ~= 0 and selfPlayer.Stamina >= 210 and not selfPlayer:IsSkillOnCooldown(BLIND_THRUST)
+					and string.match(selfPlayer.CurrentActionName, "ATTACK") then
+						print("Blind Thrust!")
+						selfPlayer:SetActionStateAtPosition(ACTION_FLAG_JUMP, actorPosition, 800)
+
+						if NEMESIS_SLASH ~= 0 and SkillsHelper.IsSkillUsable(NEMESIS_SLASH) and not selfPlayer:IsSkillOnCooldown(NEMESIS_SLASH)
+						and string.match(selfPlayer.CurrentActionName, "Back_Lunge") then
+							print("Nemesis Slash!")
+							selfPlayer:SetActionStateAtPosition(ACTION_FLAG_JUMP, actorPosition, 1500)
+							return
+						end
+						return
+					end
+					return	
+				end
+				
 			end
 		end
 	end
