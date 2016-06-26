@@ -49,6 +49,59 @@ function LootActorState:KillNear(position, radius)
     return false
 end
 
+function LootActorState:FindClosestLoot()
+    local selfPlayer = GetSelfPlayer()
+    local selfPlayerPosition = selfPlayer.Position
+
+    local actors = { }
+    for i, v in ipairs(GetActors()) do
+        if v.IsLootable and self.Settings.IgnoreBodyName[self:GetBodyName(v)] == nil then
+            table.insert(actors, v)
+        end
+    end
+
+    table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
+    for k, v in ipairs(actors) do
+        if v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 and
+            self.BlacklistActors:Contains(v.Guid) == false
+            --         and   (v == self._myTarget or Bot.Pather:CanMoveTo(v.Position))
+        then
+            --            print(self:KillNear(v.Position, 800))
+            if self:KillNear(v.Position, 800) == false then
+                print("I didn't Kill anything near loot skipping")
+                self.BlacklistActors:Add(v.Guid, 600)
+            end
+
+            if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position, 1000) == true then
+                print("Skipped loot because of Player")
+                self.BlacklistActors:Add(v.Guid, 15)
+            else
+                return v
+            end
+
+        end
+    end
+    return nil
+end
+
+function LootActorState:FindMyCurrentLoot()
+    if self._myTarget ~= nil then
+        for k, v in pairs(GetActors()) do
+            if self.BlacklistActors:Contains(v.Guid) == false and v.Guid == self._myTarget.Guid and v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 then
+                if v.IsLootable == false then
+                    return false
+                else
+                    self._myTarget = v
+                    return true
+                end
+
+            end
+        end
+        self._myTarget = nil
+    end
+    return false
+end
+
 function LootActorState:NeedToRun()
 
     if self.Settings.TakeLoot == false then
@@ -82,50 +135,30 @@ function LootActorState:NeedToRun()
 
     --    local nearestAttacker = self:GetNeareastAttacker()
 
-    local actors = { }
-    for i, v in ipairs(GetActors()) do
-        if v.IsLootable and self.Settings.IgnoreBodyName[self:GetBodyName(v)] == nil then
-            table.insert(actors, v)
+
+
+    local closest = self:FindClosestLoot()
+    if (self:FindMyCurrentLoot() == true) then
+        if closest ~= nil and self._myTarget.Position.Distance3DFromMe > 400
+            and closest.Position.Distance3DFromMe < 400 then
+            self._myTarget = closest
+            self._state = 1
+            self._sleepTimer = nil
+
         end
+        return true
     end
 
-    table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
-    if self._myTarget ~= nil then
-        for k, v in pairs(actors) do
-            if self.BlacklistActors:Contains(v.Guid) == false and v.Guid == self._myTarget.Guid and v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 then
-                --                print("loot Have Me")
-                self._myTarget = v
-                return true
-
-            end
-        end
+    if closest ~= nil then
+        self._myTarget = closest
+        self._state = 1
+        self._sleepTimer = nil
+        return true
+    else
         self._myTarget = nil
-    end
+        self._state = 1
+        self._sleepTimer = nil
 
-    self._state = 1
-    self._sleepTimer = nil
-    for k, v in pairs(actors) do
-
-
-        if v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 and
-            self.BlacklistActors:Contains(v.Guid) == false
-            --         and   (v == self._myTarget or Bot.Pather:CanMoveTo(v.Position))
-        then
-            print(self:KillNear(v.Position, 800))
-            if self:KillNear(v.Position, 800) == false then
-                print("I didn't Kill anything near loot skipping")
-                self.BlacklistActors:Add(v.Guid, 600)
-            end
-
-            if self.Settings.SkipLootPlayer == true and v.Position.Distance3DFromMe > 500 and Bot.DetectPlayerAt(v.Position, 1000) == true then
-                print("Skipped loot because of Player")
-                self.BlacklistActors:Add(v.Guid, 15)
-            else
-                self._myTarget = v
-                return true
-            end
-
-        end
     end
 
     return false
@@ -185,7 +218,7 @@ function LootActorState:Run()
     end
 
     if self._state == 2 and actorPosition.Distance3DFromMe <= 150 then
-        self._sleepTimer = PyxTimer:New(1)
+        self._sleepTimer = PyxTimer:New(2)
         self._sleepTimer:Start()
         self._myTarget:Interact(7)
 
