@@ -316,10 +316,11 @@ function ProfileEditor.OnRender3D()
         end
 
     end
+    --[[
              for k, v in pairs(Bot.Pather._pathRecorder.Graph:GetNodes()) do
                 Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 25, v.Z, 25, 38, 0xAA0000FF, 0xAA0000FF))
         end
-
+        --]]
 
 end
 
