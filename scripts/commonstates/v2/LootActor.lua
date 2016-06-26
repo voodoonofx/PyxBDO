@@ -39,8 +39,8 @@ function LootActorState:KillNear(position, radius)
         return true
     end
     for k, v in pairs(self.LootAreaList._table) do
---        print(v.Object)
---        print(v.Object.Position)
+        --        print(v.Object)
+        --        print(v.Object.Position)
         if position:GetDistance3D(v.Object.Position) < radius then
             return true
         end
@@ -92,7 +92,7 @@ function LootActorState:NeedToRun()
     table.sort(actors, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     if self._myTarget ~= nil then
         for k, v in pairs(actors) do
-            if self.BlacklistActors:Contains(v.Guid) == false and v.Guid == self._myTarget.Guid and v.Position.Distance3DFromMe < self.Settings.LootRadius then
+            if self.BlacklistActors:Contains(v.Guid) == false and v.Guid == self._myTarget.Guid and v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 then
                 --                print("loot Have Me")
                 self._myTarget = v
                 return true
@@ -107,7 +107,7 @@ function LootActorState:NeedToRun()
     for k, v in pairs(actors) do
 
 
-        if v.Position.Distance3DFromMe < self.Settings.LootRadius and
+        if v.Position.Distance3DFromMe < self.Settings.LootRadius and v.Position.Distance3DFromMe > 60 and
             self.BlacklistActors:Contains(v.Guid) == false
             --         and   (v == self._myTarget or Bot.Pather:CanMoveTo(v.Position))
         then
@@ -206,14 +206,14 @@ function LootActorState:Run()
             self:CallWhileMoving()
         end
         Bot.Pather:MoveDirectTo(actorPosition)
---        print("loot move")
+        --        print("loot move")
         self._state = 1
     elseif self._state == 1 then
---        print("loot stop")
+        --        print("loot stop")
         Bot.Pather:Stop()
         if string.find(selfPlayer.CurrentActionName, "WAIT") == nil then
             -- ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
---            print("Loot Wait")
+            --            print("Loot Wait")
             return true
         end
         selfPlayer:ClearActionState()

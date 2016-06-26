@@ -55,8 +55,8 @@ function CombatFightState:NeedToRun()
     end
 
     if Bot.Settings.Advanced.IgnoreCombatOnVendor == true and Bot.VendorState.Forced == true or
-    Bot.Settings.Advanced.IgnoreCombatOnRepair == true and Bot.RepairState.Forced == true then
-    return false
+        Bot.Settings.Advanced.IgnoreCombatOnRepair == true and Bot.RepairState.Forced == true then
+        return false
     end
     local selfPlayerPosition = selfPlayer.Position
 
@@ -65,12 +65,12 @@ function CombatFightState:NeedToRun()
         local players = Bot.GetPlayers(true)
         table.sort(players, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
         for key, value in pairs(players) do
---        print(value.Name+" "+value.IsAlive) + " "+ value.IsPvpEnable+ " "+ selfPlayer.Key ~= value.Key)
+            --        print(value.Name+" "+value.IsAlive) + " "+ value.IsPvpEnable+ " "+ selfPlayer.Key ~= value.Key)
             if value.IsAlive and value.IsPvpEnable and selfPlayer.Key ~= value.Key
-            and value.Position.Distance3DFromMe <= value.BodySize + Bot.Settings.Advanced.PvpAttackRadius and
-            value.CanAttack == true and value.IsLineOfSight and
-            ProfileEditor.CurrentProfile:IsPositionNearHotspots(value.Position, Bot.Settings.Advanced.HotSpotRadius * 2) 
-             then
+                and value.Position.Distance3DFromMe <= value.BodySize + Bot.Settings.Advanced.PvpAttackRadius and
+                value.CanAttack == true and value.IsLineOfSight and
+                ProfileEditor.CurrentProfile:IsPositionNearHotspots(value.Position, Bot.Settings.Advanced.HotSpotRadius * 2)
+            then
                 if value.Key ~= self.CurrentCombatActor.Key then
                     self._newTarget = true
                 else
@@ -78,12 +78,13 @@ function CombatFightState:NeedToRun()
                 end
 
                 self.CurrentCombatActor = value
-                print("Want to Attack Player: "..tostring(value.Name).." "..tostring(value.CanAttack).." "..tostring(value.IsLineOfSight))--.." "..value.CanAttack)
+                print("Want to Attack Player: " .. tostring(value.Name) .. " " .. tostring(value.CanAttack) .. " " .. tostring(value.IsLineOfSight))
+                -- .." "..value.CanAttack)
                 return true
             end
         end
     end
-    --]]
+    -- ]]
     local monsters = GetMonsters()
     table.sort(monsters, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
     for k, v in pairs(monsters) do
@@ -96,8 +97,8 @@ function CombatFightState:NeedToRun()
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.CombatMaxDistanceFromMe and
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and
-            (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400) and 
---            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
+            (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400) and
+            --            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
             Navigator.CanMoveTo(v.Position)-- Should be a Pull/combat distance check
         then
             if v.Key ~= self.CurrentCombatActor.Key then
@@ -127,15 +128,20 @@ function CombatFightState:Run()
     end
 
     local selfPlayer = GetSelfPlayer()
-        if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
-    return
+    if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+        return
     end
-
-        if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 300)
-print("Combat Fight switch modes")
---        selfPlayer:SwitchBattleMode()
+    --[[
+    if selfPlayer and selfPlayer.IsBattleMode == false then
+        if selfPlayer.IsActionPending then
+            return
+        end
+        Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
+        --        selfPlayer:SwitchBattleMode()
+        print("Combat pull switch modes: ")
+        return
     end
+    --]]
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then
             self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 60)
@@ -145,7 +151,10 @@ print("Combat Fight switch modes")
         end
         self._combatStarted = nil
     end
-
+    if Looting.IsLooting then
+        Looting.Close()
+        return
+    end
     Bot.CallCombatAttack(self.CurrentCombatActor, false)
 end
 

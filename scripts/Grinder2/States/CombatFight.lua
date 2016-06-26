@@ -107,27 +107,37 @@ function CombatFightState:Run()
     end
 
     local selfPlayer = GetSelfPlayer()
-        if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
-    return
+    if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+        return
     end
-
-        if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 1000)
---        selfPlayer:SwitchBattleMode()
-print("Combat Fight switch modes")
+    --[[
+    if selfPlayer and selfPlayer.IsBattleMode == false then
+        if selfPlayer.IsActionPending then
+            return
+        end
+        Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
+        --        selfPlayer:SwitchBattleMode()
+        print("Combat pull switch modes: ")
+        return
     end
+    ]]--
 
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then
             self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 60)
             print("Combat Added :" .. self.CurrentCombatActor.Key .. " to temp Ignore list")
             print("Start Health :" .. self._targetHealth .. " Current Health :" .. self.CurrentCombatActor.Health)
-            Bot.KillList:Remove( {Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position})
+            Bot.KillList:Remove( { Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position })
             return
         end
         self._combatStarted = nil
     end
-    Bot.KillList:Add( {Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X,self.CurrentCombatActor.Position.Y,self.CurrentCombatActor.Position.Z)}, 300)
+    if Looting.IsLooting then
+        Looting.Close()
+        return
+    end
+
+    Bot.KillList:Add( { Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X, self.CurrentCombatActor.Position.Y, self.CurrentCombatActor.Position.Z) }, 300)
     Bot.CallCombatAttack(self.CurrentCombatActor, false)
 end
 

@@ -191,7 +191,7 @@ function Pather:PathTo(to)
     if table.length(path) > 0 then
         if self._pathMode == 3 then
             self:Stop()
-
+            selfPlayer:ClearActionState()
         end
         table.insert(path, MyNode(to.X, to.Y, to.Z))
         self.Destination = to
@@ -211,11 +211,6 @@ function Pather:PathTo(to)
         local tmpPath = self:GeneratePath(selfPlayer.Position, to[1], self._pathRecorder.Graph)
         table.insert(tmpPath, MyNode(to[1].X, to[1].Y, to[1].Z))
         print("Unwind path nodes: " .. tostring(table.length(tmpPath)))
-        --[[
-        if table.length(tmpPath) > 1 then
-            table.remove(tmpPath, 1)
-        end
---]]
  -- Find closest node I can see in path
         local cnt = 2
         while cnt <= #tmpPath do
@@ -283,7 +278,6 @@ function Pather:GeneratePath(from, to, graph)
     local astar = MyAStar(graphToUse)
 
     local path = astar:SearchForPath(startNode, endNode, true, true)
-
     --    print("pather tl: " .. tostring(table.length(path)))
     return path
 end
