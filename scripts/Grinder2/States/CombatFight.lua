@@ -107,12 +107,15 @@ function CombatFightState:Run()
     end
 
     local selfPlayer = GetSelfPlayer()
-    --[[
-    if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-        print("Combat Fight: Switch to battle mode !")
-        selfPlayer:SwitchBattleMode()
+        if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+    return
     end
-    --]]
+
+        if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
+Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 1000)
+--        selfPlayer:SwitchBattleMode()
+print("Combat Fight switch modes")
+    end
 
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then

@@ -108,6 +108,17 @@ function CombatPullState:Run()
         return
     end
 
+        if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+    return
+    end
+
+        if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
+Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 1000)
+--        selfPlayer:SwitchBattleMode()
+print("Combat pull switch modes")
+    end
+
+
 --     print("Pull 3")
      --[[ causing crash as ptr can disapear if quick kill
     if self.CurrentCombatActor == nil or self.CurrentCombatActor.HealthPercent < 100 then
