@@ -183,8 +183,10 @@ function Bot.Start()
             return
         end
 
+        Bot.LoadCombat()
+
         if Bot.Combat == nil then
-            print("Must choose a valid COmbat Script")
+            print("Must choose a valid Combat Script")
             return
         end
         --[[
@@ -272,8 +274,8 @@ function Bot.Start()
             Bot.Fsm:AddState(Bot.DeathState)
             Bot.Fsm:AddState(PlayerPressState())
             Bot.Fsm:AddState(LibConsumables.ConsumablesState)
-            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.CombatFightState)
+            Bot.Fsm:AddState(Bot.LootState)
             Bot.Fsm:AddState(Bot.InventoryDeleteState)
             Bot.Fsm:AddState(Bot.CombatPullState)
             Bot.Fsm:AddState(IdleState())
