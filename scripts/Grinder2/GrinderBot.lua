@@ -189,16 +189,13 @@ function Bot.Start()
             print("Must choose a valid Combat Script")
             return
         end
-        --[[
+        
         if Bot.MeshDisabled == true then
-            Navigator.RealMoveTo = Navigator.MoveTo
-            Navigator.MoveTo = function(p)
-                GetSelfPlayer():MoveTo(p)
-            end
-            Navigator.RealCanMoveTo = Navigator.CanMoveTo
-            Navigator.CanMoveTo = function(p) return true end
+            PathRecorder.RealPulse = PathRecorder.Pulse
+            PathRecorder.Pulse = function(self) end
         end
 
+        --[[
         ProfileEditor.MeshConnectEnabled = false
         Navigator.MeshConnects = ProfileEditor.CurrentProfile.MeshConnects
         --]]
@@ -317,13 +314,12 @@ function Bot.Stop()
     local selfPlayer = GetSelfPlayer()
     selfPlayer:ClearActionState()
     Bot.Stats.TotalSession = Bot.Stats.TotalSession +(Pyx.Win32.GetTickCount() - Bot.Stats.SessionStart)
-    --[[
-    if Navigator.RealMoveTo ~= nil then
-        Navigator.MoveTo = Navigator.RealMoveTo
-        Navigator.RealMoveTo = nil
-        Navigator.CanMoveTo = Navigator.RealCanMoveTo
-        Navigator.RealCanMoveTo = nil
+
+    if PathRecorder.RealPulse ~= nil then
+        PathRecorder.Pulse = PathRecorder.RealPulse
+        PathRecorder.RealPulse = nil
     end
+    --[[
     Navigator.Stop(false)
     --]]
 
