@@ -205,7 +205,7 @@ function Pather:PathTo(to)
 
 
         return true
-    elseif table.length(self._pathRecorder.Graph:GetNodes()) > 0 then
+    elseif table.length(self._pathRecorder.Graph:GetNodes()) > 2 then
         print("Pather Should Unwind: " .. tostring(table.length(self._pathRecorder.Graph:GetNodes())) .. " " .. tostring(table.length(self._pathRecorder.Graph:GetConnectionsList())))
         local to = self._pathRecorder.Graph:GetNodes()
         local tmpPath = self:GeneratePath(selfPlayer.Position, to[1], self._pathRecorder.Graph)
@@ -247,6 +247,10 @@ function Pather:PathTo(to)
         self._pathRecorder.Graph = MyGraph()
         self._pathRecorder.Enabled = false
     end
+    print("Can not find path and not able to unwind")
+    self.CurrentPath = { }
+    self.Running = false
+    self:Stop()
     return false
 end
 
