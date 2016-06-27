@@ -85,7 +85,7 @@ function MainWindow.LoadCombat()
     MainWindow.Combat = nil
     local combatScriptFile = CurrentSettings.CombatScript
     local code = Pyx.FileSystem.ReadFile("../Grinder/Combats/" .. combatScriptFile)
-    combatScriptFunc,combatScriptError = load(code)
+    combatScriptFunc, combatScriptError = load(code)
 
     if combatScriptFunc == nil then
         print(string.format("Unable to load combat script: func %s err %s", tostring(combatScriptFunc), tostring(combatScriptError)))
@@ -166,9 +166,14 @@ function MainWindow.OnPulse()
             return
         end
 
+        if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+            return
+        end
+
         if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-            print("Switch to battle mode !")
-            selfPlayer:SwitchBattleMode()
+            Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 1000)
+            --        selfPlayer:SwitchBattleMode()
+            print("switch to battle mode")
         end
 
         MainWindow.State = "Attacking : " .. monsterActor.Name
@@ -182,14 +187,14 @@ function MainWindow.SaveCombatSettings()
     local json = JSON:new()
     local string = CurrentSettings.CombatScript
     local settings = string.gsub(string, ".lua", "")
-    Pyx.FileSystem.WriteFile("..\\Grinder\\Combats\\Configs\\"..settings..".json", json:encode_pretty(MainWindow.Combat.Gui))
+    Pyx.FileSystem.WriteFile("..\\Grinder\\Combats\\Configs\\" .. settings .. ".json", json:encode_pretty(MainWindow.Combat.Gui))
 end
 
 function MainWindow.LoadCombatSettings()
     local json = JSON:new()
     local string = CurrentSettings.CombatScript
     local settings = string.gsub(string, ".lua", "")
-    table.merge(MainWindow.Combat.Gui,json:decode(Pyx.FileSystem.ReadFile("..\\Grinder\\Combats\\Configs\\"..settings..".json")))
+    table.merge(MainWindow.Combat.Gui, json:decode(Pyx.FileSystem.ReadFile("..\\Grinder\\Combats\\Configs\\" .. settings .. ".json")))
 end
 
 MainWindow.RefreshAvailableCombats()

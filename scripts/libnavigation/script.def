@@ -3,8 +3,8 @@ name=BDO Navigation Library
 type=lib
 
 [files]
-file=Pather.lua
 file=PathRecorder.lua
+file=Pather.lua
 
 [dependencies]
 file=../libtable/script.def

@@ -10,28 +10,18 @@ setmetatable(CombatPullState, {
 
 function CombatPullState.new()
     local self = setmetatable( { }, CombatPullState)
-    self.CurrentCombatActor = { Key = 0 }
+    self.CurrentCombatActor = nil
     self._pullStarted = nil
     self._newTarget = false
     self.MobIgnoreList = PyxTimedList:New()
     self.Enabled = true
-    self.Settings = { DontPull = { }, SkipPullPlayer = true }
+    self.Settings = { DontPull = { }, SkipPullPlayer = true, PullSecondsUntillIgnore = 10 }
+    self.Stuck = false
+    self.DidPull = nil
     return self
 end
 
-function CombatPullState:Enter()
-    if Bot.Combat.PullEnter then
-        Bot.Combat:PullEnter(self)
-        return
-    end
-end
-
 function CombatPullState:Exit()
-    if Bot.Combat.PullExit then
-        Bot.Combat:PullExit(self)
-        return
-    end
-
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         selfPlayer:ClearActionState()
@@ -39,10 +29,6 @@ function CombatPullState:Exit()
 end
 
 function CombatPullState:NeedToRun()
-    if Bot.Combat.PullNeedToRun then
-        return Bot.Combat:PullNeedToRun(self)
-    end
-
     local selfPlayer = GetSelfPlayer()
 
     if not selfPlayer or self.Enabled == false then
@@ -53,6 +39,21 @@ function CombatPullState:NeedToRun()
         return false
     end
 
+    if self.Stuck == true then
+        self.Stuck = false
+        if self.CurrentCombatActor ~= nil then
+            print("Pull: Stuck pulling skip mob")
+            self.MobIgnoreList:Add(self.CurrentCombatActor.Guid, 600)
+            Bot.KillList:Remove( { Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position })
+        end
+    end
+    --[[
+    if self.DidPull ~= nill and self.DidPull:Expired() == false then
+        return true
+    end
+    --]]
+    self.DidPull = nil
+
     local selfPlayerPosition = selfPlayer.Position
     local monsters = GetMonsters()
     table.sort(monsters, function(a, b) return a.Position:GetDistance3D(selfPlayerPosition) < b.Position:GetDistance3D(selfPlayerPosition) end)
@@ -61,46 +62,52 @@ function CombatPullState:NeedToRun()
             v.IsAlive == true and
             v.HealthPercent == 100 and
             v.IsAggro == false and
-            --            math.abs(selfPlayer.Position.Y - v.Position.Y) < 250 and
-            -- v.CharacterStaticStatus.TribeType ~= TRIBE_TYPE_UNTRIBE and
             v.CanAttack == true and
-            self.MobIgnoreList:Contains(v.Key) == false and
+            self.MobIgnoreList:Contains(v.Guid) == false and
             table.find(Bot.Settings.PullSettings.DontPull, v.Name) == nil and
             v.Position.Distance3DFromMe <= Bot.Settings.Advanced.PullDistance and
             (Bot.MeshDisabled == true or Bot.Settings.Advanced.IgnorePullBetweenHotSpots == false or
             Bot.Settings.Advanced.IgnorePullBetweenHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius)) and
             ProfileEditor.CurrentProfile:CanAttackMonster(v) == true and
-            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight == true) and
-            Navigator.CanMoveTo(v.Position) == true
-            and(self.Settings.SkipPullPlayer == false or self.Settings.SkipPullPlayer == true and Bot.DetectPlayerAt(v.Position, 2000) == false)
+            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Guid == v.Guid) or v.IsLineOfSight == true) and
+            (self.Settings.SkipPullPlayer == false or self.Settings.SkipPullPlayer == true and Bot.DetectPlayerAt(v.Position, 2000) == false)
         then
-
-            if v.Key ~= self.CurrentCombatActor.Key then
+            if self.CurrentCombatActor == nil or v.Guid ~= self.CurrentCombatActor.Guid then
                 self._newTarget = true
             else
                 self._newTarget = false
             end
 
-            self.CurrentCombatActor = v
-            return true
+            if self._newTarget == false and(v.IsLineOfSight == false or v.HealthPercent ~= 100) then
+                print("Pull target lost LOS or health temp ignore")
+                self.MobIgnoreList:Add(self.CurrentCombatActor.Guid, 600)
+                Bot.KillList:Remove( { Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position })
+            else
+                self.CurrentCombatActor = v
+                return true
+            end
         end
     end
-
+    self.CurrentCombatActor = nil
     return false
 end
 
 function CombatPullState:Run()
-    if Bot.Combat.PullRun then
-        Bot.Combat:PullRun(self)
+
+    if self._pullStarted == nil or self._newTarget == true then
+        self._pullStarted = PyxTimer:New(self.Settings.PullSecondsUntillIgnore)
+        self._pullStarted:Start()
+        self._newTarget = false
+    end
+
+    if self._pullStarted:Expired() == true then
+        self.MobIgnoreList:Add(self.CurrentCombatActor.Guid, 600)
+        print("Pull Added :" .. self.CurrentCombatActor.Guid .. " to Ignore list")
+        Bot.KillList:Remove( { Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position })
+
         return
     end
 
-    if self._pullStarted == nil or self._newTarget == true then
-        self._pullStarted = PyxTimer:New(Bot.Settings.Advanced.PullSecondsUntillIgnore)
-        self._pullStarted:Start()
-    end
-
-    local selfPlayer = GetSelfPlayer()
     if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
         return
     end
@@ -115,22 +122,21 @@ function CombatPullState:Run()
         return
     end
     --]]
-    --[[
-    if selfPlayer and not selfPlayer.IsActionPending and not selfPlayer.IsBattleMode then
-        print("Combat Pull: Switch to battle mode !")
-Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 300)
---        selfPlayer:SwitchBattleMode()
-    end
-    --]]
-    if self._pullStarted:Expired() == true then
-        self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 600)
-        print("Pull Added :" .. self.CurrentCombatActor.Key .. " to Ignore list")
+
+    --     print("Pull 3")
+    --[[ causing crash as ptr can disapear if quick kill
+    if self.CurrentCombatActor == nil or self.CurrentCombatActor.HealthPercent < 100 then
         return
     end
+    --]]
     if Looting.IsLooting then
         Looting.Close()
         return
     end
 
+    Bot.KillList:Add( { Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X, self.CurrentCombatActor.Position.Y, self.CurrentCombatActor.Position.Z) }, 300)
     Bot.CallCombatAttack(self.CurrentCombatActor, true)
+
+    self.DidPull = PyxTimer:New(2)
+    self.DidPull:Start()
 end

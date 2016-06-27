@@ -10,8 +10,9 @@ setmetatable(RoamingState, {
 
 function RoamingState.new()
   local self = setmetatable({}, RoamingState)
-  self.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+  self.Hotspots = {}
   self.CurrentHotspotIndex = 1
+  self.Pather = nil
   return self
 end
 
@@ -47,9 +48,9 @@ function RoamingState:Run()
         Bot.CallCombatRoaming()
 
         if Bot.Settings.RunToHotSpots == true and ProfileEditor.CurrentProfile:IsPositionNearHotspots(selfPlayer.Position, Bot.Settings.Advanced.HotSpotRadius*2) == false then
-        Navigator.MoveTo(hotspot,false,true)
+        Bot.Pather:PathTo(hotspot)
         else
-        Navigator.MoveTo(hotspot,false,false)
+        Bot.Pather:PathTo(hotspot)
         end
     else
 
@@ -65,4 +66,9 @@ function RoamingState:ChangeHotSpot()
             self.CurrentHotspotIndex = 1
         end
 
+end
+
+function RoamingState:Reset()
+  self.CurrentHotspotIndex = 1
+  self.Pather = nil
 end

@@ -20,19 +20,7 @@ function CombatFightState.new()
     return self
 end
 
-function CombatFightState:Enter()
-    if Bot.Combat.CombatEnter then
-        Bot.Combat:CombatEnter(self)
-        return
-    end
-end
-
 function CombatFightState:Exit()
-    if Bot.Combat.CombatExit then
-        Bot.Combat:CombatExit(self)
-        return
-    end
-
     local selfPlayer = GetSelfPlayer()
     if selfPlayer then
         selfPlayer:ClearActionState()
@@ -40,9 +28,6 @@ function CombatFightState:Exit()
 end 
 
 function CombatFightState:NeedToRun()
-    if Bot.Combat.CombatNeedToRun then
-        return Bot.Combat:CombatNeedToRun(self)
-    end
 
     local selfPlayer = GetSelfPlayer()
 
@@ -98,9 +83,8 @@ function CombatFightState:NeedToRun()
             (Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == false or Bot.Settings.Advanced.IgnoreInCombatBetweenHotSpots == true
             and ProfileEditor.CurrentProfile:IsPositionNearHotspots(v.Position, Bot.Settings.Advanced.HotSpotRadius * 2)) and
             (v.Position.Distance3DFromMe < v.BodySize + 200 or v.Position.Distance3DFromMe < v.BodySize + 1400) and
-            --            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) and
-            Navigator.CanMoveTo(v.Position)-- Should be a Pull/combat distance check
-        then
+            ((self.CurrentCombatActor ~= nil and self.CurrentCombatActor.Key == v.Key) or v.IsLineOfSight) then
+            --            Navigator.CanMoveTo(v.Position)-- Should be a Pull/combat distance check
             if v.Key ~= self.CurrentCombatActor.Key then
                 self._newTarget = true
             else
@@ -116,11 +100,6 @@ function CombatFightState:NeedToRun()
 end
 
 function CombatFightState:Run()
-    if Bot.Combat.CombatRun then
-        Bot.Combat:CombatRun(self)
-        return
-    end
-
     if self._combatStarted == nil or self._newTarget == true then
         self._combatStarted = PyxTimer:New(Bot.Settings.Advanced.CombatSecondsUntillIgnore)
         self._combatStarted:Start()
@@ -141,12 +120,14 @@ function CombatFightState:Run()
         print("Combat pull switch modes: ")
         return
     end
-    --]]
+    ]]--
+
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then
             self.MobIgnoreList:Add(self.CurrentCombatActor.Key, 60)
             print("Combat Added :" .. self.CurrentCombatActor.Key .. " to temp Ignore list")
             print("Start Health :" .. self._targetHealth .. " Current Health :" .. self.CurrentCombatActor.Health)
+            Bot.KillList:Remove( { Guid = self.CurrentCombatActor.Guid, Position = self.CurrentCombatActor.Position })
             return
         end
         self._combatStarted = nil
@@ -155,6 +136,8 @@ function CombatFightState:Run()
         Looting.Close()
         return
     end
+
+    Bot.KillList:Add( { Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X, self.CurrentCombatActor.Position.Y, self.CurrentCombatActor.Position.Z) }, 300)
     Bot.CallCombatAttack(self.CurrentCombatActor, false)
 end
 
