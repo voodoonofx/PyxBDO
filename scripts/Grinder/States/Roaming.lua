@@ -36,8 +36,10 @@ function RoamingState:Run()
     local selfPlayer = GetSelfPlayer()
 
     if hotspot == nil then
-    print("hotspot nil "..tostring(self.CurrentHotspotIndex).." "..tostring(table.length(self.Hotspots)))
+    print("No valid Hotspot got nil "..tostring(self.CurrentHotspotIndex).." "..tostring(table.length(self.Hotspots)))
     self.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+    print("Trying to change Hotspot")
+    self:ChangeHotSpot()
     return
     end
 
