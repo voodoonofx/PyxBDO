@@ -291,7 +291,11 @@ function Magician:Roaming()
     local selfPlayer = GetSelfPlayer()
     if not selfPlayer then return end
 
-    self:FixFire()
+    if selfPlayer:CheckCurrentAction("BT_Skill_Fireball_Ing") then
+        print("Fireball stuck as ROAMING starts...firing")
+        selfPlayer:SetActionState( Magician.LMB, 500 )
+        return
+    end
     self.combos = nil
 
     if selfPlayer.IsActionPending then
