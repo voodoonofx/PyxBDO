@@ -18,6 +18,7 @@ function CombatPullState.new()
     self.Settings = { DontPull = { }, SkipPullPlayer = true, PullSecondsUntillIgnore = 10 }
     self.Stuck = false
     self.DidPull = nil
+    self._switchTimer = PyxTimer:New(3)
     return self
 end
 
@@ -93,6 +94,7 @@ function CombatPullState:NeedToRun()
 end
 
 function CombatPullState:Run()
+local selfPlayer = GetSelfPlayer()
 
     if self._pullStarted == nil or self._newTarget == true then
         self._pullStarted = PyxTimer:New(self.Settings.PullSecondsUntillIgnore)
@@ -108,20 +110,22 @@ function CombatPullState:Run()
         return
     end
 
-    if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+    if selfPlayer ~= nil and (string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) or
+    string.find(selfPlayer.CurrentActionName, "ITEM", 1)) then
         return
     end
-    --[[
     if selfPlayer and selfPlayer.IsBattleMode == false then
         if selfPlayer.IsActionPending then
             return
         end
+        if self._switchTimer:IsRunning() == false or self._switchTimer:Expired() == true then
         Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
-        --        selfPlayer:SwitchBattleMode()
-        print("Combat pull switch modes: ")
+        print("Combat pull switch modes: "..tostring(selfPlayer.IsBattleMode).." "..tostring(selfPlayer.CurrentActionName))
+        self._switchTimer:Reset()
+        self._switchTimer:Start()
+        end
         return
     end
-    --]]
 
     --     print("Pull 3")
     --[[ causing crash as ptr can disapear if quick kill

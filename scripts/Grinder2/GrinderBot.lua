@@ -210,6 +210,7 @@ function Bot.Start()
         Bot.Pather.Fallback = Bot.Settings.PatherFallBack
 
         Bot.Pather.Graph = ProfileEditor.PathRecorder.Graph
+        Bot.Pather:Reset()
 
         Bot.WarehouseState.Settings.NpcName = currentProfile.WarehouseNpcName
         Bot.WarehouseState.Settings.NpcPosition = currentProfile.WarehouseNpcPosition
