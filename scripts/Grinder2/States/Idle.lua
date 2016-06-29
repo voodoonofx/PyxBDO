@@ -13,6 +13,14 @@ function IdleState.new()
   return self
 end
 
+function IdleState:Enter()
+    local selfPlayer = GetSelfPlayer()
+    if selfPlayer then
+        selfPlayer:ClearActionState()
+        Bot.Pather:Stop()
+    end
+end 
+
 function IdleState:NeedToRun()
     return true
 end
