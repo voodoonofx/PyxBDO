@@ -14,6 +14,7 @@ function CombatFightState.new()
     self._newTarget = false
     self._combatStarted = nil
     self._targetHealth = 0
+    self._switchTimer = PyxTimer:New(2)
 
     self.MobIgnoreList = PyxTimedList:New()
 
@@ -106,21 +107,31 @@ function CombatFightState:Run()
         self._targetHealth = self.CurrentCombatActor.Health
     end
 
-    local selfPlayer = GetSelfPlayer()
-    if selfPlayer ~= nil and string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) then
+    if Looting.IsLooting then
+        Looting.Close()
         return
     end
-    --[[
+
+
+    local selfPlayer = GetSelfPlayer()
+
+
+    if selfPlayer ~= nil and(string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) or
+        string.find(selfPlayer.CurrentActionName, "ITEM", 1)) then
+        return
+    end
     if selfPlayer and selfPlayer.IsBattleMode == false then
         if selfPlayer.IsActionPending then
             return
         end
-        Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
-        --        selfPlayer:SwitchBattleMode()
-        print("Combat pull switch modes: ")
+        if self._switchTimer:IsRunning() == false or self._switchTimer:Expired() == true then
+            Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
+            print("Combat switch modes: " .. tostring(selfPlayer.IsBattleMode) .. " " .. tostring(selfPlayer.CurrentActionName))
+            self._switchTimer:Reset()
+            self._switchTimer:Start()
+        end
         return
     end
-    ]]--
 
     if self._combatStarted:Expired() == true then
         if self.CurrentCombatActor.Health >= self._targetHealth then
@@ -131,10 +142,6 @@ function CombatFightState:Run()
             return
         end
         self._combatStarted = nil
-    end
-    if Looting.IsLooting then
-        Looting.Close()
-        return
     end
 
     Bot.KillList:Add( { Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X, self.CurrentCombatActor.Position.Y, self.CurrentCombatActor.Position.Z) }, 300)
