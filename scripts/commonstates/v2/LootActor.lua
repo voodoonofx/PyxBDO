@@ -179,7 +179,7 @@ function LootActorState:Run()
     if self._state >= 2 and Looting.IsLooting then
         local looted = { }
         local numLoots = Looting.ItemCount
-        print("Loot in it")
+--        print("Loot in it")
 
         for i = 0, numLoots - 1 do
             local lootItem = Looting.GetItemByIndex(i)

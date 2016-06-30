@@ -25,6 +25,7 @@ function Profile.new()
   return self
 end
 
+--[[
 function Profile:GetHotspots()
     local hotspotsVector = { }
     for k,v in pairs(self.Hotspots) do
@@ -32,10 +33,12 @@ function Profile:GetHotspots()
     end
     return hotspotsVector
 end
+--]]
 
 function Profile:IsPositionNearHotspots(position, distance)
-    for k,v in pairs(self:GetHotspots()) do
-        if v:GetDistance3D(position) <= distance then
+    for k,v in pairs(self.Hotspots) do
+    local pos = Vector3(v.X,v.Y,v.Z)
+        if pos:GetDistance3D(position) <= distance then
             return true
         end
     end

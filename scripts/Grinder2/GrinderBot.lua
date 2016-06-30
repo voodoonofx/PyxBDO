@@ -178,8 +178,8 @@ function Bot.Start()
             return
         end
 
-        if Bot.MeshDisabled ~= true and table.length(currentProfile:GetHotspots()) < 2 then
-            print("Profile requires at least 2 hotspots !")
+        if Bot.MeshDisabled ~= true and table.length(currentProfile.Hotspots) < 1 then
+            print("Profile requires at least 1 hotspots !")
             return
         end
 
@@ -242,7 +242,7 @@ function Bot.Start()
         Bot.SecurityState.PlayerDetectedFunction = Bot.PlayerAlarm
         Bot.SecurityState.TeleportDetectedFunction = Bot.TeleportAlarm
 
-        Bot.RoamingState.Hotspots = ProfileEditor.CurrentProfile:GetHotspots()
+        Bot.RoamingState.Hotspots = ProfileEditor.CurrentProfile.Hotspots
 
         Bot.LootState.LootAreaList = Bot.KillList
 

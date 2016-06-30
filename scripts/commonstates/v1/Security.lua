@@ -12,7 +12,7 @@ setmetatable(SecurityState, {
 function SecurityState.new()
     local self = setmetatable( { }, SecurityState)
 
-    self.Settings = { PlayerDetection = false, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = false, TeleportDistance = 500 }
+    self.Settings = { PlayerDetection = false, PlayerRange = 2000, PlayerTimeAlarmSeconds = 4, PlayerRemoveAfterSeconds = 5, TeleportDetection = false, TeleportDistance = 1000 }
     self.PlayerDetectedFunction = nil
     self.TeleportDetectedFunction = nil
     self.PlayerList = { }

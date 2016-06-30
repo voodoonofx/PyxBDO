@@ -24,7 +24,7 @@ function ProfileEditor.DrawProfileEditor()
     local shouldDraw
     local selfPlayer = GetSelfPlayer()
 
-    
+
 
     if Bot.Running then
         ProfileEditor.WindowName = "Profile"
@@ -34,7 +34,7 @@ function ProfileEditor.DrawProfileEditor()
 
 
     if ProfileEditor.Visible then
-        _, ProfileEditor.Visible = ImGui.Begin(ProfileEditor.WindowName, ProfileEditor.Visible, ImVec2(300, 400), -1.0)
+        _, ProfileEditor.Visible = ImGui.Begin(ProfileEditor.WindowName, ProfileEditor.Visible, ImVec2(500, 400), -1.0)
 
         _, ProfileEditor.CurrentProfileSaveName = ImGui.InputText("##profile_save_name", ProfileEditor.CurrentProfileSaveName)
         ImGui.SameLine()
@@ -52,7 +52,7 @@ function ProfileEditor.DrawProfileEditor()
             ProfileEditor.PathRecorder:Reset()
             ProfileEditor.PathRecorder.Graph = MyGraph()
             ProfileEditor.CurrentProfile = Profile()
-            ProfileEditor.CurrentProfile.HostSpots = {}
+            ProfileEditor.CurrentProfile.HostSpots = { }
             ProfileEditor.CurrentProfileSaveName = "Unamed"
         end
         if ImGui.Button("Clear Path##id_mesh_clear", ImVec2(ImGui.GetContentRegionAvailWidth(), 20)) then
@@ -73,7 +73,7 @@ function ProfileEditor.DrawProfileEditor()
             --            _, ProfileEditor.OneWay = ImGui.Checkbox("One Way##profile_oneway", ProfileEditor.OneWay)
             ImGui.Columns(1)
             if ImGui.Button("Remove Nodes") then
-                ProfileEditor.PathRecorder.Graph:RemoveNodesConnectionsInRadius(selfPlayer.Position.X, selfPlayer.Position.Y, selfPlayer.Position.Z,  ProfileEditor.PathRecorder.RemoveRadius)
+                ProfileEditor.PathRecorder.Graph:RemoveNodesConnectionsInRadius(selfPlayer.Position.X, selfPlayer.Position.Y, selfPlayer.Position.Z, ProfileEditor.PathRecorder.RemoveRadius)
             end
             ImGui.Text("")
             _, ProfileEditor.PathRecorder.RemoveRadius = ImGui.SliderInt("Remove Radius##profile_remove_redius", ProfileEditor.PathRecorder.RemoveRadius, 100, 1000)
@@ -86,11 +86,40 @@ function ProfileEditor.DrawProfileEditor()
                 local selfPlayer = GetSelfPlayer()
                 if selfPlayer then
                     local selfPlayerPosition = selfPlayer.Position
-                    table.insert(ProfileEditor.CurrentProfile.Hotspots, { X = selfPlayerPosition.X, Y = selfPlayerPosition.Y, Z = selfPlayerPosition.Z })
+                    table.insert(ProfileEditor.CurrentProfile.Hotspots, { X = selfPlayerPosition.X, Y = selfPlayerPosition.Y, Z = selfPlayerPosition.Z, MinLevel = 1, MaxLevel = 100 })
                 end
             end
             local currentHotspotIndex = 1
-            for k, v in pairs(ProfileEditor.CurrentProfile:GetHotspots()) do
+            ImGui.Columns(3)
+            ImGui.Text("Name")
+            ImGui.NextColumn()
+            ImGui.Text("Min Level")
+            ImGui.NextColumn()
+            ImGui.Text("Max Level")
+            ImGui.NextColumn()
+
+            for key, v in pairs(ProfileEditor.CurrentProfile.Hotspots) do
+                if ProfileEditor.CurrentProfile.Hotspots[key].MinLevel == nil or ProfileEditor.CurrentProfile.Hotspots[key].MaxLevel == nil then
+                    ProfileEditor.CurrentProfile.Hotspots[key].MinLevel = 1
+                    ProfileEditor.CurrentProfile.Hotspots[key].MaxLevel = 100
+                end
+                local pos = Vector3(v.X,v.Y,v.Z)
+                if ImGui.SmallButton("x##id_profile_editor_delete_hotspot" .. tostring(key)) then
+                    ProfileEditor.CurrentProfile.Hotspots[key] = nil
+                    ImGui.NextColumn()
+                    ImGui.NextColumn()
+                else
+                    ImGui.SameLine()
+                    ImGui.Text("HS #" .. tostring(key) .. " (" .. tostring(math.floor(pos.Distance3DFromMe / 100)) .. "y)")
+                    ImGui.NextColumn()
+                    _, ProfileEditor.CurrentProfile.Hotspots[key].MinLevel = ImGui.SliderInt("Min##id_gui_hs_minlevel_" .. tostring(key), ProfileEditor.CurrentProfile.Hotspots[key].MinLevel, 1, ProfileEditor.CurrentProfile.Hotspots[key].MaxLevel)
+                    ImGui.NextColumn()
+                    _, ProfileEditor.CurrentProfile.Hotspots[key].MaxLevel = ImGui.SliderInt("Max##id_gui_hs_maxlevel_" .. tostring(key), ProfileEditor.CurrentProfile.Hotspots[key].MaxLevel, ProfileEditor.CurrentProfile.Hotspots[key].MinLevel, 100)
+                    ImGui.NextColumn()
+
+                end
+
+                --[[
                 ImGui.Text("Hotspot #" .. tostring(currentHotspotIndex) .. " (" .. tostring(math.floor(v.Distance3DFromMe / 100)) .. "y)")
                 ImGui.SameLine()
                 if ImGui.Button("Move to##id_profile_editor_moveto_hotspot" .. tostring(currentHotspotIndex)) then
@@ -101,7 +130,9 @@ function ProfileEditor.DrawProfileEditor()
                     table.remove(ProfileEditor.CurrentProfile.Hotspots, currentHotspotIndex)
                 end
                 currentHotspotIndex = currentHotspotIndex + 1
+                --]]
             end
+            ImGui.Columns(1)
         end
 
 
@@ -247,9 +278,20 @@ function ProfileEditor.LoadProfile(name)
     ProfileEditor.AttackableMonstersSelectedIndex = 0
     ProfileEditor.AttackableMonstersComboSelectedIndex = 0
 
+
     local json = JSON:new()
     ProfileEditor.CurrentProfile = Profile()
     table.merge(ProfileEditor.CurrentProfile, json:decode(Pyx.FileSystem.ReadFile(profileFilename)))
+
+    if ProfileEditor.CurrentProfile.HotSpots ~= nil then
+    for key, v in pairs(ProfileEditor.CurrentProfile.HotSpots) do
+        if v.MinLevel == nil or v.MaxLevel == nil then
+            v.MinLevel = 1
+            v.MaxLevel = 100
+        end
+    end
+    end
+
     print("Graph")
     local graph = MyGraph.LoadGraphFromJSON(Pyx.FileSystem.ReadFile(meshFilename))
     print(graph)

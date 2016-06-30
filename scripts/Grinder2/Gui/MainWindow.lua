@@ -15,7 +15,7 @@ MainWindow = { }
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder2 Beta 2 - Pookie's Mom", true, ImVec2(265, 150), -1.0, ImGuiWindowFlags_MenuBar)
+    local _, shouldDisplay = ImGui.Begin("Grinder2 Beta 3 - PookieZilla", true, ImVec2(265, 150), -1.0, ImGuiWindowFlags_MenuBar)
 	if shouldDisplay then
 		local selfPlayer = GetSelfPlayer()
 

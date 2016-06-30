@@ -110,10 +110,17 @@ local selfPlayer = GetSelfPlayer()
         return
     end
 
+        if Looting.IsLooting then
+        Looting.Close()
+        return
+    end
+
     if selfPlayer ~= nil and (string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) or
     string.find(selfPlayer.CurrentActionName, "ITEM", 1)) then
         return
     end
+
+
     if selfPlayer and selfPlayer.IsBattleMode == false then
         if selfPlayer.IsActionPending then
             return
