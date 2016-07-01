@@ -111,9 +111,13 @@ function CombatFightState:Run()
         Looting.Close()
         return
     end
-
-
     local selfPlayer = GetSelfPlayer()
+
+        if selfPlayer.CurrentActionName == "ITEM_PICK_ING" then
+    GetSelfPlayer():SetActionState(ACTION_FLAG_MOVE_FORWARD, 50)
+    end
+
+
 
 
     if selfPlayer ~= nil and(string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) or

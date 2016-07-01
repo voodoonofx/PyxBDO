@@ -115,6 +115,13 @@ local selfPlayer = GetSelfPlayer()
         return
     end
 
+        if selfPlayer.CurrentActionName == "ITEM_PICK_ING" then
+--    print("Loot bug")
+    GetSelfPlayer():SetActionState(ACTION_FLAG_MOVE_FORWARD, 50)
+    return
+    end
+
+
     if selfPlayer ~= nil and (string.find(selfPlayer.CurrentActionName, "ACTION_CHANGE", 1) or
     string.find(selfPlayer.CurrentActionName, "ITEM", 1)) then
         return
@@ -144,6 +151,7 @@ local selfPlayer = GetSelfPlayer()
         Looting.Close()
         return
     end
+
 
     Bot.KillList:Add( { Guid = self.CurrentCombatActor.Guid, Position = Vector3(self.CurrentCombatActor.Position.X, self.CurrentCombatActor.Position.Y, self.CurrentCombatActor.Position.Z) }, 300)
     Bot.CallCombatAttack(self.CurrentCombatActor, true)

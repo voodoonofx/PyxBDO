@@ -327,8 +327,8 @@ function ProfileEditor.OnRender3D()
     if ProfileEditor.DrawPath and selfPlayer then
         local myPosition = MyNode(selfPlayer.Position.X, selfPlayer.Position.Y, selfPlayer.Position.Z)
 
-        for k, v in pairs(ProfileEditor.CurrentProfile:GetHotspots()) do
-            if selfPlayer.Position:GetDistance3D(v) <= maxDistance then
+        for k, v in pairs(ProfileEditor.CurrentProfile.Hotspots) do
+            if selfPlayer.Position:GetDistance3D(Vector3(v.X,v.Y,v.Z)) <= maxDistance then
                 Renderer.Draw3DTrianglesList(GetInvertedTriangleList(v.X, v.Y + 100, v.Z, 100, 150, 0xAAFF0000, 0xAAFF00FF))
             end
         end

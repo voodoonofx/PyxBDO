@@ -24,6 +24,8 @@ Bot.EnableDebugTradeManagerState = false
 Bot.EnableDebugVendorState = false
 Bot.EnableDebugWarehouseState = false
 
+Bot._switchTimer = PyxTimer:New(2)
+
 Bot.Fsm = FSM()
 Bot.Pather = Pather:New(MyGraph())
 Bot.Combat = nil
@@ -189,7 +191,7 @@ function Bot.Start()
             print("Must choose a valid Combat Script")
             return
         end
-        
+
         if Bot.MeshDisabled == true then
             PathRecorder.RealPulse = PathRecorder.Pulse
             PathRecorder.Pulse = function(self) end
@@ -527,10 +529,25 @@ function Bot.OnPulse()
 
         Bot.Fsm:Pulse()
         Bot.Pather:Pulse()
-        if Bot.Fsm.CurrentState ~= nil and Bot.SecurityState.PausePlayerDetection == false and(Bot.Fsm.CurrentState == Bot.WarehouseState or Bot.Fsm.CurrentState == Bot.VendorState or Bot.Fsm.CurrentState == Bot.RepairState
+        if Bot.Fsm.CurrentState ~= nil and(Bot.Fsm.CurrentState == Bot.WarehouseState or Bot.Fsm.CurrentState == Bot.VendorState or Bot.Fsm.CurrentState == Bot.RepairState
             or Bot.Fsm.CurrentState == Bot.TurninState) then
-            print("Bot: Pausing Player Detection for state: " .. Bot.Fsm.CurrentState.Name)
-            Bot.SecurityState.PausePlayerDetection = true
+            local selfPlayer = GetSelfPlayer()
+
+            if selfPlayer and selfPlayer.IsBattleMode == true then
+                if selfPlayer.IsActionPending == false then
+                    if Bot._switchTimer:IsRunning() == false or Bot._switchTimer:Expired() == true then
+                        Keybindings.HoldByActionId(KEYBINDING_ACTION_WEAPON_IN_OUT, 500)
+                        print("Bot switch from battle mode: " .. tostring(selfPlayer.IsBattleMode) .. " " .. tostring(selfPlayer.CurrentActionName))
+                        Bot._switchTimer:Reset()
+                        Bot._switchTimer:Start()
+                    end
+
+                end
+                if Bot.SecurityState.PausePlayerDetection == false then
+                print("Bot: Pausing Player Detection for state: " .. Bot.Fsm.CurrentState.Name)
+                Bot.SecurityState.PausePlayerDetection = true
+                end
+            end
         elseif Bot.SecurityState.PausePlayerDetection == true and(Bot.Fsm.CurrentState == nil or(Bot.Fsm.CurrentState ~= Bot.WarehouseState and Bot.Fsm.CurrentState ~= Bot.VendorState and Bot.Fsm.CurrentState ~= Bot.RepairState
             and Bot.Fsm.CurrentState ~= Bot.TurninState)) then
             print("Bot Re Enable Player detection 240 seconds")

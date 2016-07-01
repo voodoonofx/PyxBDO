@@ -91,7 +91,7 @@ function Pather:Pulse()
     if selfPlayer == nil then
         return
     end
-    if string.find(selfPlayer.CurrentActionName, "JUMP", 1) then
+    if string.find(selfPlayer.CurrentActionName, "JUMP", 1) or string.find(selfPlayer.CurrentActionName, "ATTACK", 1) or string.find(selfPlayer.CurrentActionName, "Skill", 1) then
         return
     end
 
@@ -105,21 +105,21 @@ function Pather:Pulse()
 
     if self.Running == true then
 
-        if string.find(selfPlayer.CurrentActionName, "RUN", 1) or string.find(selfPlayer.CurrentActionName, "WAIT", 1) then
+--        if string.find(selfPlayer.CurrentActionName, "RUN", 1) or string.find(selfPlayer.CurrentActionName, "WAIT", 1) then
             self.LastPosition = selfPlayer.Position
 
             if self.LastStuckTimer:Expired() == true then
                 if (self.LastStuckCheckPosition.Distance3DFromMe < 120) then
                     self:StuckHandler()
                 else
---                    print("Stuck Distance change: " .. tostring(self.LastStuckCheckPosition.Distance3DFromMe))
+                    print("Stuck Distance change: " .. tostring(self.LastStuckCheckPosition.Distance3DFromMe))
                     self.StuckCount = 0
                 end
                 self.LastStuckTimer:Reset()
                 self.LastStuckTimer:Start()
                 self.LastStuckCheckPosition = selfPlayer.Position
             end
-        end
+--        end
 
         if self._pathMode == 3 then
             local myDistance = self.Destination.Distance3DFromMe
@@ -353,6 +353,7 @@ end
 
 function Pather:StuckHandler()
     local selfPlayer = GetSelfPlayer()
+    print("Stuck tick: "..tostring(selfPlayer.CurrentActionName))
     if self.StuckCount == 6 or self.StuckCount == 12 then
 
         print("Set Move Forward")
