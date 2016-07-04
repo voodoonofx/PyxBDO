@@ -175,9 +175,9 @@ function WarriorV3:Attack(monsterActor)
 			-- If we have cast no spell at least auto attack 
 			print("Interacting - Autoattack")
 			selfPlayer:Interact(monsterActor) 
-        end
-         
-    end
+            end
+    	end
+	end
 end
 
 
