@@ -34,6 +34,7 @@ end
 
 
 function Pather:Reset()
+print("Pather Reset Called")
     self:Stop()
     local selfPlayer = GetSelfPlayer()
     selfPlayer:ClearActionState()

@@ -2,7 +2,7 @@ LootActorState = { }
 LootActorState.__index = LootActorState
 LootActorState.Name = "LootActor"
 
-CombatLootState = {}
+CombatLootState = { }
 CombatLootState.__index = CombatLootState
 CombatLootState.Name = "CombatLoot"
 
@@ -17,14 +17,14 @@ function CombatLootState:NeedToRun()
         return false
     end
 
-    if self.BlacklistActors:Contains(closestLoot.Guid)  then
+    if self.BlacklistActors:Contains(closestLoot.Guid) then
         return false
     end
 
     local closestAggro = nil
     local aggroCount = 0
 
-    for _,v in ipairs(GetMonsters()) do
+    for _, v in ipairs(GetMonsters()) do
         if v.IsAggro then
             aggroCount = aggroCount + 1
             if closestAggro == nil or v.Position.Distance3DFromMe < closestAggro.Position.Distance3DFromMe then
@@ -51,7 +51,7 @@ function CombatLootState:NeedToRun()
     end
 
     -- should avoid if monster is in path to loot but this should be ok for now
-    if (closestAggro.Position.Distance3DFromMe - closestAggro.BodySize - 50) < (closestLoot.Position.Distance3DFromMe - closestLoot.BodySize) then
+    if (closestAggro.Position.Distance3DFromMe - closestAggro.BodySize - 50) <(closestLoot.Position.Distance3DFromMe - closestLoot.BodySize) then
         self.BlacklistActors:Add(closestLoot.Guid, 1)
         return false
     end
@@ -82,8 +82,8 @@ function LootActorState.new()
     self._sleepTimer = nil
     self.Stuck = false
 
-    setmetatable(CombatLootState, {__index = self})
-    self.CombatLootState = setmetatable({}, CombatLootState)
+    setmetatable(CombatLootState, { __index = self })
+    self.CombatLootState = setmetatable( { }, CombatLootState)
 
     return self
 end
@@ -240,7 +240,7 @@ function LootActorState:Run()
     if self._state >= 2 and Looting.IsLooting then
         local looted = { }
         local numLoots = Looting.ItemCount
---        print("Loot in it")
+        --        print("Loot in it")
 
         for i = 0, numLoots - 1 do
             local lootItem = Looting.GetItemByIndex(i)
@@ -259,7 +259,7 @@ function LootActorState:Run()
 
         if self.Settings.LogLoot and #looted > 0 and self.LastLoggedBody ~= self._myTarget.Guid then
             self.LastLoggedBody = self._myTarget.Guid
-            local f = io.open(Pyx.Scripting.CurrentScript.Directory.."loot.txt", "a")
+            local f = io.open(Pyx.Scripting.CurrentScript.Directory .. "loot.txt", "a")
             local bodyName = self:GetBodyName(self._myTarget)
             local msg = string.format("%s %s - %s\n", os.date(), bodyName, table.concat(looted, ","))
             f:write(msg)
@@ -320,10 +320,13 @@ function LootActorState:Run()
         self._state = 1
     elseif self._state == 1 then
         --        print("loot stop")
-        Bot.Pather:Stop()
+        if string.find(selfPlayer.CurrentActionName, "JUMP", 1) == nil then
+            Bot.Pather:Stop()
+        else
+            return
+        end
+
         if string.find(selfPlayer.CurrentActionName, "WAIT") == nil then
-            -- ~= "WAIT" and selfPlayer.CurrentActionName ~= "BT_WAIT" then
-            --            print("Loot Wait")
             return true
         end
         selfPlayer:ClearActionState()
