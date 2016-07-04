@@ -150,7 +150,7 @@ function WarriorV3:Attack(monsterActor)
 				return
 			end
             Navigator.MoveTo(targetPosition)
-        else if selfPlayer.IsActionPending == false then
+        elseif selfPlayer.IsActionPending == false then
 			
 			
 			if self.ShouldGuard then
@@ -175,7 +175,6 @@ function WarriorV3:Attack(monsterActor)
 			-- If we have cast no spell at least auto attack 
 			print("Interacting - Autoattack")
 			selfPlayer:Interact(monsterActor) 
-            end
     	end
 	end
 end
