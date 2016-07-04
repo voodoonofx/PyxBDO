@@ -150,7 +150,7 @@ function WarriorV3:Attack(monsterActor)
 				return
 			end
             Navigator.MoveTo(targetPosition)
-        else if selfPlayer.IsActionPending == false
+        else if selfPlayer.IsActionPending == false then
 			
 			
 			if self.ShouldGuard then

@@ -15,7 +15,7 @@ MainWindow = { }
 
 function MainWindow.DrawMainWindow()
     local valueChanged = false
-    local _, shouldDisplay = ImGui.Begin("Grinder", true, ImVec2(265, 150), -1.0, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize)
+    local _, shouldDisplay = ImGui.Begin("Grinder1 OBSOLETE! NOT SUPPORTED", true, ImVec2(265, 150), -1.0, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoResize)
 	if shouldDisplay then
 		local selfPlayer = GetSelfPlayer()
 

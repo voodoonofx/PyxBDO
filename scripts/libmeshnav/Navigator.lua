@@ -465,3 +465,5 @@ end)
 Pyx.Scripting.CurrentScript:RegisterCallback("PyxBDO.OnRender3D", function()
     Navigator.OnRender3D()
 end)
+
+print("This script is using Libmeshnav. It is Obsolete and can be removed at anytime.")
