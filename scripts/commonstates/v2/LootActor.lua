@@ -7,6 +7,10 @@ CombatLootState.__index = CombatLootState
 CombatLootState.Name = "CombatLoot"
 
 function CombatLootState:NeedToRun()
+    if self.Settings.CombatLoot == false then
+        return
+    end
+
     local player = GetSelfPlayer()
     if player == nil then
         return false
@@ -70,7 +74,7 @@ function LootActorState.new()
     self._myTarget = nil
     self.BlacklistActors = PyxTimedList:New()
 
-    self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, IgnoreBodyName = { } }
+    self.Settings = { TakeLoot = true, LootRadius = 4000, SkipLootPlayer = false, LogLoot = false, CombatLoot = false, IgnoreBodyName = { } }
     self.State = 0
     self.Stuck = false
     self.ItemCheckFunction = nil
