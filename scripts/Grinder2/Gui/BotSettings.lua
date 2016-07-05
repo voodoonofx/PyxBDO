@@ -104,6 +104,7 @@ function BotSettings.DrawBotSettings()
 			BotSettings.UpdateInventoryList()
             _, Bot.Settings.LootSettings.TakeLoot = ImGui.Checkbox("Take loots##id_guid_looting_take_loot", Bot.Settings.LootSettings.TakeLoot)
 			_, Bot.Settings.LootSettings.SkipLootPlayer = ImGui.Checkbox("Skip loot if player in range##id_guid_looting_IgnorePlayers", Bot.Settings.LootSettings.SkipLootPlayer)
+			_, Bot.Settings.LootSettings.CombatLoot = ImGui.Checkbox("Loot while in Combat##id_guid_looting_combat", Bot.Settings.LootSettings.CombatLoot)
 			_, Bot.Settings.LootSettings.LogLoot = ImGui.Checkbox("Log loot##id_guid_looting_log_loot", Bot.Settings.LootSettings.LogLoot)
 
 
