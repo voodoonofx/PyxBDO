@@ -8,7 +8,7 @@ CombatLootState.Name = "CombatLoot"
 
 function CombatLootState:NeedToRun()
     if self.Settings.CombatLoot == false then
-        return
+        return false
     end
 
     local player = GetSelfPlayer()
