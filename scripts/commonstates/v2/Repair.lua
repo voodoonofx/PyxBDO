@@ -130,16 +130,14 @@ function RepairState:Run()
 	local confirm = [[
 	MessageBox.keyProcessEnter()
 	]]
-	local equippedwarehouse = [[
-	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
-	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
-	RepairAllEquippedItemBtn_LUp()
-	]]
-	local invenwarehouse = [[
-	UI.getChildControl( Panel_Equipment, "RadioButton_Icon_Money2"):SetCheck(true)
-	UI.getChildControl(Panel_Equipment,"RadioButton_Icon_Money"):SetCheck(false)
-	RepairAllInvenItemBtn_LUp()
-	]]
+    local equippedwarehouse = [[
+    PaGlobal_Repair:messageBoxRepairAllEquippedItem()
+    PaGlobal_Repair:cursor_PosUpdate()
+    ]]
+    local invenwarehouse = [[
+    PaGlobal_Repair:messageBoxRepairAllInvenItem()
+    PaGlobal_Repair:cursor_PosUpdate()
+    ]]
 
     if vendorPosition.Distance3DFromMe > 200 then
         if self.CallWhileMoving then
